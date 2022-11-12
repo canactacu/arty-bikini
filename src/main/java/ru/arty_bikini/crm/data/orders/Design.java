@@ -1,9 +1,9 @@
 package ru.arty_bikini.crm.data.orders;
 
 import ru.arty_bikini.crm.data.UserEntity;
-import ru.arty_bikini.crm.data.enums.DesignStraps;
-import ru.arty_bikini.crm.data.enums.GlueDesign;
-import ru.arty_bikini.crm.data.enums.TextileOrder;
+import ru.arty_bikini.crm.dto.enums.DesignStraps;
+import ru.arty_bikini.crm.dto.enums.GlueDesign;
+import ru.arty_bikini.crm.dto.enums.TextileOrder;
 
 import javax.persistence.*;
 

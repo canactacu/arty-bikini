@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.arty_bikini.crm.Utils;
 import ru.arty_bikini.crm.data.UserEntity;
-import ru.arty_bikini.crm.data.enums.UserGroup;
+import ru.arty_bikini.crm.dto.enums.UserGroup;
 import ru.arty_bikini.crm.dto.UserDTO;
 import ru.arty_bikini.crm.jpa.SessionRepository;
 import ru.arty_bikini.crm.jpa.UserRepository;

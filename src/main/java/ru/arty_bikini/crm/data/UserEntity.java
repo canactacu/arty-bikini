@@ -1,6 +1,6 @@
 package ru.arty_bikini.crm.data;
 
-import ru.arty_bikini.crm.data.enums.UserGroup;
+import ru.arty_bikini.crm.dto.enums.UserGroup;
 
 import javax.persistence.*;
 

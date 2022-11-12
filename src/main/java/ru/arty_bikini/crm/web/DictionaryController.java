@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
 import ru.arty_bikini.crm.dto.dict.TrainerDTO;
+import ru.arty_bikini.crm.dto.packet.dict.*;
 import ru.arty_bikini.crm.jpa.SessionRepository;
 import ru.arty_bikini.crm.jpa.TrainerRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 //api/dict/get-trainers + получить всех тренеров
@@ -99,94 +99,3 @@ public class DictionaryController {
 
 }
 
-//тело для:изменить тренара.
-class EditTrainersRequest {
-    private int idTrainers;
-    private String name;//имя тренера
-
-    public int getIdTrainers() {
-        return idTrainers;
-    }
-
-    public void setIdTrainers(int idTrainers) {
-        this.idTrainers = idTrainers;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-}
-
-//ответ для:изменить тренара
-class EditTrainersResponse{
-    private final String statusCode;//статус
-    private final TrainerDTO trainerDTO;//измененный тренер
-
-    public EditTrainersResponse(String statusCode, TrainerDTO trainerDTO) {
-        this.statusCode = statusCode;
-        this.trainerDTO = trainerDTO;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public TrainerDTO getTrainerDTO() {
-        return trainerDTO;
-    }
-}
-
-//тело для:добавить тренара.
-class AddTrainersRequest {
-    private String name;//имя тренера
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-}
-
-//ответ для:добавить тренара
-class AddTrainersResponse{
-    private final String statusCode;//статус
-    private final TrainerDTO trainerDTO;//добавленный тренер
-
-    public AddTrainersResponse(String statusCode, TrainerDTO trainerDTO) {
-        this.statusCode = statusCode;
-        this.trainerDTO = trainerDTO;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public TrainerDTO getTrainerDTO() {
-        return trainerDTO;
-    }
-}
-
-//ответ для:получить список работ...
-class GetTrainersResponse{
-    private final String statusCode;//статус
-    private final List<TrainerDTO> trainerList;//список тренеров
-
-    public GetTrainersResponse(String statusCode, List<TrainerDTO> trainerList) {
-        this.statusCode = statusCode;
-        this.trainerList = trainerList;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public List<TrainerDTO> getTrainerList() {
-        return trainerList;
-    }
-}

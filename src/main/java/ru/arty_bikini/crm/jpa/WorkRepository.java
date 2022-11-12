@@ -14,6 +14,6 @@ public interface WorkRepository extends JpaRepository<WorkEntity, Integer> {
     public List<WorkEntity> getByTour(TourEntity tour);//список работ по встрече
 
     //найти список работ по списку интервалов
-    @Query("SELECT * FROM works WHERE intetval_id IN ( ?1 ) ")
+    @Query(value = "SELECT * FROM works WHERE intetval_id IN ( ?1 ) ", nativeQuery = true)
     public List<WorkEntity> getByIntervalList(List<IntervalEntity> intervals);
 }

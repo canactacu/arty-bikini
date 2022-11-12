@@ -1,7 +1,7 @@
 package ru.arty_bikini.crm.data.work;
 
 import ru.arty_bikini.crm.data.UserEntity;
-import ru.arty_bikini.crm.data.enums.TypeWork;
+import ru.arty_bikini.crm.dto.enums.TypeWork;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 
 import javax.persistence.*;

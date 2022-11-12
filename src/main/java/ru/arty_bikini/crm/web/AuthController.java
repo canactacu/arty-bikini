@@ -7,6 +7,7 @@ import ru.arty_bikini.crm.Utils;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.dto.UserDTO;
+import ru.arty_bikini.crm.dto.packet.auth.*;
 import ru.arty_bikini.crm.jpa.SessionRepository;
 import ru.arty_bikini.crm.jpa.UserRepository;
 import ru.arty_bikini.crm.servise.UserService;
@@ -188,104 +189,4 @@ public class AuthController {
         return new EditUserResponse("нет сессии", null);
     }
 }
-//тело для: редактирование user пользователя
-class EditUserRequest{
-    private UserDTO user;
 
-    public UserDTO getUser() {
-        return user;
-    }
-
-    public void setUser(UserDTO user) {
-        this.user = user;
-    }
-}
-
-//ответ для: редактирование user пользователя
-class EditUserResponse{
-    //что хотим отправить
-    private final String editCode;
-    private final List<UserDTO> users;
-
-    public EditUserResponse(String editCode, List<UserDTO> users) {
-        this.editCode = editCode;
-        this.users = users;
-    }
-
-    public String getEditCode() {
-        return editCode;
-    }
-
-    public List<UserDTO> getUsers() {
-        return users;
-    }
-}
-
-//ответ для:точка входа по логину и паролю(
-class LoginResponse {
-
-    //то,что мы передаем клиенту
-    private final String errorCode;//ошибка
-    private final String accessCode;//код доступа
-
-    public LoginResponse(String errorCode, String accessCode) {
-        this.errorCode = errorCode;
-        this.accessCode = accessCode;
-    }//конструктор
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public String getAccessCode() {
-        return accessCode;
-    }
-}
-
-//ответ для:вход в систему без пороля, по сохраненному в браузере коду
-class ReconnectResponse{
-    private final boolean success;//код доступа
-
-    public ReconnectResponse(boolean success){
-        this.success = success;
-    }//конструктор
-
-    public boolean getSuccess() {
-        return success;
-    }
-}
-
-//ответ для:смена пароля
-class ChangePasswordResponse {
-    private final String statusCode;//статус
-    private final String password;//пароль
-
-    public ChangePasswordResponse(String statusCode, String password){
-        this.statusCode = statusCode;
-        this.password = password;
-    }
-
-    public String getStatusCode(){return statusCode;}
-    public String getPassword(){return password;}
-
-}
-
-//ответ для:возвращает всех пользователей
-class GetUsersResponse{
-    //что должно возвращать
-    private final List<UserDTO> users;//пользователи без паролей
-    private final String statusCode;
-
-    public GetUsersResponse(List<UserDTO> users, String statusCode) {
-        this.users = users;
-        this.statusCode = statusCode;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public List<UserDTO> getUsers() {
-        return users;
-    }
-}

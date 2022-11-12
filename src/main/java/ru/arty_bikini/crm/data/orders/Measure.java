@@ -1,7 +1,7 @@
 package ru.arty_bikini.crm.data.orders;
 
 import ru.arty_bikini.crm.data.dict.CategoryMeasureEntity;
-import ru.arty_bikini.crm.data.enums.BustNaturalMeasure;
+import ru.arty_bikini.crm.dto.enums.BustNaturalMeasure;
 
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;

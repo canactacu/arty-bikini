@@ -1,6 +1,6 @@
 package ru.arty_bikini.crm.data.orders;
 
-import ru.arty_bikini.crm.data.enums.ClientType;
+import ru.arty_bikini.crm.dto.enums.ClientType;
 
 import javax.persistence.*;
 

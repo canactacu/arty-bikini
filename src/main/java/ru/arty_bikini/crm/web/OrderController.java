@@ -9,15 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
-import ru.arty_bikini.crm.data.enums.ClientType;
+import ru.arty_bikini.crm.dto.PageDTO;
+import ru.arty_bikini.crm.dto.enums.ClientType;
 import ru.arty_bikini.crm.data.orders.Design;
 import ru.arty_bikini.crm.data.orders.LeadInfo;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.orders.PersonalData;
-import ru.arty_bikini.crm.dto.orders.DesignDTO;
-import ru.arty_bikini.crm.dto.orders.LeadInfoDTO;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
-import ru.arty_bikini.crm.dto.orders.PersonalDataDTO;
+import ru.arty_bikini.crm.dto.packet.order.*;
 import ru.arty_bikini.crm.jpa.OrderRepository;
 import ru.arty_bikini.crm.jpa.SessionRepository;
 import ru.arty_bikini.crm.jpa.TrainerRepository;
@@ -25,7 +24,7 @@ import ru.arty_bikini.crm.jpa.UserRepository;
 
 import java.util.List;
 
-import static ru.arty_bikini.crm.data.enums.ClientType.*;
+import static ru.arty_bikini.crm.dto.enums.ClientType.*;
 
 ///api/order/get-clients + //получить список клиентов
 ///api/order/get-leads  + //получить список лидов
@@ -118,10 +117,13 @@ public class OrderController {
 
             //сделать DTO
 
-            Page<OrderDTO> pageDTO = all.map((orderEntity) -> {
-                OrderDTO dto = objectMapper.convertValue(orderEntity, new TypeReference<OrderDTO>() {});
-                return dto;
-            });
+            PageDTO<OrderDTO> pageDTO = new PageDTO<>(
+                    objectMapper.convertValue(all.getContent(), new TypeReference<List<OrderDTO>>() {}),
+                    all.getNumber(),
+                    all.getSize(),
+                    all.getTotalElements(),
+                    all.getTotalPages()
+            );
 
             return new GetArchiveResponse("переданы", pageDTO);
         }
@@ -247,124 +249,4 @@ public class OrderController {
         return new GetOrderByTrainerResponse("нет сессии", null);
     }
 }
-//ответ для: получить список заказов по тренеру
-class GetOrderByTrainerResponse{
-    private final String statusCode;//статус
-    private final List<OrderDTO> orderList;
 
-    public GetOrderByTrainerResponse(String statusCode, List<OrderDTO> orderList) {
-        this.statusCode = statusCode;
-        this.orderList = orderList;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public List<OrderDTO> getOrderList() {
-        return orderList;
-    }
-}
-
-//тело для:получить список заказов по тренеру
-class GetOrderByTrainerRequest{
-    private int idTrainer;
-
-    public int getIdTrainer() {
-        return idTrainer;
-    }
-
-    public void setIdTrainer(int idTrainer) {
-        this.idTrainer = idTrainer;
-    }
-}
-
-//ответ для: изменить клиента
-class EditClientResponse{
-    private final String statusCode;//статус
-    private final OrderDTO order;
-
-    public EditClientResponse(String statusCode, OrderDTO order) {
-        this.statusCode = statusCode;
-        this.order = order;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public OrderDTO getOrder() {
-        return order;
-    }
-}
-
-//тело для: изменить клиента
-class EditClientRequest{
-    private OrderDTO order;
-
-    public OrderDTO getOrder() {
-        return order;
-    }
-
-    public void setOrder(OrderDTO order) {
-        this.order = order;
-    }
-
-}
-
-//ответ для: добавить лида-клиента
-class AddClientResponse{
-    private final String statusCode;//статус
-    private final OrderDTO orderr;//ответ
-
-    public AddClientResponse(String statusCode, OrderDTO orderr) {
-        this.statusCode = statusCode;
-        this.orderr = orderr;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public OrderDTO getOrderr() {
-        return orderr;
-    }
-}
-
-//ответ список лидо и клиентов
-class GetClientsResponse{
-    private final String statusCode;//статус
-    private final List<OrderDTO> orders; //список клиентов
-
-    public GetClientsResponse(String statusCode, List<OrderDTO> orders) {
-        this.statusCode = statusCode;
-        this.orders = orders;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public List<OrderDTO> getOrders() {
-        return orders;
-    }
-}
-
-//ответ архив
-class GetArchiveResponse{
-    private final String statusCode;//статус
-    private final Page<OrderDTO> orders; //список клиентов
-
-    public GetArchiveResponse(String statusCode, Page<OrderDTO> orders) {
-        this.statusCode = statusCode;
-        this.orders = orders;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public Page<OrderDTO> getOrders() {
-        return orders;
-    }
-}
