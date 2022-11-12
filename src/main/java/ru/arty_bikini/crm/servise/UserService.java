@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.arty_bikini.crm.Utils;
 import ru.arty_bikini.crm.data.UserEntity;
-import ru.arty_bikini.crm.data.UserGroup;
+import ru.arty_bikini.crm.data.enums.UserGroup;
 import ru.arty_bikini.crm.dto.UserDTO;
+import ru.arty_bikini.crm.jpa.SessionRepository;
 import ru.arty_bikini.crm.jpa.UserRepository;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SessionRepository sessionRepository;
 
     //если талбица пустая, то создаем 1 пользователя
     @PostConstruct//вызвать функцию при запуске программы(после заполнения всех зависимостей)
@@ -35,7 +39,7 @@ public class UserService {
         }
     }
 
-    public List<UserDTO> getUsers() {
+    public List<UserDTO> getUsers() {//получение списка пользователей
         List<UserEntity> all = userRepository.findAll();
         List<UserDTO> result = new ArrayList<>();
 
@@ -53,4 +57,5 @@ public class UserService {
 
         return result;
     }
+
 }

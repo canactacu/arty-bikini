@@ -6,14 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.Utils;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.UserEntity;
-import ru.arty_bikini.crm.data.UserGroup;
 import ru.arty_bikini.crm.dto.UserDTO;
 import ru.arty_bikini.crm.jpa.SessionRepository;
 import ru.arty_bikini.crm.jpa.UserRepository;
 import ru.arty_bikini.crm.servise.UserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,7 +35,7 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")//
+    @PostMapping("/login")//точка входа по логину и паролю(
     @ResponseBody//аннотация для ответа
     public LoginResponse login(@RequestParam String login, @RequestParam String password){
 
@@ -72,7 +70,7 @@ public class AuthController {
         return new LoginResponse("invalidPassword", null);//создаем обьект для ответа клиенту
     }
 
-    @PostMapping("/reconnect")//
+    @PostMapping("/reconnect")//вход в систему без пороля, по сохраненному в браузере коду
     @ResponseBody//аннотация для ответа
     public ReconnectResponse reconnect(@RequestParam String key){
 
@@ -91,7 +89,6 @@ public class AuthController {
     @PostMapping("/change-password")//смена пароля
     @ResponseBody//аннотация для ответа
     public ChangePasswordResponse changePassword(@RequestParam String key, @RequestParam int id){
-
         //проверяем тот ли key
         SessionEntity session = sessionRepository.getByKey(key);
         if (session == null){
@@ -140,7 +137,7 @@ public class AuthController {
 
     }
 
-    @PostMapping("/edit-user")//редактирование
+    @PostMapping("/edit-user")//редактирование user пользователя
     @ResponseBody
     public EditUserResponse EditUser(@RequestParam String key, @RequestBody EditUserRequest body){
         //проверяем тот ли key
@@ -191,8 +188,8 @@ public class AuthController {
         return new EditUserResponse("нет сессии", null);
     }
 }
-
-class EditUserRequest{//класс,который описывает обьект тело
+//тело для: редактирование user пользователя
+class EditUserRequest{
     private UserDTO user;
 
     public UserDTO getUser() {
@@ -204,6 +201,7 @@ class EditUserRequest{//класс,который описывает обьек�
     }
 }
 
+//ответ для: редактирование user пользователя
 class EditUserResponse{
     //что хотим отправить
     private final String editCode;
@@ -223,7 +221,8 @@ class EditUserResponse{
     }
 }
 
-class LoginResponse {//описывает обьект ответа клиенту
+//ответ для:точка входа по логину и паролю(
+class LoginResponse {
 
     //то,что мы передаем клиенту
     private final String errorCode;//ошибка
@@ -243,6 +242,7 @@ class LoginResponse {//описывает обьект ответа клиент
     }
 }
 
+//ответ для:вход в систему без пороля, по сохраненному в браузере коду
 class ReconnectResponse{
     private final boolean success;//код доступа
 
@@ -255,6 +255,7 @@ class ReconnectResponse{
     }
 }
 
+//ответ для:смена пароля
 class ChangePasswordResponse {
     private final String statusCode;//статус
     private final String password;//пароль
@@ -269,6 +270,7 @@ class ChangePasswordResponse {
 
 }
 
+//ответ для:возвращает всех пользователей
 class GetUsersResponse{
     //что должно возвращать
     private final List<UserDTO> users;//пользователи без паролей

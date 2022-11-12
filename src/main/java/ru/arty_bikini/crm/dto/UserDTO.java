@@ -1,6 +1,6 @@
 package ru.arty_bikini.crm.dto;
 
-import ru.arty_bikini.crm.data.UserGroup;
+import ru.arty_bikini.crm.data.enums.UserGroup;
 
 //для передали данных в интернете
 public class UserDTO {

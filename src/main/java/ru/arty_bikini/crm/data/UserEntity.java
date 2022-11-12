@@ -1,5 +1,7 @@
 package ru.arty_bikini.crm.data;
 
+import ru.arty_bikini.crm.data.enums.UserGroup;
+
 import javax.persistence.*;
 
 @Entity(name = "users")//создаем пустую табл имя user

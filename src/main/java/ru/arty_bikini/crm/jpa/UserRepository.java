@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     public UserEntity getByLogin(String login);
     // SELECT * FROM user WHERE login = ?;
-    public UserEntity getById(int id);
+    public UserEntity getById(int id);//ищет пользователя, по ID пользователя
 
 //    @Query("SELECT * FROM users;")
 //    public List<UserEntity> getAll(); можно заменить на findAll()
