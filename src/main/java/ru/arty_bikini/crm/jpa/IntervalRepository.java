@@ -2,7 +2,6 @@ package ru.arty_bikini.crm.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.work.IntervalEntity;
 
 import java.time.LocalDateTime;
@@ -23,7 +22,7 @@ public interface IntervalRepository extends JpaRepository<IntervalEntity, Intege
     //                               start = 10                     end = 30
     //ищет список интервалов от start до end включая частичные попадания
     @Query(value = "SELECT * FROM intervals WHERE ?1 < data_finish AND ?2 > data_start", nativeQuery = true)
-    public List<IntervalEntity> getIntervalFromStartToEnd(LocalDateTime start, LocalDateTime end);
+    public List<IntervalEntity> getIntervalFromStartToEnd(kotlinx.datetime.LocalDateTime start, LocalDateTime end);
 
     public IntervalEntity getByDateStart(LocalDateTime dateFinish);//ищи интервал по стартовой дате в колонке старт
 
