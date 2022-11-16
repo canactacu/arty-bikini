@@ -1,7 +1,7 @@
 package ru.arty_bikini.crm.data;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Locale;
 
 @Entity(name = "sessions")//создаем пустую табл имя
@@ -9,7 +9,7 @@ public class SessionEntity {
     private int id;
     private UserEntity user;
     private String key;
-    private LocalDateTime start;
+    private LocalDate start;
 
     @Id //первичный кюч
     @GeneratedValue
@@ -41,11 +41,11 @@ public class SessionEntity {
     }
 
     @Column//создаст столбцы
-    public LocalDateTime getStart() {
+    public LocalDate getStart() {
         return start;
     }
 
-    public void setStart(LocalDateTime start) {
+    public void setStart(LocalDate start) {
         this.start = start;
     }
 }

@@ -15,10 +15,13 @@ import ru.arty_bikini.crm.dto.work.IntervalDTO;
 import ru.arty_bikini.crm.dto.work.WorkDTO;
 import ru.arty_bikini.crm.jpa.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+
+import static ru.arty_bikini.crm.Utils.toDate;
 
 //api/work/add-work  + //добавить работу
 //api/work/edit-work//изменить работу?
@@ -122,8 +125,8 @@ public class WorkController {
                 IntervalEntity intervalEntity = new IntervalEntity();
 
                 intervalEntity.setId(0);
-                intervalEntity.setDateStart(body.getDatefinish().minusDays(7));
-                intervalEntity.setDateFinish(body.getDatefinish());
+                intervalEntity.setDateStart(toDate(body.getDateFinish()).minusDays(7));
+                intervalEntity.setDateFinish(toDate(body.getDateFinish()));
 
                 IntervalEntity save = intervalRepository.save(intervalEntity);
 
@@ -131,12 +134,12 @@ public class WorkController {
                 return new AddIntervalResponse("заполнили интервал первый", saveDTO);
             }
             //передаваемая дата = предыдущей
-            if (body.getDatefinish().isEqual(last.getDateFinish())) {
+            if (toDate(body.getDateFinish()).isEqual(last.getDateFinish())) {
                 return new AddIntervalResponse("заполняемая дата = прошлой", null);
             }
 
             //передаваемая дата < предыдущей
-            if (body.getDatefinish().isBefore(last.getDateFinish())) {
+            if (toDate(body.getDateFinish()).isBefore(last.getDateFinish())) {
                 return new AddIntervalResponse("заполняемая дата < прошлой", null);
             }
 
@@ -144,7 +147,7 @@ public class WorkController {
 
             intervalEntity.setId(0);
             intervalEntity.setDateStart(last.getDateFinish());
-            intervalEntity.setDateFinish(body.getDatefinish());//заполнить
+            intervalEntity.setDateFinish(toDate(body.getDateFinish()));//заполнить
 
             IntervalEntity save = intervalRepository.save(intervalEntity);//сохранить в бд
 
@@ -173,37 +176,37 @@ public class WorkController {
 
             //проверяем дату встречи новую
             //передаваемая дата = предыдущей
-            LocalDateTime dateStart = interval.getDateStart();//это предыдущая дата финиша
-            if (body.getDateFinish().isEqual(dateStart)) {
+            LocalDate dateStart = interval.getDateStart();//это предыдущая дата финиша
+            if (toDate(body.getDateFinish()).isEqual(dateStart)) {
                 return new EditIntervalResponse("заполняемая дата = прошлой", null, null);
             }
 
             //передаваемая дата < предыдущей
-            if (body.getDateFinish().isBefore(dateStart)) {
+            if (toDate(body.getDateFinish()).isBefore(dateStart)) {
                 return new EditIntervalResponse("заполняемая дата < прошлой", null, null);
             }
             //выясняем есть ли следущий интервал, и если есть, то проверяем новую дату,не выползает ли она за пределы
             IntervalEntity nextInterval = intervalRepository.getByDateStart(interval.getDateFinish());//поиск интервала после данного
             if (nextInterval != null) {
                 //проверка новой даты
-                if (body.getDateFinish().isEqual(nextInterval.getDateFinish())) {
+                if (toDate(body.getDateFinish()).isEqual(nextInterval.getDateFinish())) {
                     return new EditIntervalResponse("заполняемая дата = следущей", null, null);
                 }
-                if (body.getDateFinish().isAfter(nextInterval.getDateFinish())) {
+                if (toDate(body.getDateFinish()).isAfter(nextInterval.getDateFinish())) {
                     return new EditIntervalResponse("заполняемая дата > следущей", null, null);
                 }
 
-                interval.setDateFinish(body.getDateFinish());//поменяли дату
+                interval.setDateFinish(toDate(body.getDateFinish()));//поменяли дату
                 IntervalEntity save = intervalRepository.save(interval); //сохрали бд
                 IntervalDTO saveDTO = objectMapper.convertValue(save, IntervalDTO.class);//переделали в DTO
 
-                nextInterval.setDateStart(body.getDateFinish());//перезаполнили следущую
+                nextInterval.setDateStart(toDate(body.getDateFinish()));//перезаполнили следущую
                 IntervalEntity save1 = intervalRepository.save(nextInterval); //сохрали бд
                 IntervalDTO saveDTO1 = objectMapper.convertValue(save1, IntervalDTO.class);//переделали в DTO
 
                 return new EditIntervalResponse("переправили даты в текущем и след. интервале", saveDTO, saveDTO1);
             }
-            interval.setDateFinish(body.getDateFinish());//поменяли дату
+            interval.setDateFinish(toDate(body.getDateFinish()));//поменяли дату
             IntervalEntity save = intervalRepository.save(interval);            //сохрали бд
             IntervalDTO saveDTO = objectMapper.convertValue(save, IntervalDTO.class);            //переделали в DTO
 
@@ -228,8 +231,9 @@ public class WorkController {
                 return new DivIntervalResponse("нет такого интервала", null);
             }
             //проверяем дату, которую хотим поставить, она должна быть в рамках интервала
-            LocalDateTime tour = body.getTour();//текущая встреча
-            if ((tour == interval.getDateStart()) || (tour == interval.getDateFinish())) {
+            LocalDate tour = toDate(body.getTour());//текущая встреча
+
+            if ((tour.isEqual(interval.getDateStart())) || (tour == interval.getDateFinish())) {
                 return new DivIntervalResponse("встреча = границе интервала", null);
             }
             if ((interval.getDateStart().isAfter(tour)) || (tour.isAfter(interval.getDateFinish()))) {
@@ -376,8 +380,8 @@ public class WorkController {
             IntervalEntity intervalLast = intervalRepository.getLast();//последний интервал
             IntervalEntity intervalFirst = intervalRepository.getFirst();//первый интервал
 
-            LocalDateTime end = body.getDateTime().plusDays(35);//дата окончания
-            List<IntervalEntity> intervalList = intervalRepository.getIntervalFromStartToEnd(body.getDateTime(), end);
+            LocalDate end = toDate(body.getDateTime()).plusDays(35);//дата окончания
+            List<IntervalEntity> intervalList = intervalRepository.getIntervalFromStartToEnd(toDate(body.getDateTime()), end);
             if(intervalList.size() == 0){
                 return new GetIntervalWorkResponse("интервалов нет", Collections.emptyList(), Collections.emptyList());
             }

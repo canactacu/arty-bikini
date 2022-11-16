@@ -4,12 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 public class TourEntity {
     private int id;
-    private LocalDateTime tour;//доп встреча
+    private LocalDate tour;//доп встреча
 
     @Id
     @GeneratedValue
@@ -22,11 +22,11 @@ public class TourEntity {
     }
 
     @Column(name = "tour")
-    public LocalDateTime getTour() {
+    public LocalDate getTour() {
         return tour;
     }
 
-    public void setTour(LocalDateTime tour) {
+    public void setTour(LocalDate tour) {
         this.tour = tour;
     }
 }

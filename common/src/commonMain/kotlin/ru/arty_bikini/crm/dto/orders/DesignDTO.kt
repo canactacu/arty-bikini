@@ -1,9 +1,9 @@
 package ru.arty_bikini.crm.dto.orders
 
+import ru.arty_bikini.crm.dto.UserDTO
 import ru.arty_bikini.crm.dto.enums.DesignStraps
 import ru.arty_bikini.crm.dto.enums.GlueDesign
 import ru.arty_bikini.crm.dto.enums.TextileOrder
-import ru.arty_bikini.crm.dto.UserDTO
 
 //класс данных о дизайне
 class DesignDTO {

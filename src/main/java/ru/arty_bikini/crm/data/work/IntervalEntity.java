@@ -4,14 +4,14 @@ import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 //интервалы
 @Entity(name = "intervals")
 public class IntervalEntity {
     private int id;
-    private LocalDateTime dateStart;//дата начала работ
-    private LocalDateTime dateFinish;//дата окончания работ на производстве
+    private LocalDate dateStart;//дата начала работ
+    private LocalDate dateFinish;//дата окончания работ на производстве
     private TourEntity tour;//доп встреча
 
 
@@ -26,20 +26,20 @@ public class IntervalEntity {
     }
 
     @Column(name = "data_start")
-    public LocalDateTime getDateStart() {
+    public LocalDate getDateStart() {
         return dateStart;
     }
 
-    public void setDateStart(LocalDateTime dateStart) {
+    public void setDateStart(LocalDate dateStart) {
         this.dateStart = dateStart;
     }
 
     @Column(name = "data_finish")
-    public LocalDateTime getDateFinish() {
+    public LocalDate getDateFinish() {
         return dateFinish;
     }
 
-    public void setDateFinish(LocalDateTime dateFinish) {
+    public void setDateFinish(LocalDate dateFinish) {
         this.dateFinish = dateFinish;
     }
 

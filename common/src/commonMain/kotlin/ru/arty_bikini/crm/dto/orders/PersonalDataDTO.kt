@@ -1,16 +1,11 @@
 package ru.arty_bikini.crm.dto.orders
 
-import kotlinx.datetime.LocalDateTime
 import ru.arty_bikini.crm.dto.dict.TrainerDTO
 import ru.arty_bikini.crm.dto.enums.ClientLanguage
 
 //класс данных секретных
 class PersonalDataDTO {
-    var family //фамилия
-            : String? = null
-    var name //имя
-            : String? = null
-    var patronymic //отчество
+    var name //фамилия имя отчество
             : String? = null
     var prepayment //предоплата
             : String? = null
@@ -24,11 +19,11 @@ class PersonalDataDTO {
     var addOrder //допольнительно к заказу
             : String? = null
     var orderTime //дата заказа(предоплата или заполнение мерок?)
-            : LocalDateTime? = null
+            : Long? = null
     var competitionTime //дата соревнований
-            : LocalDateTime? = null
+            : Long? = null
     var neededTime //дата, когда нужен заказ
-            : LocalDateTime? = null
+            : Long? = null
     var comment //комментарий на чем остановились
             : String? = null
     var trainer //тренер

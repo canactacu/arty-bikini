@@ -1,4 +1,6 @@
-package ru.arty_bikini.crm.data.orders;
+package ru.arty_bikini.crm.data.orders.google;
+
+import ru.arty_bikini.crm.dto.enums.ColumnImportTarget;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +12,7 @@ import javax.persistence.Id;
 public class OrderDataTypeEntity {
     private int id;
     private String name;//имя в системе
+    private ColumnImportTarget target;
     private int googleColumn;//какая колонка
     private String googleName;//имя колонки в гугл таблице
 
@@ -30,6 +33,15 @@ public class OrderDataTypeEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+    
+    @Column
+    public ColumnImportTarget getTarget() {
+        return target;
+    }
+
+    public void setTarget(ColumnImportTarget target) {
+        this.target = target;
     }
 
     @Column(name = "google_column")

@@ -12,7 +12,7 @@ import ru.arty_bikini.crm.jpa.SessionRepository;
 import ru.arty_bikini.crm.jpa.UserRepository;
 import ru.arty_bikini.crm.servise.UserService;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,7 +54,7 @@ public class AuthController {
             session.setId(0);//
             session.setUser(user);
             session.setKey(UUID.randomUUID().toString());
-            session.setStart(LocalDateTime.now());
+            session.setStart(LocalDate.now());
 
             sessionRepository.save(session);//сохранить пароль
 

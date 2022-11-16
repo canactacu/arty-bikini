@@ -4,8 +4,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Random;
+import java.util.TimeZone;
 import java.util.stream.Stream;
 
 public class Utils {
@@ -50,5 +53,32 @@ public class Utils {
         }
 
         return password.toString();
+    }
+
+    //из LocalDateTime в long
+    public static long toLongFromTime(LocalDateTime LocalDate){
+        return LocalDate.toInstant(ZoneOffset.UTC).toEpochMilli();
+    }
+
+    //из long в LocalDateTime
+    public static LocalDateTime toTime(long miliseconds){
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(miliseconds), ZoneOffset.UTC);
+    }
+
+    //из LocalDate в long
+    public static long toLong(LocalDate LocalDate){
+        return LocalDate.atTime(LocalTime.of(0, 0)).toInstant(ZoneOffset.UTC).toEpochMilli();
+    }
+
+    //из long в LocalDate
+    public static LocalDate toDate(long miliseconds){
+        return LocalDate.ofInstant(Instant.ofEpochMilli(miliseconds), ZoneOffset.UTC);
+    }
+
+    //из строки в LocalDateTime  14.11.2022 11:36:41
+    public static LocalDateTime toTime(String str){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
+        return dateTime;
     }
 }

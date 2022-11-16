@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
-import ru.arty_bikini.crm.data.orders.OrderDataTypeDTO;
-import ru.arty_bikini.crm.data.orders.OrderDataTypeEntity;
+import ru.arty_bikini.crm.dto.orders.google.OrderDataTypeDTO;
+import ru.arty_bikini.crm.data.orders.google.OrderDataTypeEntity;
 import ru.arty_bikini.crm.dto.packet.ordet_data.EditTypeRequest;
 import ru.arty_bikini.crm.dto.packet.ordet_data.EditTypeResponse;
 import ru.arty_bikini.crm.dto.packet.ordet_data.GetTypesResponse;
@@ -17,9 +17,11 @@ import ru.arty_bikini.crm.servise.GoogleService;
 
 import java.util.List;
 
-///api/order-data/edit-type   изменить столбик гугол(имя в системе)
+///api/order-data/edit-type   изменить столбик гугол(имя, таргет в системе)
 // /api/order-data/get-types       получить список всех столбиков
 ///api/order-data/import-google              Импорт данных из гугла
+///api/order-data/import-result              получиьб результатц импорта
+///api/order-data/link-order-to-import              привязать заказ к результату импорта
 @RestController//контролерр
 @RequestMapping("/api/order-data")
 public class OrderDataController {
@@ -85,6 +87,7 @@ public class OrderDataController {
 
             //положить в бд новый
             orderDataTypeEntity.setName(body.getOrderDataType().getName());
+            orderDataTypeEntity.setTarget(body.getOrderDataType().getTarget());
             //orderDataTypeEntity.setGoogleColumn(body.getOrderDataType().getGoogleColumn());
             //orderDataTypeEntity.setGoogleName(body.getOrderDataType().getGoogleName());
 
@@ -111,6 +114,7 @@ public class OrderDataController {
 
             googleService.doImport();
 
+            return ("вошли в функцию");
         }
         return ("нет сессии");
     }
