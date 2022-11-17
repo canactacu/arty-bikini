@@ -14,6 +14,7 @@ import ru.arty_bikini.crm.dto.packet.work.*;
 import ru.arty_bikini.crm.dto.work.IntervalDTO;
 import ru.arty_bikini.crm.dto.work.WorkDTO;
 import ru.arty_bikini.crm.jpa.*;
+import ru.arty_bikini.crm.servise.OrderService;
 
 import java.time.LocalDate;
 import java.time.LocalDate;
@@ -55,6 +56,9 @@ public class WorkController {
 
     @Autowired
     private ObjectMapper objectMapper;
+    
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private TourRepository tourRepository;

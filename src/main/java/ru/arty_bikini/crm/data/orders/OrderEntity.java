@@ -1,5 +1,7 @@
 package ru.arty_bikini.crm.data.orders;
 
+import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
+import ru.arty_bikini.crm.data.work.TourEntity;
 import ru.arty_bikini.crm.dto.enums.ClientType;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ public class OrderEntity {
     private String name;
     private ClientType type;//статус клиента
 
+    private DataGoogleEntity dataGoogle;//гугол
     private PersonalData personalData;
     private Design design;
     private LeadInfo leadInfo;
@@ -23,6 +26,16 @@ public class OrderEntity {
 
     public void setId(int id) {
         this.id = id;
+    }
+    
+    @ManyToOne(targetEntity = DataGoogleEntity.class)//сущности откуда берем переменную из какой табл
+    @JoinColumn(name = "data_google_id")
+    public DataGoogleEntity getDataGoogle() {
+        return dataGoogle;
+    }
+
+    public void setDataGoogle(DataGoogleEntity dataGoogle) {
+        this.dataGoogle = dataGoogle;
     }
 
     @Column

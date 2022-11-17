@@ -29,6 +29,8 @@ public class DictionaryController {
 
     @Autowired
     private ObjectMapper objectMapper;
+    
+   
 
 
     @PostMapping("/get-trainers")//получить всех тренеров
@@ -43,6 +45,7 @@ public class DictionaryController {
         if (session.getUser().getGroup().canViewLeads == true) {
 
             List<TrainerEntity> trainer = trainerRepository.findAll();//найти всех
+            
             List<TrainerDTO> trainerDTOS = objectMapper.convertValue(trainer, new TypeReference<List<TrainerDTO>>() {});
             return new GetTrainersResponse("тренеров передали", trainerDTOS);
         }

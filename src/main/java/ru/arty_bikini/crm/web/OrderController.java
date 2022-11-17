@@ -21,6 +21,7 @@ import ru.arty_bikini.crm.jpa.OrderRepository;
 import ru.arty_bikini.crm.jpa.SessionRepository;
 import ru.arty_bikini.crm.jpa.TrainerRepository;
 import ru.arty_bikini.crm.jpa.UserRepository;
+import ru.arty_bikini.crm.servise.OrderService;
 
 import java.util.List;
 
@@ -52,6 +53,9 @@ public class OrderController {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private OrderService orderService;
 
 
     @PostMapping("/get-clients")//получить список клиентов
@@ -72,9 +76,9 @@ public class OrderController {
 
 
             //сделать DTO
-            List<OrderDTO> dto = objectMapper.convertValue(all, new TypeReference<List<OrderDTO>>() {});
+            List<OrderDTO> orderDTOS = orderService.toOrderDTOList(all);
 
-            return new GetClientsResponse("переданы клиенты", dto);
+            return new GetClientsResponse("переданы клиенты", orderDTOS);
         }
         return new GetClientsResponse("нет сессии", null);
     }
@@ -94,9 +98,8 @@ public class OrderController {
             List<OrderEntity> all = orderRepository.findAllByType(LEAD);
 
             //сделать DTO
-            List<OrderDTO> dto = objectMapper.convertValue(all, new TypeReference<List<OrderDTO>>() {});
-
-            return new GetClientsResponse("переданы лиды", dto);
+            List<OrderDTO> orderDTOS = orderService.toOrderDTOList(all);
+            return new GetClientsResponse("переданы лиды", orderDTOS);
         }
         return new GetClientsResponse("нет сессии", null);
     }
@@ -118,7 +121,7 @@ public class OrderController {
             //сделать DTO
 
             PageDTO<OrderDTO> pageDTO = new PageDTO<>(
-                    objectMapper.convertValue(all.getContent(), new TypeReference<List<OrderDTO>>() {}),
+                    orderService.toOrderDTOList(all.getContent()),
                     all.getNumber(),
                     all.getSize(),
                     all.getTotalElements(),
@@ -153,9 +156,8 @@ public class OrderController {
            orderRepository.save(order);
 
             //в dto
-            OrderDTO rezult = objectMapper.convertValue(order, new TypeReference<OrderDTO>() {});
-
-           return  new AddClientResponse("клиента-лида передали", rezult);
+            OrderDTO orderDTO = orderService.toOrderDTO(order);
+           return  new AddClientResponse("клиента-лида передали", orderDTO);
         }
         return new AddClientResponse("нет сессии", null);
     }
@@ -219,9 +221,8 @@ public class OrderController {
             OrderEntity save = orderRepository.save(order);
 
             //переделать в DTO
-            OrderDTO saveDTO = objectMapper.convertValue(save, OrderDTO.class);
-
-            return new EditClientResponse("данные исправлены", saveDTO);
+            OrderDTO orderDTO = orderService.toOrderDTO(save);
+            return new EditClientResponse("данные исправлены", orderDTO);
         }
         return new EditClientResponse("нет сессии", null);
     }
@@ -242,9 +243,10 @@ public class OrderController {
                 return new GetOrderByTrainerResponse("нет такого тренера", null);
             }
             List<OrderEntity> order = orderRepository.getByPersonalDataTrainer(trainer);
-            List<OrderDTO> orderDTOS = objectMapper.convertValue(order, new TypeReference<List<OrderDTO>>() {});
 
-            return new GetOrderByTrainerResponse("список отправлен", orderDTOS);
+            List<OrderDTO> orderDTOS1 = orderService.toOrderDTOList(order);
+
+            return new GetOrderByTrainerResponse("список отправлен", orderDTOS1);
         }
         return new GetOrderByTrainerResponse("нет сессии", null);
     }

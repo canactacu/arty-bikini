@@ -140,7 +140,7 @@ public class AuthController {
 
     @PostMapping("/edit-user")//редактирование user пользователя
     @ResponseBody
-    public EditUserResponse EditUser(@RequestParam String key, @RequestBody EditUserRequest body){
+    public EditUserResponse editUser(@RequestParam String key, @RequestBody EditUserRequest body){
         //проверяем тот ли key
         SessionEntity session = sessionRepository.getByKey(key);
         if (session == null){
@@ -148,9 +148,28 @@ public class AuthController {
         }
         if (session.getKey().equals(key)){// ключи совпали
             if (session.getUser().getGroup().canEditUsers == true){//должны сравнить права user
-
+               
+                String loginName = body.getUser().getLogin();//название логина,кот нам передали
+                //проверить тело на адекватность
+                if (loginName.matches("[a-zA-Zа-яА-Я0-9][a-zA-Zа-яА-Я0-9 _]{2,40}")){
+                
+                }
+                else{
+                    return new EditUserResponse("недопустимые имена", null);
+                }
+                
                 //добавить
+                //проверить тело на совпаддения имен
+                UserEntity sameUser = userRepository.getByLogin(loginName);
+                if (sameUser != null) {
+                    if (sameUser.getId() != body.getUser().getId()) {
+                        return new EditUserResponse("одинаковые имена", null);
+                    }
+                }
+                
+    
                 if(body.getUser().getId() == 0){//добавить; id = 0  у перданного нам
+                   
                     UserEntity user = new UserEntity();
 
                     user.setId(0);

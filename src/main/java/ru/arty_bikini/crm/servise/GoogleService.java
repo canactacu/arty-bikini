@@ -101,7 +101,7 @@ public class GoogleService {
 
             dataGoogle.setId(0);
             dataGoogle.setConnected(false);
-            dataGoogle.setDataGoogle(toTime(time));
+            dataGoogle.setDateGoogle(toTime(time));
 
             Map<Integer,String> accumulator = new HashMap<>();
             for (int i = 0; i < line.size(); i++) {
@@ -128,7 +128,7 @@ public class GoogleService {
             }
 
             //переделать из строки во время
-            DataGoogleEntity row = dataGoogleRepository.getByDataGoogle(toTime(time));//проверяем по времени
+            DataGoogleEntity row = dataGoogleRepository.getByDateGoogle(toTime(time));//проверяем по времени
             if (row != null) {            //если заполняли идем дальше
 
                 if (Objects.equals(row.getName(), dataGoogle.getName())) {
@@ -139,7 +139,7 @@ public class GoogleService {
 
             try {
                 String json = objectMapper.writeValueAsString(accumulator);
-                dataGoogle.setData(json);
+                dataGoogle.setJson(json);
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();

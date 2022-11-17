@@ -2,10 +2,7 @@ package ru.arty_bikini.crm.data.orders.google;
 
 import ru.arty_bikini.crm.dto.enums.ColumnImportTarget;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 //описывает типы данных получаемых от клиента
 @Entity(name = "orders_data_type")
@@ -36,6 +33,7 @@ public class OrderDataTypeEntity {
     }
     
     @Column
+    @Enumerated(EnumType.STRING)
     public ColumnImportTarget getTarget() {
         return target;
     }

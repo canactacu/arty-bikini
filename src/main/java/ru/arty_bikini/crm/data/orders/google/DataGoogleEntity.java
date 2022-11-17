@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 public class DataGoogleEntity {
     private int id;
     private boolean connected;//соединен с клиентом, обработан
-    private LocalDateTime dataGoogle;//дата заполнения мерок в гугол
+    private LocalDateTime dateGoogle;//дата заполнения мерок в гугол
     private String name;//имя клиента указанного в гугол
     private String telephon;//телефон клиента указанного в гугол
-    private String data;//другие данные из гугла
+    private String json;//другие данные из гугла
 
     @Id
     @GeneratedValue
@@ -36,12 +36,12 @@ public class DataGoogleEntity {
     }
 
     @Column(name = "date_google")
-    public LocalDateTime getDataGoogle() {
-        return dataGoogle;
+    public LocalDateTime getDateGoogle() {
+        return dateGoogle;
     }
 
-    public void setDataGoogle(LocalDateTime dataGoogle) {
-        this.dataGoogle = dataGoogle;
+    public void setDateGoogle(LocalDateTime dateGoogle) {
+        this.dateGoogle = dateGoogle;
     }
 
     @Column
@@ -62,12 +62,12 @@ public class DataGoogleEntity {
         this.telephon = telephon;
     }
 
-    @Column
-    public String getData() {
-        return data;
+    @Column(columnDefinition = "TEXT")
+    public String getJson() {
+        return json;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setJson(String json) {
+        this.json = json;
     }
 }
