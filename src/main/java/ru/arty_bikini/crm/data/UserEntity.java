@@ -10,7 +10,11 @@ public class UserEntity {
     private String login;
     private String password;
     private UserGroup group;
-
+    private String specialisation;//специализация
+    private String productivityComment;//комментарий по продуктивности
+    private int baseProductivity;//основная продуктивность(для расклейщиц)
+    private String productivityJson;
+    
     @Id //первичный кюч
     @GeneratedValue//заполнять автоматически   создадут столбцы в табл user
     public int getId() {
@@ -47,5 +51,41 @@ public class UserEntity {
 
     public void setGroup(UserGroup group) {
         this.group = group;
+    }
+    
+    @Column
+    public String getSpecialisation() {
+        return specialisation;
+    }
+    
+    public void setSpecialisation(String specialisation) {
+        this.specialisation = specialisation;
+    }
+    
+    @Column(name = "productivity-comment")
+    public String getProductivityComment() {
+        return productivityComment;
+    }
+    
+    public void setProductivityComment(String productivityComment) {
+        this.productivityComment = productivityComment;
+    }
+    
+    @Column(name = "base-productivity")
+    public int getBaseProductivity() {
+        return baseProductivity;
+    }
+    
+    public void setBaseProductivity(int baseProductivity) {
+        this.baseProductivity = baseProductivity;
+    }
+    
+    @Column(name = "productivity-json")
+    public String getProductivityJson() {
+        return productivityJson;
+    }
+    
+    public void setProductivityJson(String productivityJson) {
+        this.productivityJson = productivityJson;
     }
 }

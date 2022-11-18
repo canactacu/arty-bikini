@@ -1,7 +1,7 @@
 package ru.arty_bikini.crm.data.orders;
 
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
-import ru.arty_bikini.crm.dto.enums.ClientLanguage;
+import ru.arty_bikini.crm.dto.enums.personalData.ClientLanguage;
 
 import javax.persistence.*;
 import java.time.LocalDate;

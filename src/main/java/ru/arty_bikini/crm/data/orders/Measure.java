@@ -1,7 +1,6 @@
 package ru.arty_bikini.crm.data.orders;
 
 import ru.arty_bikini.crm.data.dict.CategoryMeasureEntity;
-import ru.arty_bikini.crm.dto.enums.BustNaturalMeasure;
 
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
@@ -25,7 +24,7 @@ public class Measure {
     private String bustUnder;//   обхват под грудью
     private String bustNumber;//  размер груди/импланта
     private String cupSilicone;//  лиф-комментарий по силикону
-    private BustNaturalMeasure bustNatural;  //  СВ/СНВ
+    //private BustNaturalMeasure bustNatural;  //  СВ/СНВ
     private String bustBetween;//   расстояние между чашек
     //private  cupNumber; //   лиф-размер чашки
     private String cupType;//  тип чашки

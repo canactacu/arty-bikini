@@ -1,8 +1,10 @@
 package ru.arty_bikini.crm.dto.packet.dict
 
+import kotlinx.serialization.Serializable
+
 //тело для:изменить тренара.
-class EditTrainersRequest {
-    var idTrainers = 0
-    var name //имя тренера
-            : String? = null
-}
+@Serializable
+class EditTrainersRequest (
+    var idTrainers: Int = 0,
+    var name : String? = null
+)

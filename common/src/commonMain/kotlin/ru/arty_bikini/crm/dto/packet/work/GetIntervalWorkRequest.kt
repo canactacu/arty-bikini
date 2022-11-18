@@ -1,7 +1,10 @@
 package ru.arty_bikini.crm.dto.packet.work
 
+import kotlinx.serialization.Serializable
+
 //тело для:получить список работ...
-class GetIntervalWorkRequest {
-    var dateTime //получаем дату начала
-            : Long? = null
-}
+@Serializable
+class GetIntervalWorkRequest (
+    var dateTime  : Long? = null //получаем дату начала
+    
+    )

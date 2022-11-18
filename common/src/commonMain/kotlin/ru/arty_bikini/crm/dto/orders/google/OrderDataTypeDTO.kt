@@ -1,8 +1,10 @@
 package ru.arty_bikini.crm.dto.orders.google
 
+import kotlinx.serialization.Serializable
 import ru.arty_bikini.crm.dto.enums.ColumnImportTarget
 
 //описывает типы данных получаемых от клиента
+@Serializable
 class OrderDataTypeDTO {
     var id = 0
 

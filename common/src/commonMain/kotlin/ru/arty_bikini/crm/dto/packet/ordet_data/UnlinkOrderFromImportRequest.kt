@@ -1,7 +1,9 @@
 package ru.arty_bikini.crm.dto.packet.ordet_data
 
+import kotlinx.serialization.Serializable
+
 //тело
-class UnlinkOrderFromImportRequest {
-    var idOrder //от клиента
-            = 0
-}
+@Serializable
+class UnlinkOrderFromImportRequest (
+    var idOrder : Int = 0   //от клиента
+)

@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
-import ru.arty_bikini.crm.dto.enums.ClientType;
+import ru.arty_bikini.crm.dto.enums.personalData.ClientType;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 
 import java.util.List;

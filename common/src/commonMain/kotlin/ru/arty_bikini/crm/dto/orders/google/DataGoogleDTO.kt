@@ -1,5 +1,8 @@
 package ru.arty_bikini.crm.dto.orders.google
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 class DataGoogleDTO {
     var id = 0
     

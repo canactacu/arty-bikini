@@ -14,6 +14,8 @@ enum class UserGroup
     @JvmField val canAddWork: Boolean,
     @JvmField val canViewColumnForGoogle: Boolean, //
     @JvmField val canEditColumnForGoogle: Boolean, //изменить столбик гугол(
+    @JvmField val canViewProductTypes: Boolean, //список типов мерок(бодифитнес,фитнес бини...),Добавить, изменить,Список типов страз
+
 ) {
     // изменить интервал,удалить работу,разделить интервал(добавить встречу),добавить работы на отдельную встречу,
 // удалить работу со встречи,получить список работ в интервалах, интервалов по дате
@@ -26,7 +28,8 @@ enum class UserGroup
         canEditClients = true,
         canAddWork = true,
         canViewColumnForGoogle = true,
-        canEditColumnForGoogle = true
+        canEditColumnForGoogle = true,
+        canViewProductTypes = true
     ),
     TANYA(
         canEditUsers = true,
@@ -37,8 +40,10 @@ enum class UserGroup
         canEditClients = true,
         canAddWork = true,
         canViewColumnForGoogle = true,
-        canEditColumnForGoogle = true
-    ),
+        canEditColumnForGoogle = true,
+        canViewProductTypes = true,
+    
+        ),
     MANAGER(
         canEditUsers = false,
         canViewLeads = true,
@@ -48,9 +53,10 @@ enum class UserGroup
         canEditClients = true,
         canAddWork = true,
         canViewColumnForGoogle = true,
-        canEditColumnForGoogle = false
+        canEditColumnForGoogle = false,
+        canViewProductTypes = true,
     ),
-    WORKER(
+    SEAMSTRESS(
         canEditUsers = false,
         canViewLeads = false,
         canViewClients = true,
@@ -59,6 +65,20 @@ enum class UserGroup
         canEditClients = false,
         canAddWork = false,
         canViewColumnForGoogle = true,
-        canEditColumnForGoogle = false
-    );
+        canEditColumnForGoogle = false,
+        canViewProductTypes = true,
+    ),
+    GLUER(
+        canEditUsers = false,
+        canViewLeads = false,
+        canViewClients = true,
+        canViewArchive = false,
+        canAddClientsLeads = false,
+        canEditClients = false,
+        canAddWork = false,
+        canViewColumnForGoogle = true,
+        canEditColumnForGoogle = false,
+        canViewProductTypes = true,
+    ),
+    ;
 }

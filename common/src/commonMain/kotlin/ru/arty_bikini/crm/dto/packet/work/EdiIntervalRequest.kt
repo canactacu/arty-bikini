@@ -1,9 +1,12 @@
 package ru.arty_bikini.crm.dto.packet.work
 
+import kotlinx.serialization.Serializable
+
 //тело для: изменить интервал
-class EdiIntervalRequest {
-    var idInterval //уже существующий
-            = 0
-    var dateFinish //дата встречи новая
-            : Long? = null
-}
+@Serializable
+class EdiIntervalRequest (
+    
+    var idInterval : Int = 0,  //уже существующий
+    var dateFinish  : Long? = null //дата встречи новая
+    
+    )

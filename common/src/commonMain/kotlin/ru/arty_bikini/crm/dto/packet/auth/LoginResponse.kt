@@ -1,9 +1,10 @@
 package ru.arty_bikini.crm.dto.packet.auth
 
+import kotlinx.serialization.Serializable
+
 //ответ для:точка входа по логину и паролю(
-class LoginResponse    //конструктор
-    (//то,что мы передаем клиенту
-    val errorCode //ошибка
-    : String?, //код доступа
+@Serializable
+class LoginResponse(
+    val errorCode : String?,
     val accessCode: String?
 )

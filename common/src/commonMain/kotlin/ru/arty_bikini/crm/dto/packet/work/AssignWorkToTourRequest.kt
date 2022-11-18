@@ -1,7 +1,10 @@
 package ru.arty_bikini.crm.dto.packet.work
 
+import kotlinx.serialization.Serializable
+
 //тело для:добавить работу на отдельную встречу
-class AssignWorkToTourRequest {
-    var idWork //id работы, которую хотим добавить на встречу
-            = 0
-}
+@Serializable
+class AssignWorkToTourRequest (
+    var idWork : Int = 0 //id работы, которую хотим добавить на встречу
+
+)

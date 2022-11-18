@@ -1,11 +1,11 @@
 package ru.arty_bikini.crm.dto.orders
 
-import ru.arty_bikini.crm.dto.enums.ColdHotLeadInfo
-import ru.arty_bikini.crm.dto.enums.HasManyLeadInfo
+import kotlinx.serialization.Serializable
+import ru.arty_bikini.crm.dto.enums.lead.ColdHotLeadInfo
+import ru.arty_bikini.crm.dto.enums.lead.HasManyLeadInfo
 
+@Serializable
 class LeadInfoDTO {
-    var coldHot //холодный,теплый горячий
-            : ColdHotLeadInfo? = null
-    var hasMany //А,В,С
-            : HasManyLeadInfo? = null
+    var coldHot: ColdHotLeadInfo? = null //холодный,теплый горячий
+    var hasMany: HasManyLeadInfo? = null //А,В,С
 }

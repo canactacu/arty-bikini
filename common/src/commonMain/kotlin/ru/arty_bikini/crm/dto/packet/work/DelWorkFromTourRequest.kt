@@ -1,7 +1,9 @@
 package ru.arty_bikini.crm.dto.packet.work
 
+import kotlinx.serialization.Serializable
+
 //тело для:удалить работу со встречи
-class DelWorkFromTourRequest {
-    var idWork //id работы, которую хотим удалить со встречу
-            = 0
-}
+@Serializable
+class DelWorkFromTourRequest (
+    var idWork : Int = 0//id работы, которую хотим удалить со встречу
+    )

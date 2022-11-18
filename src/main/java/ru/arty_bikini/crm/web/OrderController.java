@@ -1,6 +1,5 @@
 package ru.arty_bikini.crm.web;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,7 +9,7 @@ import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
 import ru.arty_bikini.crm.dto.PageDTO;
-import ru.arty_bikini.crm.dto.enums.ClientType;
+import ru.arty_bikini.crm.dto.enums.personalData.ClientType;
 import ru.arty_bikini.crm.data.orders.Design;
 import ru.arty_bikini.crm.data.orders.LeadInfo;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
@@ -25,7 +24,7 @@ import ru.arty_bikini.crm.servise.OrderService;
 
 import java.util.List;
 
-import static ru.arty_bikini.crm.dto.enums.ClientType.*;
+import static ru.arty_bikini.crm.dto.enums.personalData.ClientType.*;
 
 ///api/order/get-clients + //получить список клиентов
 ///api/order/get-leads  + //получить список лидов
