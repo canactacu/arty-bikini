@@ -12,7 +12,7 @@ public class UserEntity {
     private UserGroup group;
     private String specialisation;//специализация
     private String productivityComment;//комментарий по продуктивности
-    private int baseProductivity;//основная продуктивность(для расклейщиц)
+    private Integer baseProductivity;//основная продуктивность(для расклейщиц)
     private String productivityJson;
     
     @Id //первичный кюч
@@ -62,7 +62,7 @@ public class UserEntity {
         this.specialisation = specialisation;
     }
     
-    @Column(name = "productivity-comment")
+    @Column(name = "productivity_comment")
     public String getProductivityComment() {
         return productivityComment;
     }
@@ -71,16 +71,16 @@ public class UserEntity {
         this.productivityComment = productivityComment;
     }
     
-    @Column(name = "base-productivity")
-    public int getBaseProductivity() {
+    @Column(name = "base_productivity")
+    public Integer getBaseProductivity() {
         return baseProductivity;
     }
     
-    public void setBaseProductivity(int baseProductivity) {
+    public void setBaseProductivity(Integer baseProductivity) {
         this.baseProductivity = baseProductivity;
     }
     
-    @Column(name = "productivity-json")
+    @Column(name = "productivity_json")
     public String getProductivityJson() {
         return productivityJson;
     }

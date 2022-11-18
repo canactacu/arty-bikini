@@ -5,6 +5,6 @@ import ru.arty_bikini.crm.dto.orders.google.OrderDataTypeDTO
 
 @Serializable
 class EditTypeResponse (
-    val statusCode: String?,
-    val orderDataType: OrderDataTypeDTO?
+    val statusCode: String,
+    val orderDataType: OrderDataTypeDTO? = null
 )

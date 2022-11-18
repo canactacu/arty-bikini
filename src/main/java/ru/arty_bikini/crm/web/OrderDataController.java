@@ -108,6 +108,8 @@ public class OrderDataController {
             //положить в бд новый
             orderDataTypeEntity.setName(body.getOrderDataType().getName());
             orderDataTypeEntity.setTarget(body.getOrderDataType().getTarget());
+            orderDataTypeEntity.setDisplayCategory(body.getOrderDataType().getDisplayCategory());
+            orderDataTypeEntity.setDisplayPosition(body.getOrderDataType().getDisplayPosition());
             //orderDataTypeEntity.setGoogleColumn(body.getOrderDataType().getGoogleColumn());
             //orderDataTypeEntity.setGoogleName(body.getOrderDataType().getGoogleName());
 

@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 
 //(тип заказа(куп,платье..))
-@Entity(name = "product-type")
+@Entity(name = "product_types")
 public class ProductTypeEntity {
     private int id;
     private String name;//не понятно зачем
@@ -32,7 +32,7 @@ public class ProductTypeEntity {
         this.name = name;
     }
     
-    @Column(name = "payment-non-stone")
+    @Column(name = "payment_non_stone")
     public int getPaymentNonStone() {
         return paymentNonStone;
     }
@@ -41,7 +41,7 @@ public class ProductTypeEntity {
         this.paymentNonStone = paymentNonStone;
     }
     
-    @Column(name = "category-measure")
+    @Column(name = "category_measure")
     @Enumerated(EnumType.STRING)
     public CategoryMeasure getCategoryMeasure() {
         return categoryMeasure;

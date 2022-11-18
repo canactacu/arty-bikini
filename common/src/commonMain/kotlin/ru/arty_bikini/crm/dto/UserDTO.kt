@@ -12,7 +12,7 @@ class UserDTO : IEntity {
     var group: UserGroup? = null
     var specialisation: String? = null
     var productivityComment : String? = null
-    var baseProductivity : Int = 0;//основная продуктивность(для расклейщиц)
+    var baseProductivity : Int? = 0;//основная продуктивность(для расклейщиц)
     var productivity : Map<TypeWork, Int>? = null
     
 }

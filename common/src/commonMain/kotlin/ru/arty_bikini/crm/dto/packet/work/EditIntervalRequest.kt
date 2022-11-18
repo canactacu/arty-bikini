@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 //тело для: изменить интервал
 @Serializable
-class EdiIntervalRequest (
+class EditIntervalRequest (
     
     var idInterval : Int = 0,  //уже существующий
     var dateFinish  : Long? = null //дата встречи новая

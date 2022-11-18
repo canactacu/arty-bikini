@@ -1,6 +1,7 @@
 package ru.arty_bikini.crm.data.orders.google;
 
 import ru.arty_bikini.crm.dto.enums.ColumnImportTarget;
+import ru.arty_bikini.crm.dto.enums.measure.DataDisplayCategory;
 
 import javax.persistence.*;
 
@@ -12,7 +13,12 @@ public class OrderDataTypeEntity {
     private ColumnImportTarget target;
     private int googleColumn;//какая колонка
     private String googleName;//имя колонки в гугл таблице
-
+  
+    private DataDisplayCategory displayCategory;
+    private String displayPosition;
+    
+    
+    
     @Id
     @GeneratedValue
     public int getId() {
@@ -58,5 +64,23 @@ public class OrderDataTypeEntity {
 
     public void setGoogleName(String googleName) {
         this.googleName = googleName;
+    }
+    
+    @Column(name = "data_display_category")
+    public DataDisplayCategory getDisplayCategory() {
+        return displayCategory;
+    }
+    
+    public void setDisplayCategory(DataDisplayCategory displayCategory) {
+        this.displayCategory = displayCategory;
+    }
+    
+    @Column(name = "display_position")
+    public String getDisplayPosition() {
+        return displayPosition;
+    }
+    
+    public void setDisplayPosition(String displayPosition) {
+        this.displayPosition = displayPosition;
     }
 }

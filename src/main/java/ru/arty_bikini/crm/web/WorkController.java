@@ -17,7 +17,6 @@ import ru.arty_bikini.crm.jpa.*;
 import ru.arty_bikini.crm.servise.OrderService;
 
 import java.time.LocalDate;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -163,7 +162,7 @@ public class WorkController {
 
     @PostMapping("/edit-interval")//изменить интервал
     @ResponseBody
-    public EditIntervalResponse editInterval(@RequestParam String key, @RequestBody EdiIntervalRequest body) {
+    public EditIntervalResponse editInterval(@RequestParam String key, @RequestBody EditIntervalRequest body) {
         //проверка на key
         SessionEntity session = sessionRepository.getByKey(key);
         if (session == null) {

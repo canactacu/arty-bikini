@@ -5,7 +5,7 @@ import ru.arty_bikini.crm.dto.enums.design.SizeTypeRhinston;
 
 import javax.persistence.*;
 
-@Entity(name = "rhineston-type")
+@Entity(name = "rhinestone_types")
 public class RhinestoneTypeEntity {
     private int id;
     private ManufacturerType manufacturer;//1) Производитель
@@ -32,13 +32,13 @@ public class RhinestoneTypeEntity {
         this.manufacturer = manufacturer;
     }
     
-    @Column(name = "size-type")
+    @Column(name = "size_type")
     @Enumerated(EnumType.STRING)
-    public SizeTypeRhinston getSizeTypeRhinston() {
+    public SizeTypeRhinston getSizeType() {
         return sizeType;
     }
     
-    public void setSizeTypeRhinston(SizeTypeRhinston sizeType) {
+    public void setSizeType(SizeTypeRhinston sizeType) {
         this.sizeType = sizeType;
     }
     
