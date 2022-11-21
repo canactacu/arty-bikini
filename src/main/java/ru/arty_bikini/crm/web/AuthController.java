@@ -71,7 +71,7 @@ public class AuthController {
             // UPDATE session SET (user_id = ?, key = ?, start = ?) WHERE id = ?;
 
 
-            return new LoginResponse(null, session.getKey());
+            return new LoginResponse("ok", session.getKey());
         }
 
         return new LoginResponse("invalidPassword", null);//создаем обьект для ответа клиенту

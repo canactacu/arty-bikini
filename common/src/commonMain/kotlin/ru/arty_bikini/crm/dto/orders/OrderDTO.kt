@@ -17,9 +17,9 @@ class OrderDTO : IEntity {
     var leadInfo: LeadInfoDTO? = null
 
     val dataGoogle: DataGoogleDTO? = null
-    var TanyaOk : Boolean? = false
-    var designAll : Boolean? = false
-    var measureAll : Boolean? = false
+    var tanyaOk : Boolean = false
+    var designAll : Boolean = false
+    var measureAll : Boolean = false
     var express : ExpressDTO? = null
     
 }

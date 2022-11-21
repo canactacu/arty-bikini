@@ -1,5 +1,10 @@
 package ru.arty_bikini.crm.data.orders.google;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ru.arty_bikini.crm.utils.LocalDateTimeToLongDeserializer;
+import ru.arty_bikini.crm.utils.LocalDateTimeToLongSerializer;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +16,8 @@ import java.time.LocalDateTime;
 public class DataGoogleEntity {
     private int id;
     private boolean connected;//соединен с клиентом, обработан
+    @JsonSerialize(using = LocalDateTimeToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeToLongDeserializer.class)
     private LocalDateTime dateGoogle;//дата заполнения мерок в гугол
     private String name;//имя клиента указанного в гугол
     private String telephon;//телефон клиента указанного в гугол

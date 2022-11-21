@@ -1,7 +1,11 @@
 package ru.arty_bikini.crm.data.work;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
+import ru.arty_bikini.crm.utils.LocalDateToLongDeserializer;
+import ru.arty_bikini.crm.utils.LocalDateToLongSerializer;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -10,7 +14,13 @@ import java.time.LocalDate;
 @Entity(name = "intervals")
 public class IntervalEntity {
     private int id;
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
     private LocalDate dateStart;//дата начала работ
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
     private LocalDate dateFinish;//дата окончания работ на производстве
     private TourEntity tour;//доп встреча
 

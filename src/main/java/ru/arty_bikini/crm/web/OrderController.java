@@ -21,6 +21,7 @@ import ru.arty_bikini.crm.dto.packet.order.*;
 import ru.arty_bikini.crm.jpa.*;
 import ru.arty_bikini.crm.servise.OrderService;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static ru.arty_bikini.crm.dto.enums.personalData.ClientType.*;
@@ -241,10 +242,25 @@ public class OrderController {
             order.setPersonalData(personalData);
             order.setDesign(design);
             order.setLeadInfo(leadInfo);
-
-            //сохранить в бд
+    
+            //ставим дату предоплаты
+            if (order.getPersonalData().getOrderTime() == null) {
+                if (body.getOrder().getPersonalData() != null) {
+                    if (body.getOrder().getPersonalData().getPrepayment() != null) {
+                        if (order.getPersonalData() == null) {
+                            order.setPersonalData(new PersonalData());
+                        }
+                        order.getPersonalData().setOrderTime(LocalDate.now());
+                    }
+                }
+            }
+            
+           
+    
+           //сохранить в бд
             OrderEntity save = orderRepository.save(order);
-
+            
+           
             //переделать в DTO
             OrderDTO orderDTO = orderService.toOrderDTO(save);
             return new EditClientResponse("данные исправлены", orderDTO);

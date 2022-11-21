@@ -1,5 +1,10 @@
 package ru.arty_bikini.crm.data;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ru.arty_bikini.crm.utils.LocalDateToLongDeserializer;
+import ru.arty_bikini.crm.utils.LocalDateToLongSerializer;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Locale;
@@ -9,6 +14,9 @@ public class SessionEntity {
     private int id;
     private UserEntity user;
     private String key;
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
     private LocalDate start;
 
     @Id //первичный кюч

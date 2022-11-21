@@ -21,7 +21,7 @@ public class OrderEntity {
     private ExpressEntity express ;//срочность
     private boolean measureAll;//заполненость мерок
     private boolean designAll; //заполненость дизайна
-    private boolean TanyaOk; //таня проверила
+    private boolean tanyaOk; //таня проверила
 
     @Id
     @GeneratedValue
@@ -119,11 +119,11 @@ public class OrderEntity {
     
     @Column(name = "tanya_ok", columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
     public boolean isTanyaOk() {
-        return TanyaOk;
+        return tanyaOk;
     }
     
     public void setTanyaOk(boolean tanyaOk) {
-        TanyaOk = tanyaOk;
+        tanyaOk = tanyaOk;
     }
 }
 

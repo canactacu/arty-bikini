@@ -1,7 +1,11 @@
 package ru.arty_bikini.crm.data.orders;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
 import ru.arty_bikini.crm.dto.enums.personalData.ClientLanguage;
+import ru.arty_bikini.crm.utils.LocalDateToLongDeserializer;
+import ru.arty_bikini.crm.utils.LocalDateToLongSerializer;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -17,9 +21,15 @@ public class PersonalData {
     private String city;//город
     private ClientLanguage language;
     private String addOrder;//допольнительно к заказу
-
-    private LocalDate OrderTime;//дата заказа(предоплата или заполнение мерок?)
-    private LocalDate CompetitionTime;//дата соревнований
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
+    private LocalDate orderTime;//дата заказа(предоплата или заполнение мерок?)
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
+    private LocalDate competitionTime;//дата соревнований
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
     private LocalDate neededTime;//дата, когда нужен заказ
 
     private String comment;//комментарий на чем остановились
@@ -71,12 +81,12 @@ public class PersonalData {
 
     @Column(name = "pd_order_time")
     public LocalDate getOrderTime() {
-        return OrderTime;
+        return orderTime;
     }
 
     @Column(name = "pd_competition_time")
     public LocalDate getCompetitionTime() {
-        return CompetitionTime;
+        return competitionTime;
     }
 
     @Column(name = "pd_needed_time")
@@ -118,11 +128,11 @@ public class PersonalData {
     }
 
     public void setOrderTime(LocalDate orderTime) {
-        OrderTime = orderTime;
+        this.orderTime = orderTime;
     }
 
     public void setCompetitionTime(LocalDate competitionTime) {
-        CompetitionTime = competitionTime;
+        this.competitionTime = competitionTime;
     }
 
     public void setNeededTime(LocalDate neededTime) {
