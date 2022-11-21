@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 //тело для: добавить интервал
 @Serializable
 class AddIntervalRequest (
-    var dateFinish  : Long? = null  //дата встречи
+    var dateFinish  : Long //дата встречи
 )

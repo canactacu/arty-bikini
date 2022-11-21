@@ -23,6 +23,9 @@ public class OrderService {
     
     //orderEntity преобразуем в OrderDTO
     public OrderDTO toOrderDTO(OrderEntity orderEntity){
+    
+      //  System.out.println(objectMapper);
+        
         OrderDTO orderDTO = objectMapper.convertValue(orderEntity, OrderDTO.class);
         
        if (orderEntity.getDataGoogle() != null){

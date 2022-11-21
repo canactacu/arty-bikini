@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ChangePasswordResponse(//статус
     val statusCode: String, //пароль
-    val password: String
+    val password: String? = null
 )

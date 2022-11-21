@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class EditIntervalRequest (
     
-    var idInterval : Int = 0,  //уже существующий
-    var dateFinish  : Long? = null //дата встречи новая
+    var idInterval : Int ,  //уже существующий
+    var dateFinish  : Long //дата встречи новая
     
     )

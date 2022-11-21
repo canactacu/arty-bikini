@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 //тело для:получить список заказов по тренеру
 @Serializable
 class GetOrderByTrainerRequest (
-    var idTrainer: Int = 0
+    var idTrainer: Int
     )

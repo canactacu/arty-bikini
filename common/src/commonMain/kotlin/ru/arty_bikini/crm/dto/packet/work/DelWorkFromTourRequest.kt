@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 //тело для:удалить работу со встречи
 @Serializable
 class DelWorkFromTourRequest (
-    var idWork : Int = 0//id работы, которую хотим удалить со встречу
+    var idWork : Int //id работы, которую хотим удалить со встречу
     )

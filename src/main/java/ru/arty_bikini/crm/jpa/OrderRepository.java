@@ -14,5 +14,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
     public Page<OrderEntity> findAllByType(ClientType type, Pageable pageable);//найти всех определенного типа и по страницам
     public OrderEntity getById(int id);//взять одного клиента по id клиента
     public List<OrderEntity> getByPersonalDataTrainer(TrainerEntity trainer);//найти список заказов по тренеру
+    public List<OrderEntity> getByMeasureAllOrDesignAll(boolean measure, boolean design);
 
 }

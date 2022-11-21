@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.UserEntity;
+import ru.arty_bikini.crm.data.dict.ExpressEntity;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
+import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.dto.PageDTO;
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType;
 import ru.arty_bikini.crm.data.orders.Design;
@@ -16,10 +18,7 @@ import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.orders.PersonalData;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
 import ru.arty_bikini.crm.dto.packet.order.*;
-import ru.arty_bikini.crm.jpa.OrderRepository;
-import ru.arty_bikini.crm.jpa.SessionRepository;
-import ru.arty_bikini.crm.jpa.TrainerRepository;
-import ru.arty_bikini.crm.jpa.UserRepository;
+import ru.arty_bikini.crm.jpa.*;
 import ru.arty_bikini.crm.servise.OrderService;
 
 import java.util.List;
@@ -27,14 +26,14 @@ import java.util.List;
 import static ru.arty_bikini.crm.dto.enums.personalData.ClientType.*;
 
 ///api/order/get-clients + //получить список клиентов
-///api/order/get-leads  + //получить список лидов
+///api/order/get-leads  + - //получить список лидов и клиентов с предоплатой и без мерок или без дизайна
 ///api/order/add-client + //добавить лида-клиента
 ///api/order/edit-client + //изменить клиента
 ///api/order/get-client //получить 1 клиента?
 ///api/order/get-archive + //архив по страницам
 ///api/order/get-order-by-trainer +  //получить список заказов по тренеру
 
-@RestController//контролерр
+@RestController
 @RequestMapping("/api/order")
 public class OrderController {
 
@@ -54,7 +53,13 @@ public class OrderController {
     private UserRepository userRepository;
     
     @Autowired
+    private ExpressRepository expressRepository;
+    
+    @Autowired
     private OrderService orderService;
+    
+    @Autowired
+    private DataGoogleRepository dataGoogleRepository;
 
 
     @PostMapping("/get-clients")//получить список клиентов
@@ -63,7 +68,7 @@ public class OrderController {
         //проверка на key
         SessionEntity session = sessionRepository.getByKey(key);
         if (session == null){
-            return new GetClientsResponse("нет сессии", null);
+            return new GetClientsResponse("нет сессии", null, null);
         }
         //проверка на права доступа
         if(session.getUser().getGroup().canViewClients == true){
@@ -77,30 +82,32 @@ public class OrderController {
             //сделать DTO
             List<OrderDTO> orderDTOS = orderService.toOrderDTOList(all);
 
-            return new GetClientsResponse("переданы клиенты", orderDTOS);
+            return new GetClientsResponse("переданы клиенты", orderDTOS, null);
         }
-        return new GetClientsResponse("нет сессии", null);
+        return new GetClientsResponse("нет сессии", null, null);
     }
 
-    @PostMapping("/get-leads")//получить список лидов
+    @PostMapping("/get-leads")//получить список лидов и клиентов с предоплатой и без мерок или без дизайна
     @ResponseBody
     public GetClientsResponse getLeads(@RequestParam String key){
         //проверка на key
         SessionEntity session = sessionRepository.getByKey(key);
         if (session == null){
-            return new GetClientsResponse("нет сессии", null);
+            return new GetClientsResponse("нет сессии", null, null);
         }
         //проверка на права доступа
         if(session.getUser().getGroup().canViewLeads == true){
 
             //сходить в бд//получить клиентов
             List<OrderEntity> all = orderRepository.findAllByType(LEAD);
-
+            List<OrderEntity> orderList = orderRepository.getByMeasureAllOrDesignAll(false, false);
+            List<OrderDTO> orderDTOS1 = orderService.toOrderDTOList(orderList);
+    
             //сделать DTO
             List<OrderDTO> orderDTOS = orderService.toOrderDTOList(all);
-            return new GetClientsResponse("переданы лиды", orderDTOS);
+            return new GetClientsResponse("переданы лиды", orderDTOS, orderDTOS1);
         }
-        return new GetClientsResponse("нет сессии", null);
+        return new GetClientsResponse("нет сессии", null, null);
     }
 
     @PostMapping("/get-archive")//получить список архив
@@ -180,22 +187,41 @@ public class OrderController {
                 return new EditClientResponse("нет такого Id", null);
             }
 
-            //примитивы в OrderEntity заполнить в ручную
+            //примитивы в OrderEntity заполнить в ручную @Embedable
             order.setName(body.getOrder().getName());
             order.setType(body.getOrder().getType());
+            order.setMeasureAll(body.getOrder().getMeasureAll());
+            order.setDesignAll(body.getOrder().getDesignAll());
+            order.setTanyaOk(body.getOrder().getTanyaOk());
 
             //все остальное заполнить через класс маппер
             PersonalData personalData = objectMapper.convertValue(body.getOrder().getPersonalData(), PersonalData.class);
             Design design = objectMapper.convertValue(body.getOrder().getDesign(), Design.class);//->DTO
             LeadInfo leadInfo = objectMapper.convertValue(body.getOrder().getLeadInfo(), LeadInfo.class);
-
             //проверить все вложенные *Entity (по ID сходить в бд и заменить на то,что вернет гибернайт)
+    
+            if (body.getOrder().getExpress() != null){
+                ExpressEntity express = expressRepository.getById(body.getOrder().getExpress().getId());
+                if (express == null){
+                    return new EditClientResponse("express == null, не заполнено ", null);
+                }
+                order.setExpress(express);
+            }
+            
+            if (body.getOrder().getDataGoogle() != null){
+                DataGoogleEntity dataGoogle = dataGoogleRepository.getById(body.getOrder().getDataGoogle().getId());
+                if (dataGoogle == null){
+                    return new EditClientResponse("dataGoogle == null, не заполнено ", null);
+                }
+                order.setDataGoogle(dataGoogle);
+            }
+            
             if (personalData != null) {
 
                 if (personalData.getTrainer() != null) {
                     TrainerEntity trainer = trainerRepository.getById(personalData.getTrainer().getId());
                     if (trainer == null) {
-                        return new EditClientResponse("trainer == null, не заполнино ", null);
+                        return new EditClientResponse("trainer == null, не заполнено ", null);
                     }
                     personalData.setTrainer(trainer);
                 }
@@ -205,7 +231,7 @@ public class OrderController {
                 if (design.getDesigner() != null){
                     UserEntity user = userRepository.getById(design.getDesigner().getId());
                     if (user == null){
-                        return new EditClientResponse("user == null, не заполнино ", null);
+                        return new EditClientResponse("user == null, не заполнено ", null);
                     }
                     design.setDesigner(user);
                 }

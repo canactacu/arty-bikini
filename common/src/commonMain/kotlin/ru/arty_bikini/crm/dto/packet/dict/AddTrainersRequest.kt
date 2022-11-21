@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 //тело для:добавить тренара.
 @Serializable
 class AddTrainersRequest (
-    var name : String? = null //имя тренера
+    var name : String //имя тренера
 )

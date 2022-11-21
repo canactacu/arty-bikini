@@ -1,6 +1,8 @@
 package ru.arty_bikini.crm.data.orders;
 
 import ru.arty_bikini.crm.data.UserEntity;
+import ru.arty_bikini.crm.data.dict.PriceEntity;
+import ru.arty_bikini.crm.data.dict.StrapsEntity;
 import ru.arty_bikini.crm.dto.enums.design.DesignStraps;
 import ru.arty_bikini.crm.dto.enums.design.GlueDesign;
 import ru.arty_bikini.crm.dto.enums.design.TextileOrder;
@@ -15,12 +17,14 @@ public class Design {
 
     private String amount;//количество страз
     private GlueDesign glue;//клей
-    private DesignStraps straps;//верхние лямки дизайн
+    private StrapsEntity straps;//верхние лямки дизайн
     private String commentDesignUP;//комментарий по дизайну лифа
     private String commentDesignDoun;//комментарий по дизайну низ
 
     private UserEntity designer;//кто заполнил дизайн
     private boolean userTanya;//таня проверила дизайн
+    
+    private PriceEntity price;
 
     @Column(name = "d_color")
     public String getColor() {
@@ -59,17 +63,27 @@ public class Design {
     public void setGlue(GlueDesign glue) {
         this.glue = glue;
     }
-
-    @Column(name = "d_straps")
-    @Enumerated(EnumType.STRING)
-    public DesignStraps getStraps() {
+    
+    @ManyToOne(targetEntity = StrapsEntity.class)//сущности откуда берем переменную из какой табл
+    @JoinColumn(name = "straps_id")//даем название колонке
+    public StrapsEntity getStraps() {
         return straps;
     }
-
-    public void setStraps(DesignStraps straps) {
+    
+    public void setStraps(StrapsEntity straps) {
         this.straps = straps;
     }
-
+    
+    @ManyToOne(targetEntity = PriceEntity.class)//сущности откуда берем переменную из какой табл
+    @JoinColumn(name = "price_id")//даем название колонке
+    public PriceEntity getPrice() {
+        return price;
+    }
+    
+    public void setPrice(PriceEntity price) {
+        this.price = price;
+    }
+    
     @Column(name = "d_comment_design_up")
     public String getCommentDesignUP() {
         return commentDesignUP;

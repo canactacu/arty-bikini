@@ -2,6 +2,7 @@ package ru.arty_bikini.crm.dto.orders
 
 import kotlinx.serialization.Serializable
 import ru.arty_bikini.crm.dto.IEntity
+import ru.arty_bikini.crm.dto.dict.ExpressDTO
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType
 import ru.arty_bikini.crm.dto.orders.google.DataGoogleDTO
 
@@ -16,5 +17,9 @@ class OrderDTO : IEntity {
     var leadInfo: LeadInfoDTO? = null
 
     val dataGoogle: DataGoogleDTO? = null
-
+    var TanyaOk : Boolean? = false
+    var designAll : Boolean? = false
+    var measureAll : Boolean? = false
+    var express : ExpressDTO? = null
+    
 }

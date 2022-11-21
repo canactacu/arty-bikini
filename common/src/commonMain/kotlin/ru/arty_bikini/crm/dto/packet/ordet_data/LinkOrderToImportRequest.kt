@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 //тело для: привязать заказ к результату импорта
 @Serializable
 class LinkOrderToImportRequest (
-    var idOrder : Int = 0,//от клиента
-    var idDataGoogle : Int = 0 //от гугла
+    var idOrder : Int ,
+    var idDataGoogle : Int  //от гугла
 )

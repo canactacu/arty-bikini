@@ -9,7 +9,7 @@ import ru.arty_bikini.crm.dto.enums.personalData.ClientLanguage
 class PersonalDataDTO {
     var name: String? = null //фамилия имя отчество
     var prepayment: String? = null  //предоплата
-    var payment: String? = null  //цена
+    var payment: Int? = null  //цена
     var telephon: String? = null //телефон
     var city: String? = null  //город
     var language: ClientLanguage? = null

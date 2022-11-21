@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 //тело для:удалить встречу(только, если нет работ)
 @Serializable
 class DelIntervalRequest (
-    var idInterval : Int  = 0 //id интервала, в котором будем удалять встречу
+    var idInterval : Int   //id интервала, в котором будем удалять встречу
 
 )

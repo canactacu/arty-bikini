@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 //тело для:изменить тренара.
 @Serializable
 class EditTrainersRequest (
-    var idTrainers: Int = 0,
-    var name : String? = null
+    var idTrainers: Int,
+    var name : String
 )

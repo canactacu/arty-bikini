@@ -7,7 +7,7 @@ import ru.arty_bikini.crm.dto.work.WorkDTO
 //ответ для:получить список работ...
 @Serializable
 class GetIntervalWorkResponse(
-    val statusCode: String?, //список работ одним списком
-    val workDTOList: List<WorkDTO>?, //список интервалов
-    val intervalDTOList: List<IntervalDTO>?
+    val statusCode: String, //список работ одним списком
+    val workDTOList: List<WorkDTO>? = null, //список интервалов
+    val intervalDTOList: List<IntervalDTO>? = null
 )

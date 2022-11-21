@@ -35,7 +35,7 @@ import java.util.List;
 ///api/order-data/link-order-to-import      +        привязать заказ к результату импорта
 ///api/order-data/unlink-order-from-import      +        отвязать заказ от гугл данных
 
-@RestController//контролерр
+@RestController
 @RequestMapping("/api/order-data")
 public class OrderDataController {
 

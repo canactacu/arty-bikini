@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm.data.orders;
 
+import ru.arty_bikini.crm.data.dict.ExpressEntity;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType;
 
@@ -16,6 +17,11 @@ public class OrderEntity {
     private PersonalData personalData;
     private Design design;
     private LeadInfo leadInfo;
+    
+    private ExpressEntity express ;//срочность
+    private boolean measureAll;//заполненость мерок
+    private boolean designAll; //заполненость дизайна
+    private boolean TanyaOk; //таня проверила
 
     @Id
     @GeneratedValue
@@ -81,6 +87,43 @@ public class OrderEntity {
 
     public void setLeadInfo(LeadInfo leadInfo) {
         this.leadInfo = leadInfo;
+    }
+    
+    @ManyToOne(targetEntity = ExpressEntity.class)//сущности откуда берем переменную из какой табл
+    @JoinColumn(name = "express_id")
+    public ExpressEntity getExpress() {
+        return express;
+    }
+    
+    public void setExpress(ExpressEntity express) {
+        this.express = express;
+    }
+    
+    @Column(name = "measure_all", columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
+    public boolean isMeasureAll() {
+        return measureAll;
+    }
+    
+    public void setMeasureAll(boolean measureAll) {
+        this.measureAll = measureAll;
+    }
+    
+    @Column(name = "design_all", columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
+    public boolean isDesignAll() {
+        return designAll;
+    }
+    
+    public void setDesignAll(boolean designAll) {
+        this.designAll = designAll;
+    }
+    
+    @Column(name = "tanya_ok", columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
+    public boolean isTanyaOk() {
+        return TanyaOk;
+    }
+    
+    public void setTanyaOk(boolean tanyaOk) {
+        TanyaOk = tanyaOk;
     }
 }
 

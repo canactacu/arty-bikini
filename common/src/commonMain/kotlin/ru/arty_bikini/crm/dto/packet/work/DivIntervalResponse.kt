@@ -6,6 +6,6 @@ import ru.arty_bikini.crm.dto.work.IntervalDTO
 //ответ для: разделить интервал(добавить встречу)
 @Serializable
 class DivIntervalResponse(//статус
-    val statusCode: String?,
-    val intervalDTO: IntervalDTO?
+    val statusCode: String,
+    val intervalDTO: IntervalDTO? = null
 )

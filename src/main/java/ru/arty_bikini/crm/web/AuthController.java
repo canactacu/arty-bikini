@@ -1,6 +1,7 @@
 package ru.arty_bikini.crm.web;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.Utils;
@@ -15,6 +16,8 @@ import ru.arty_bikini.crm.servise.UserService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
+//user 174  ("/edit-user")
 
 // /api/auth/login - 4 точка входа по логину и паролю(если нет сохраненного пароля а браузере)
 // /api/auth/reconnect - 12(вход в систему без пороля, по сохраненному в браузере коду)
@@ -35,9 +38,12 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @PostMapping("/login")//точка входа по логину и паролю(
-    @ResponseBody//аннотация для ответа
+    @ResponseBody
     public LoginResponse login(@RequestParam String login, @RequestParam String password){
 
         UserEntity user = userRepository.getByLogin(login);
@@ -81,7 +87,6 @@ public class AuthController {
         }
         //сравнить ключ из бд и ключ из клиента
         if (session.getKey().equals(key)){
-            //System.out.println("тут2////////////////////////");
             return new ReconnectResponse(true);
         }
         return new ReconnectResponse(false);//ключи не совпали
@@ -175,7 +180,17 @@ public class AuthController {
                     user.setId(0);
                     user.setLogin(body.getUser().getLogin());
                     user.setGroup(body.getUser().getGroup());
-
+                    user.setBaseProductivity(body.getUser().getBaseProductivity());
+                    user.setSpecialisation(body.getUser().getSpecialisation());
+                    user.setProductivityComment(body.getUser().getProductivityComment());
+                    
+                    try {
+                        String productivityJson = objectMapper.writeValueAsString(body.getUser().getProductivity());
+    
+                        user.setProductivityJson(productivityJson);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     //добавить в бд
                     userRepository.save(user);
 
@@ -194,6 +209,17 @@ public class AuthController {
 
                 user.setLogin(body.getUser().getLogin());
                 user.setGroup(body.getUser().getGroup());
+                user.setBaseProductivity(body.getUser().getBaseProductivity());
+                user.setSpecialisation(body.getUser().getSpecialisation());
+                user.setProductivityComment(body.getUser().getProductivityComment());
+    
+                try {
+                    String productivityJson = objectMapper.writeValueAsString(body.getUser().getProductivity());
+        
+                    user.setProductivityJson(productivityJson);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 //добавить в бд
                 userRepository.save(user);

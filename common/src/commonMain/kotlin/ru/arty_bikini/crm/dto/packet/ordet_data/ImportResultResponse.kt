@@ -7,5 +7,5 @@ import ru.arty_bikini.crm.dto.orders.google.DataGoogleDTO
 @Serializable
 class ImportResultResponse(
     val statusCode: String,
-    val dataGoogleDTOList: List<DataGoogleDTO>
+    val dataGoogleDTOList: List<DataGoogleDTO>? = null
     )

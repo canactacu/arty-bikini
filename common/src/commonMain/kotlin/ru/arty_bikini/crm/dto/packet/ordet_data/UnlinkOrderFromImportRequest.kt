@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 //тело
 @Serializable
 class UnlinkOrderFromImportRequest (
-    var idOrder : Int = 0   //от клиента
+    var idOrder : Int  //от клиента
 )

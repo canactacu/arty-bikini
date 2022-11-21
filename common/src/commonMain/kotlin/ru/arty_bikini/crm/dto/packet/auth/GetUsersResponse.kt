@@ -6,6 +6,6 @@ import ru.arty_bikini.crm.dto.UserDTO
 //ответ для:возвращает всех пользователей
 @Serializable
 class GetUsersResponse(
-    val users: List<UserDTO>?,  //пользователи без паролей
-    val statusCode: String?
+    val users: List<UserDTO>? = null,  //пользователи без паролей
+    val statusCode: String
 )

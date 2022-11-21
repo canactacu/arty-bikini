@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 //ответ для: удалить работу
 @Serializable
 class DelWorkResponse( //статус
-    val statusCode: String?
+    val statusCode: String
 )

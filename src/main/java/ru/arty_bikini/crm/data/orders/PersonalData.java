@@ -12,7 +12,7 @@ public class PersonalData {
     private String name;//фамилия имя отчество
 
     private String prepayment;//предоплата
-    private String payment;//цена
+    private int payment;//цена
     private String telephon;//телефон
     private String city;//город
     private ClientLanguage language;
@@ -43,8 +43,8 @@ public class PersonalData {
         return prepayment;
     }
 
-    @Column(name = "pd_payment")
-    public String getPayment() {
+    @Column(name = "pd_payment", columnDefinition = "INTEGER NOT NULL DEFAULT 0")
+    public int getPayment() {
         return payment;
     }
 
@@ -97,7 +97,7 @@ public class PersonalData {
         this.prepayment = prepayment;
     }
 
-    public void setPayment(String payment) {
+    public void setPayment(int payment) {
         this.payment = payment;
     }
 

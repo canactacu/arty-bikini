@@ -6,6 +6,6 @@ import ru.arty_bikini.crm.dto.work.WorkDTO
 //ответ для:добавить работу на отдельную встречу
 @Serializable
 class AssignWorkToTourResponse(//статус
-    val statusCode: String?,
-    val workDTO: WorkDTO?
+    val statusCode: String,
+    val workDTO: WorkDTO? = null
 )

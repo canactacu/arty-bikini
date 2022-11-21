@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 //тело для:получить список работ...
 @Serializable
 class GetIntervalWorkRequest (
-    var dateTime  : Long? = null //получаем дату начала
+    var dateTime  : Long //получаем дату начала
     
     )

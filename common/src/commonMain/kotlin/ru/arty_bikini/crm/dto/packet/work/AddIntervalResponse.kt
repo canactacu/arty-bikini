@@ -6,6 +6,6 @@ import ru.arty_bikini.crm.dto.work.IntervalDTO
 //ответ для: добавить интервал
 @Serializable
 class AddIntervalResponse(//статус
-    val statusCode: String?, //интервал
-    val intervalDTO: IntervalDTO?
+    val statusCode: String, //интервал
+    val intervalDTO: IntervalDTO?= null
 )

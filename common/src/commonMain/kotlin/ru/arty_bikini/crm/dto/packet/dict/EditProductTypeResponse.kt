@@ -6,5 +6,5 @@ import ru.arty_bikini.crm.dto.dict.ProductTypeDTO
 @Serializable
 class EditProductTypeResponse(
     val statusCode: String,
-    val productTypeDTO: ProductTypeDTO?
+    val productTypeDTO: ProductTypeDTO? = null
 )

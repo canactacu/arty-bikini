@@ -6,6 +6,6 @@ import ru.arty_bikini.crm.dto.orders.OrderDTO
 //ответ
 @Serializable
 class LinkOrderToImportResponse(
-    val code: String,
-    val orderDTO: OrderDTO
+    val code: String?,
+    val orderDTO: OrderDTO? = null
     )

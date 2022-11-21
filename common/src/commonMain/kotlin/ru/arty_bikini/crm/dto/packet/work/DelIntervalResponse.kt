@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 //ответ для:удалить встречу(только, если нет работ)
 @Serializable
 class DelIntervalResponse( //статус
-    val statusCode: String?
+    val statusCode: String
 )
