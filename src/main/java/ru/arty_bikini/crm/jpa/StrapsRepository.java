@@ -4,4 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.arty_bikini.crm.data.dict.StrapsEntity;
 
 public interface StrapsRepository extends JpaRepository<StrapsEntity, Integer> {
+    public StrapsEntity getById(int id);
 }

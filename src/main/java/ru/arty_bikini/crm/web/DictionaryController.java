@@ -5,17 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
-import ru.arty_bikini.crm.data.dict.ProductTypeEntity;
-import ru.arty_bikini.crm.data.dict.RhinestoneTypeEntity;
-import ru.arty_bikini.crm.data.dict.TrainerEntity;
-import ru.arty_bikini.crm.dto.dict.ProductTypeDTO;
-import ru.arty_bikini.crm.dto.dict.RhinestoneTypeDTO;
-import ru.arty_bikini.crm.dto.dict.TrainerDTO;
+import ru.arty_bikini.crm.data.dict.*;
+import ru.arty_bikini.crm.dto.dict.*;
 import ru.arty_bikini.crm.dto.packet.dict.*;
-import ru.arty_bikini.crm.jpa.ProductTypeRepository;
-import ru.arty_bikini.crm.jpa.RhinestoneTypeRepository;
-import ru.arty_bikini.crm.jpa.SessionRepository;
-import ru.arty_bikini.crm.jpa.TrainerRepository;
+import ru.arty_bikini.crm.jpa.*;
 
 import java.util.List;
 
@@ -25,13 +18,31 @@ import java.util.List;
 
 ///api/dict/get-product-types + Список типов купальников
 //      /api/dict/edit-product-type + Добавить,изменить тип купальника
+
 //    /api/dict/get-rhinestone-type + Список типов страз
 //  /api/dict/edit-rhinestone-type + Добавить изменить тип страз
-//это контроллер
 
-@RestController//контролерр
+//api/dict/get-express + получить все цены за срочность
+//api/dict/add-express  + добавить новую цену срочности
+//api/dict/edit-express  + изменить цену срочности
+
+//api/dict/get-price   получить всех
+//api/dict/add-price  добавить
+//api/dict/edit-price  изменить
+
+//api/dict/get-straps   получить всех straps
+//api/dict/add-straps  добавить straps
+//api/dict/edit-straps  изменить straps
+
+@RestController
 @RequestMapping("/api/dict")
 public class DictionaryController {
+    
+    @Autowired
+    private ExpressRepository expressRepository;
+    
+    @Autowired
+    private StrapsRepository strapsRepository;
 
     @Autowired
     private SessionRepository sessionRepository;
@@ -47,6 +58,9 @@ public class DictionaryController {
     
    @Autowired
    private RhinestoneTypeRepository rhinestoneTypeRepository;
+   
+   @Autowired
+   private PriceRepository priceRepository;
 
 
     @PostMapping("/get-trainers")//получить всех тренеров
@@ -210,6 +224,249 @@ public class DictionaryController {
     
         }
         return new EditRhinestoneTypeResponse("нет сессии", null);
+    }
+    
+    @PostMapping("/get-express")//получить все цены за срочность
+    @ResponseBody
+    public GetExpressResponse getExpress(@RequestParam String key) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new GetExpressResponse("нет сессии", null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+    
+            List<ExpressEntity> all = expressRepository.findAll();
+    
+            List<ExpressDTO> expressDTOS = objectMapper.convertValue(all, new TypeReference<List<ExpressDTO>>() {});
+    
+    
+            return new GetExpressResponse("список цен на срочность передан", expressDTOS);
+        }
+        return new GetExpressResponse("нет сессии", null);
+        
+    }
+    
+    @PostMapping("/add-express")//добавить новую цену срочности
+    @ResponseBody
+    public AddExpressResponse addExpress(@RequestParam String key, @RequestBody AddExpressRequest body) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new AddExpressResponse("нет сессии", null);
+        }
+        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+            
+            if (body.getExpressDTO() == null){
+                return new AddExpressResponse("ExpressDTO() == null", null);
+    
+            }
+            ExpressEntity express = new ExpressEntity();
+            express.setId(0);
+            express.setMaxDays(body.getExpressDTO().getMaxDays());
+            express.setMinDays(body.getExpressDTO().getMinDays());
+            express.setCost(body.getExpressDTO().getCost());
+    
+            ExpressEntity save = expressRepository.save(express);
+            ExpressDTO expressDTO = objectMapper.convertValue(save, ExpressDTO.class);
+    
+            return new AddExpressResponse("создали срочность", expressDTO);
+        }
+        return new AddExpressResponse("нет сессии", null);
+        
+    }
+    
+    @PostMapping("/edit-express")//изменить цену срочности
+    @ResponseBody
+    public EditExpressResponse editExpress(@RequestParam String key, @RequestBody EditExpressRequest body) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new EditExpressResponse("нет сессии", null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+    
+            if (body.getExpressDTO() == null){
+                return new EditExpressResponse("ExpressDTO() == null", null);
+        
+            }
+            ExpressEntity express = expressRepository.getById(body.getExpressDTO().getId());
+            if(express == null){
+                return new EditExpressResponse("нет такой Id срочности", null);
+            }
+            express.setMaxDays(body.getExpressDTO().getMaxDays());
+            express.setMinDays(body.getExpressDTO().getMinDays());
+            express.setCost(body.getExpressDTO().getCost());
+    
+            ExpressEntity save = expressRepository.save(express);
+            ExpressDTO expressDTO = objectMapper.convertValue(save, ExpressDTO.class);
+            return new EditExpressResponse("изменили срочность", expressDTO);
+        }
+        return new EditExpressResponse("нет сессии", null);
+        
+    }
+    
+    @PostMapping("/get-straps")//получить все straps
+    @ResponseBody
+    public GetStrapsResponse getStraps(@RequestParam String key) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new GetStrapsResponse("нет сессии", null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+            List<StrapsEntity> list = strapsRepository.findAll();
+    
+            List<StrapsDTO> strapsDTOS = objectMapper.convertValue(list, new TypeReference<List<StrapsDTO>>() {});
+            return new GetStrapsResponse("список передан", strapsDTOS);
+        }
+        return new GetStrapsResponse("нет сессии", null);
+        
+    }
+    
+    @PostMapping("/add-straps")//добавить новую StrapsEntity
+    @ResponseBody
+    public AddStrapsResponse addStraps(@RequestParam String key, @RequestBody AddStrapsRequest body) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new AddStrapsResponse("нет сессии", null);
+        }
+        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+            
+            if (body.getStrapsDTO() == null){
+                return new AddStrapsResponse("StrapsDTO() == null", null);
+                
+            }
+            StrapsEntity straps = new StrapsEntity();
+            straps.setId(0);
+            straps.setName(body.getStrapsDTO().getName());
+            straps.setCount(body.getStrapsDTO().getCount());
+    
+            StrapsEntity save = strapsRepository.save(straps);
+            StrapsDTO strapsDTO = objectMapper.convertValue(save, StrapsDTO.class);
+    
+            return new AddStrapsResponse("создали StrapsEntity", strapsDTO);
+        }
+        return new AddStrapsResponse("нет сессии", null);
+        
+    }
+    
+    @PostMapping("/edit-straps")//изменить StrapsEntity
+    @ResponseBody
+    public EditStrapsResponse editStraps(@RequestParam String key, @RequestBody EditStrapsRequest body) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new EditStrapsResponse("нет сессии", null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+            
+            if (body.getStrapsDTO() == null){
+                return new EditStrapsResponse("StrapsDTO() == null", null);
+            }
+    
+            StrapsEntity straps = strapsRepository.getById(body.getStrapsDTO().getId());
+            if(straps == null){
+                return new EditStrapsResponse("нет такой Id", null);
+            }
+            
+            straps.setName(body.getStrapsDTO().getName());;
+            straps.setCount(body.getStrapsDTO().getCount());
+    
+            StrapsEntity save = strapsRepository.save(straps);
+            StrapsDTO strapsDTO = objectMapper.convertValue(save, StrapsDTO.class);
+    
+            return new EditStrapsResponse("изменили", strapsDTO);
+        }
+        return new EditStrapsResponse("нет сессии", null);
+        
+    }
+    
+    @PostMapping("/get-price")//получить все price
+    @ResponseBody
+    public GetPriceResponse getPrice(@RequestParam String key) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new GetPriceResponse("нет сессии", null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+    
+            List<PriceEntity> all = priceRepository.findAll();
+    
+            List<PriceDTO> priceDTOS = objectMapper.convertValue(all, new TypeReference<List<PriceDTO>>() {});
+            return new GetPriceResponse("список передан", priceDTOS);
+        }
+        return new GetPriceResponse("нет сессии", null);
+        
+    }
+    
+    @PostMapping("/add-price")//добавить новую price
+    @ResponseBody
+    public AddPriceResponse addPrice(@RequestParam String key, @RequestBody AddPriceRequest body) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new AddPriceResponse("нет сессии", null);
+        }
+        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+            
+            if (body.getPriceDTO() == null){
+                return new AddPriceResponse("PriceDTO() == null", null);
+            }
+            PriceEntity price = new PriceEntity();
+            
+            price.setId(0);
+            price.setName(body.getPriceDTO().getName());
+            price.setCount(body.getPriceDTO().getCount());
+    
+            PriceEntity save = priceRepository.save(price);
+    
+            PriceDTO priceDTO = objectMapper.convertValue(save, PriceDTO.class);
+    
+            return new AddPriceResponse("создали priceDTO", priceDTO);
+        }
+        return new AddPriceResponse("нет сессии", null);
+        
+    }
+    
+    @PostMapping("/edit-price")//изменить price
+    @ResponseBody
+    public EditPriceResponse editPrice(@RequestParam String key, @RequestBody EditPriceRequest body) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new EditPriceResponse("нет сессии", null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+            
+            if (body.getPriceDTO() == null){
+                return new EditPriceResponse("PriceDTO() == null", null);
+            }
+    
+            PriceEntity price = priceRepository.getById(body.getPriceDTO().getId());
+            if(price == null){
+                return new EditPriceResponse("нет такой Id", null);
+            }
+    
+            price.setName(body.getPriceDTO().getName());
+            price.setCount(body.getPriceDTO().getCount());
+    
+            PriceEntity save = priceRepository.save(price);
+    
+            PriceDTO priceDTO = objectMapper.convertValue(save, PriceDTO.class);
+    
+            return new EditPriceResponse("изменили", priceDTO);
+        }
+        return new EditPriceResponse("нет сессии", null);
+        
     }
 }
 
