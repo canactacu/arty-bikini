@@ -24,7 +24,6 @@ public class Design {
     private UserEntity designer;//кто заполнил дизайн
     private boolean userTanya;//таня проверила дизайн
     
-    private PriceEntity price;
 
     @Column(name = "d_color")
     public String getColor() {
@@ -74,15 +73,6 @@ public class Design {
         this.straps = straps;
     }
     
-    @ManyToOne(targetEntity = PriceEntity.class)//сущности откуда берем переменную из какой табл
-    @JoinColumn(name = "price_id")//даем название колонке
-    public PriceEntity getPrice() {
-        return price;
-    }
-    
-    public void setPrice(PriceEntity price) {
-        this.price = price;
-    }
     
     @Column(name = "d_comment_design_up")
     public String getCommentDesignUP() {

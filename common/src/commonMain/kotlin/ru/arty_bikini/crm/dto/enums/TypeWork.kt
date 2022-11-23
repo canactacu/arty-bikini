@@ -3,7 +3,7 @@ package ru.arty_bikini.crm.dto.enums
 enum class TypeWork (override val displayName: String) : HasDisplayValue {
     // ALL,//лиф, трусы, лямки, сшито
     //    CUP_STRAP_CONECT,//лиф, лямки, сшито
-    CUP("Лиф"),  //лиф
+    CUP("Чашки"),  //лиф
     HIP("Трусы"),  //трусы
 
     //    HIP_STRAP,//трусы, лямки

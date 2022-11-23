@@ -8,6 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
+import ru.arty_bikini.crm.data.orders.google.MeasureVariantsEntity;
+import ru.arty_bikini.crm.dto.orders.google.MeasureVariantsDTO;
+import ru.arty_bikini.crm.dto.packet.ordet_data.EditValueRequest;
+import ru.arty_bikini.crm.dto.packet.ordet_data.EditValueResponse;
+import ru.arty_bikini.crm.dto.packet.ordet_data.EditMeasureVariantsRequest;
+import ru.arty_bikini.crm.dto.packet.ordet_data.EditMeasureVariantsResponse;
+import ru.arty_bikini.crm.dto.packet.ordet_data.GetMeasureVariantsResponse;
 import ru.arty_bikini.crm.dto.packet.ordet_data.LinkOrderToImportRequest;
 import ru.arty_bikini.crm.dto.packet.ordet_data.LinkOrderToImportResponse;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
@@ -19,10 +26,9 @@ import ru.arty_bikini.crm.dto.packet.ordet_data.EditTypeRequest;
 import ru.arty_bikini.crm.dto.packet.ordet_data.EditTypeResponse;
 import ru.arty_bikini.crm.dto.packet.ordet_data.GetTypesResponse;
 import ru.arty_bikini.crm.dto.packet.ordet_data.ImportResultResponse;
-import ru.arty_bikini.crm.jpa.DataGoogleRepository;
-import ru.arty_bikini.crm.jpa.OrderDataTypeRepository;
-import ru.arty_bikini.crm.jpa.OrderRepository;
-import ru.arty_bikini.crm.jpa.SessionRepository;
+import ru.arty_bikini.crm.jpa.*;
+import ru.arty_bikini.crm.servise.ColumnService;
+import ru.arty_bikini.crm.servise.DictionaryService;
 import ru.arty_bikini.crm.servise.GoogleService;
 import ru.arty_bikini.crm.servise.OrderService;
 
@@ -34,6 +40,11 @@ import java.util.List;
 ///api/order-data/import-result       +       получить результаты импорта
 ///api/order-data/link-order-to-import      +        привязать заказ к результату импорта
 ///api/order-data/unlink-order-from-import      +        отвязать заказ от гугл данных
+
+///api/order-data/get-measure-variants  + получить всех measure-variants
+///api/order-data/edit-measure-variants  +  изменить,добавить measure-variants
+
+//api/order-data/edit-value +
 
 @RestController
 @RequestMapping("/api/order-data")
@@ -59,6 +70,15 @@ public class OrderDataController {
     
     @Autowired
     private OrderService orderService;
+    
+    @Autowired
+    private MeasureVariantsRepository measureVariantsRepository;
+    
+    @Autowired
+    private DictionaryService dictionaryService;
+    
+    @Autowired
+    private ColumnService columnService;
 
 
     @PostMapping("/get-types")//получить список всех столбиков
@@ -95,14 +115,18 @@ public class OrderDataController {
         }
         //проверка на права доступа
         if(session.getUser().getGroup().canEditColumnForGoogle == true){
-
             OrderDataTypeDTO orderDataTypeDTO = body.getOrderDataType();//столбик, кот нам передали
-
-            //зайти в бд найти его(нужную колонку) там по ид например
-            OrderDataTypeEntity orderDataTypeEntity = orderDataTypeRepository.getById(orderDataTypeDTO.getId());
-            if(orderDataTypeEntity == null){//колонка и таким ид не найдена
-                return new EditTypeResponse("колонка и таким ид не найдена", null);
-
+            OrderDataTypeEntity orderDataTypeEntity;
+            if (body.getOrderDataType().getId() == 0) {
+                orderDataTypeEntity = new OrderDataTypeEntity();
+                orderDataTypeEntity.setId(0);
+            }
+            else {
+                 orderDataTypeEntity = orderDataTypeRepository.getById(orderDataTypeDTO.getId());
+                if(orderDataTypeEntity == null){//колонка и таким ид не найдена
+                    return new EditTypeResponse("колонка и таким ид не найдена", null);
+        
+                }
             }
 
             //положить в бд новый
@@ -110,16 +134,22 @@ public class OrderDataController {
             orderDataTypeEntity.setTarget(body.getOrderDataType().getTarget());
             orderDataTypeEntity.setDisplayCategory(body.getOrderDataType().getDisplayCategory());
             orderDataTypeEntity.setDisplayPosition(body.getOrderDataType().getDisplayPosition());
+            
+            String json = dictionaryService.productToJson(body.getOrderDataType().getProducts());
+            if (json == null){
+                return new EditTypeResponse("json == null", null);
+            }
+            orderDataTypeEntity.setProductJson(json);
             //orderDataTypeEntity.setGoogleColumn(body.getOrderDataType().getGoogleColumn());
             //orderDataTypeEntity.setGoogleName(body.getOrderDataType().getGoogleName());
 
-            //соранить бд
+            //сохранить бд
             OrderDataTypeEntity save = orderDataTypeRepository.save(orderDataTypeEntity);
 
             //переделать назад в дто
-            OrderDataTypeDTO orderDataTypeDTO1 = objectMapper.convertValue(save, OrderDataTypeDTO.class);
-
-            return new EditTypeResponse("колонка исправлена", orderDataTypeDTO1);
+            OrderDataTypeDTO saveDTO = columnService.toDTO(save);
+            
+            return new EditTypeResponse("колонка исправлена", saveDTO);
         }
         return new EditTypeResponse("нет сессии", null);
     }
@@ -232,6 +262,105 @@ public class OrderDataController {
         }
         return new LinkOrderToImportResponse ("нет сессии", null);
     }
-
+    
+    @PostMapping("/get-measure-variants")//    получить всех measure-variants
+    @ResponseBody
+    public GetMeasureVariantsResponse getMeasureVariants(@RequestParam String key){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null){
+            return new GetMeasureVariantsResponse ("нет сессии", null);
+        }
+        if(session.getUser().getGroup().canEditColumnForGoogle == true){
+            List<MeasureVariantsEntity> all = measureVariantsRepository.findAll();
+    
+            List<MeasureVariantsDTO> measureVariantsDTOS = objectMapper.convertValue(all, new TypeReference<List<MeasureVariantsDTO>>() {});
+            return new GetMeasureVariantsResponse ("список отправлен", measureVariantsDTOS);
+            
+        }
+        return new GetMeasureVariantsResponse ("нет сессии", null);
+    }
+    
+    @PostMapping("/edit-measure-variants")  //  изменить, добавить   measure-variants
+    @ResponseBody
+    public EditMeasureVariantsResponse editMeasureVariants(@RequestParam String key, @RequestBody EditMeasureVariantsRequest body){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null){
+            return new EditMeasureVariantsResponse ("нет сессии", null);
+        }
+        if(session.getUser().getGroup().canEditColumnForGoogle == true){
+    
+            MeasureVariantsEntity measureVariants;
+            if(body.getMeasureVariantsDTO().getId() == 0){
+                measureVariants = new MeasureVariantsEntity();
+                measureVariants.setId(0);
+            }
+            else {
+                measureVariants = measureVariantsRepository.getById(body.getMeasureVariantsDTO().getId());
+                if(measureVariants == null){
+                    return new EditMeasureVariantsResponse ("нет id", null);
+                }
+            }
+            
+            measureVariants.setName(body.getMeasureVariantsDTO().getName());
+            measureVariants.setDescription(body.getMeasureVariantsDTO().getDescription());
+            measureVariants.setGoogleName(body.getMeasureVariantsDTO().getGoogleName());
+    
+            String json = dictionaryService.productToJson(body.getMeasureVariantsDTO().getProducts());
+            if (json == null) {
+                return new EditMeasureVariantsResponse ("нет product", null);
+            }
+            measureVariants.setProductsJson(json);
+    
+            OrderDataTypeEntity orderDataTypeEntity = orderDataTypeRepository.getById(body.getMeasureVariantsDTO().getOrderDataType().getId());
+            if (orderDataTypeEntity == null){
+                return new EditMeasureVariantsResponse ("orderDataTypeEntity == null", null);
+            }
+            measureVariants.setOrderDataType(orderDataTypeEntity);
+    
+            MeasureVariantsEntity save = measureVariantsRepository.save(measureVariants);
+    
+            MeasureVariantsDTO measureVariantsDTO = columnService.toDTO(save);
+    
+            return new EditMeasureVariantsResponse ("изменен, добавлен", measureVariantsDTO);
+            
+        }
+        return new EditMeasureVariantsResponse ("нет сессии", null);
+    }
+    
+    @PostMapping("/edit-value")//
+    @ResponseBody
+    public EditValueResponse editValue(@RequestParam String key, @RequestBody EditValueRequest body){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null){
+            return new EditValueResponse ("нет сессии", null);
+        }
+        if(session.getUser().getGroup().canEditColumnForGoogle == true){
+    
+            OrderEntity order = orderRepository.getById(body.getOrderId());
+            if (order == null) {
+                return new EditValueResponse ("order == null", null);
+            }
+            
+            OrderDataTypeEntity orderDataType = orderDataTypeRepository.getById(body.getOrderDataTypeId());
+            if (orderDataType == null) {
+                return new EditValueResponse ("orderDataType == null", null);
+            }
+    
+    
+            String measuresToJson = columnService.measuresToJson(order.getMeasuresJson(), orderDataType, body.getValue());
+            order.setMeasuresJson(measuresToJson);
+    
+            OrderEntity save = orderRepository.save(order);
+    
+            OrderDTO orderDTO = orderService.toOrderDTO(save);
+    
+            return new EditValueResponse ("значения изменены", orderDTO);
+        }
+        return new EditValueResponse ("нет сессии", null);
+    }
+    
 }
 

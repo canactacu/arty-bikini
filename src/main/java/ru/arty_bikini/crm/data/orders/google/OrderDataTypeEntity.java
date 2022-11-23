@@ -5,7 +5,7 @@ import ru.arty_bikini.crm.dto.enums.measure.DataDisplayCategory;
 
 import javax.persistence.*;
 
-//описывает типы данных получаемых от клиента
+//описывает типы данных получаемых от клиента   (столбики)
 @Entity(name = "orders_data_type")
 public class OrderDataTypeEntity {
     private int id;
@@ -17,8 +17,9 @@ public class OrderDataTypeEntity {
     private DataDisplayCategory displayCategory;
     private String displayPosition;
     
+    private String productJson;
     
-    
+   
     @Id
     @GeneratedValue
     public int getId() {
@@ -28,7 +29,16 @@ public class OrderDataTypeEntity {
     public void setId(int id) {
         this.id = id;
     }
-
+   
+    @Column(name = "product_json")
+    public String getProductJson() {
+        return productJson;
+    }
+    
+    public void setProductJson(String productJson) {
+        this.productJson = productJson;
+    }
+    
     @Column
     public String getName() {
         return name;

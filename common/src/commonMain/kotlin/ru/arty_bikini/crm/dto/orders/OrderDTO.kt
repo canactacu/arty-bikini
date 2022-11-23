@@ -3,6 +3,7 @@ package ru.arty_bikini.crm.dto.orders
 import kotlinx.serialization.Serializable
 import ru.arty_bikini.crm.dto.IEntity
 import ru.arty_bikini.crm.dto.dict.ExpressDTO
+import ru.arty_bikini.crm.dto.dict.ProductTypeDTO
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType
 import ru.arty_bikini.crm.dto.orders.google.DataGoogleDTO
 
@@ -22,4 +23,6 @@ class OrderDTO : IEntity {
     var measureAll : Boolean = false
     var express : ExpressDTO? = null
     
+    var product : ProductTypeDTO? = null
+    var measures : Map<Int, String>? = null
 }

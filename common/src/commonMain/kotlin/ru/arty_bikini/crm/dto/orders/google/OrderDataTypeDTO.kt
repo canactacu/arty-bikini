@@ -1,6 +1,7 @@
 package ru.arty_bikini.crm.dto.orders.google
 
 import kotlinx.serialization.Serializable
+import ru.arty_bikini.crm.dto.dict.ProductTypeDTO
 import ru.arty_bikini.crm.dto.enums.ColumnImportTarget
 import ru.arty_bikini.crm.dto.enums.measure.DataDisplayCategory
 
@@ -20,4 +21,6 @@ class OrderDataTypeDTO {
     var displayCategory : DataDisplayCategory? = null
     
     var displayPosition : String? = null
+    
+    var products : Set<ProductTypeDTO>? = null
 }

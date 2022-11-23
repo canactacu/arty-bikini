@@ -1,6 +1,7 @@
 package ru.arty_bikini.crm.data.orders;
 
 import ru.arty_bikini.crm.data.dict.ExpressEntity;
+import ru.arty_bikini.crm.data.dict.ProductTypeEntity;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType;
 
@@ -22,7 +23,12 @@ public class OrderEntity {
     private boolean measureAll;//заполненость мерок
     private boolean designAll; //заполненость дизайна
     private boolean tanyaOk; //таня проверила
-
+    
+    private ProductTypeEntity product;//тип заказа
+    private String measuresJson;
+    
+   
+    
     @Id
     @GeneratedValue
     public int getId() {
@@ -33,6 +39,15 @@ public class OrderEntity {
         this.id = id;
     }
     
+    @Column(name = "measures_json")
+    public String getMeasuresJson() {
+        return measuresJson;
+    }
+    
+    public void setMeasuresJson(String measuresJson) {
+        this.measuresJson = measuresJson;
+    }
+   
     @ManyToOne(targetEntity = DataGoogleEntity.class)//сущности откуда берем переменную из какой табл
     @JoinColumn(name = "data_google_id")
     public DataGoogleEntity getDataGoogle() {
@@ -125,6 +140,19 @@ public class OrderEntity {
     public void setTanyaOk(boolean tanyaOk) {
         tanyaOk = tanyaOk;
     }
+    
+    @ManyToOne(targetEntity = ProductTypeEntity.class)//сущности откуда берем переменную из какой табл
+    @JoinColumn(name = "product_type_id")
+    public ProductTypeEntity getProduct() {
+        return product;
+    }
+    
+    public void setProduct(ProductTypeEntity product) {
+        this.product = product;
+    }
+    
+    
+    
 }
 
 

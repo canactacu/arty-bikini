@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.dict.ExpressEntity;
+import ru.arty_bikini.crm.data.dict.ProductTypeEntity;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.dto.PageDTO;
@@ -61,6 +62,9 @@ public class OrderController {
     
     @Autowired
     private DataGoogleRepository dataGoogleRepository;
+    
+    @Autowired
+    public ProductTypeRepository productTypeRepository;
 
 
     @PostMapping("/get-clients")//получить список клиентов
@@ -207,6 +211,13 @@ public class OrderController {
                     return new EditClientResponse("express == null, не заполнено ", null);
                 }
                 order.setExpress(express);
+            }
+            if (body.getOrder().getProduct() != null){
+                ProductTypeEntity productType = productTypeRepository.getById(body.getOrder().getProduct().getId());
+                if (productType == null){
+                    return new EditClientResponse("productType == null, не заполнено ", null);
+                }
+                order.setProduct(productType);
             }
             
             if (body.getOrder().getDataGoogle() != null){

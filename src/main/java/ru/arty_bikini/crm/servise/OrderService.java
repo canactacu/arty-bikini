@@ -18,26 +18,34 @@ import java.util.Map;
 public class OrderService {
     
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
+    
+    @Autowired
+    private ColumnService columnService;
     
     
     //orderEntity преобразуем в OrderDTO
-    public OrderDTO toOrderDTO(OrderEntity orderEntity){
+    public OrderDTO toOrderDTO(OrderEntity orderEntity) {
     
-      //  System.out.println(objectMapper);
-        
+        //  System.out.println(objectMapper);
+    
         OrderDTO orderDTO = objectMapper.convertValue(orderEntity, OrderDTO.class);
-        
-       if (orderEntity.getDataGoogle() != null){
-           try {
-               Map<Integer, String> integerStringMap = objectMapper.readValue(orderEntity.getDataGoogle().getJson(), new TypeReference<Map<Integer, String>>() {});
-               orderDTO.getDataGoogle().setData(integerStringMap);
-           } catch (JsonMappingException e) {
-               throw new RuntimeException(e);
-           } catch (JsonProcessingException e) {
-               throw new RuntimeException(e);
-           }
-       }
+    
+        if (orderEntity.getDataGoogle() != null) {
+            try {
+                Map<Integer, String> integerStringMap = objectMapper.readValue(orderEntity.getDataGoogle().getJson(), new TypeReference<Map<Integer, String>>() {
+                });
+                orderDTO.getDataGoogle().setData(integerStringMap);
+            } catch (JsonMappingException e) {
+                throw new RuntimeException(e);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    
+        Map<Integer, String> integerStringMap = columnService.measuresToMap(orderEntity.getMeasuresJson());
+        orderDTO.setMeasures(integerStringMap);
+       
         return orderDTO;
     }
     
