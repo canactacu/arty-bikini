@@ -175,61 +175,61 @@ public class OrderController {
 
     @PostMapping("/edit-client")//изменить клиента
     @ResponseBody
-    public EditClientResponse editClient(@RequestParam String key, @RequestBody EditClientRequest body){
-
+    public EditClientResponse editClient(@RequestParam String key, @RequestBody EditClientRequest body) {
+    
         //проверка на key
         SessionEntity session = sessionRepository.getByKey(key);//выташили нужный кеу,если такого нет, вернули null
-        if (session == null){
+        if (session == null) {
             return new EditClientResponse("нет сессии", null);
         }
         //проверка прав на: изменить клиента
-        if(session.getUser().getGroup().canEditClients == true){
-
+        if (session.getUser().getGroup().canEditClients == true) {
+    
             //OrderDto->OrderEntity
             //получить из бд Order проверить,что не null
             OrderEntity order = orderRepository.getById(body.getOrder().getId());
-            if(order == null){
+            if (order == null) {
                 return new EditClientResponse("нет такого Id", null);
             }
-
+    
             //примитивы в OrderEntity заполнить в ручную @Embedable
             order.setName(body.getOrder().getName());
             order.setType(body.getOrder().getType());
             order.setMeasureAll(body.getOrder().getMeasureAll());
             order.setDesignAll(body.getOrder().getDesignAll());
             order.setTanyaOk(body.getOrder().getTanyaOk());
-
+    
             //все остальное заполнить через класс маппер
             PersonalData personalData = objectMapper.convertValue(body.getOrder().getPersonalData(), PersonalData.class);
             Design design = objectMapper.convertValue(body.getOrder().getDesign(), Design.class);//->DTO
             LeadInfo leadInfo = objectMapper.convertValue(body.getOrder().getLeadInfo(), LeadInfo.class);
-            //проверить все вложенные *Entity (по ID сходить в бд и заменить на то,что вернет гибернайт)
+            //проверить все вложенные *Entity (по ID сходить в бд и заменить на то, что вернет гибернайт)
     
-            if (body.getOrder().getExpress() != null){
+            if (body.getOrder().getExpress() != null) {
                 ExpressEntity express = expressRepository.getById(body.getOrder().getExpress().getId());
-                if (express == null){
+                if (express == null) {
                     return new EditClientResponse("express == null, не заполнено ", null);
                 }
                 order.setExpress(express);
             }
-            if (body.getOrder().getProduct() != null){
+            if (body.getOrder().getProduct() != null) {
                 ProductTypeEntity productType = productTypeRepository.getById(body.getOrder().getProduct().getId());
-                if (productType == null){
+                if (productType == null) {
                     return new EditClientResponse("productType == null, не заполнено ", null);
                 }
                 order.setProduct(productType);
             }
-            
-            if (body.getOrder().getDataGoogle() != null){
+    
+            if (body.getOrder().getDataGoogle() != null) {
                 DataGoogleEntity dataGoogle = dataGoogleRepository.getById(body.getOrder().getDataGoogle().getId());
-                if (dataGoogle == null){
+                if (dataGoogle == null) {
                     return new EditClientResponse("dataGoogle == null, не заполнено ", null);
                 }
                 order.setDataGoogle(dataGoogle);
             }
-            
+    
             if (personalData != null) {
-
+        
                 if (personalData.getTrainer() != null) {
                     TrainerEntity trainer = trainerRepository.getById(personalData.getTrainer().getId());
                     if (trainer == null) {
@@ -238,17 +238,17 @@ public class OrderController {
                     personalData.setTrainer(trainer);
                 }
             }
-
+    
             if (design != null) {
-                if (design.getDesigner() != null){
+                if (design.getDesigner() != null) {
                     UserEntity user = userRepository.getById(design.getDesigner().getId());
-                    if (user == null){
+                    if (user == null) {
                         return new EditClientResponse("user == null, не заполнено ", null);
                     }
                     design.setDesigner(user);
                 }
             }
-
+    
             //заполняем
             order.setPersonalData(personalData);
             order.setDesign(design);
@@ -265,13 +265,38 @@ public class OrderController {
                     }
                 }
             }
-            
-           
     
-           //сохранить в бд
-            OrderEntity save = orderRepository.save(order);
+            //считаем дату отправки
+            if (order.getPersonalData().getDeliveryTime() != 0) {
+                if (order.getPersonalData().getNeededTime() != null) { //менеджер дата, когда нужен
             
-           
+                    LocalDate date = order.getPersonalData().getNeededTime().minusDays(order.getPersonalData().getDeliveryTime());
+                    date = date.minusDays(3);
+                    order.getPersonalData().setPackageTime(date);//сохраняем
+            
+                } else if (order.getPersonalData().getCompetitionTime() != null) {//менеджер дата соревнований
+            
+                    LocalDate date = order.getPersonalData().getCompetitionTime().minusDays(order.getPersonalData().getDeliveryTime());
+                    date = date.minusDays(3);
+                    order.getPersonalData().setPackageTime(date);//сохраняем
+                } else if (order.getDataGoogle().getNeededDate() != null) {//клиент дата, когда нужен
+            
+                    LocalDate date = order.getDataGoogle().getNeededDate().minusDays(order.getPersonalData().getDeliveryTime());
+                    date = date.minusDays(3);
+                    order.getPersonalData().setPackageTime(date);//сохраняем
+                } else if (order.getDataGoogle().getCompetition() != null) {//клиент дата соревнований
+            
+                    LocalDate date = order.getDataGoogle().getNeededDate().minusDays(order.getPersonalData().getDeliveryTime());
+                    date = date.minusDays(3);
+                    order.getPersonalData().setPackageTime(date);//сохраняем
+                }
+            }
+    
+    
+            //сохранить в бд
+            OrderEntity save = orderRepository.save(order);
+    
+    
             //переделать в DTO
             OrderDTO orderDTO = orderService.toOrderDTO(save);
             return new EditClientResponse("данные исправлены", orderDTO);

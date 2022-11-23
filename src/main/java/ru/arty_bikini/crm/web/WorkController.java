@@ -34,7 +34,7 @@ import static ru.arty_bikini.crm.Utils.toDate;
 //api/work/del-interval + //удалить встречу(только, если нет работ)
 //api/work/get-interval-work   +  //получить список работ в интервалах, интервалов по дате началу длинна = 35 дней
 
-@RestController//контролерр
+@RestController
 @RequestMapping("/api/work")
 public class WorkController {
 

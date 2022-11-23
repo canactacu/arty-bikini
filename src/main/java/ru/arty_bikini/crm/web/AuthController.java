@@ -26,7 +26,7 @@ import java.util.UUID;
 // /api/auth/edit-user - редактировать пользователя(добавлять, скрывать, менять групу, логин(только админ и таня))
 
 
-@RestController//контролерр
+@RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 

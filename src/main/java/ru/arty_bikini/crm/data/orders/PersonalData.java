@@ -10,8 +10,8 @@ import ru.arty_bikini.crm.utils.LocalDateToLongSerializer;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-//класс данных секретных
-@Embeddable//помечает класс как встраиваемый в др сущность
+
+@Embeddable
 public class PersonalData {
     private String name;//фамилия имя отчество
 
@@ -20,22 +20,47 @@ public class PersonalData {
     private String telephon;//телефон
     private String city;//город
     private ClientLanguage language;
-    private String addOrder;//допольнительно к заказу
+    private String addOrder;//дополнительно к заказу
     
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
     private LocalDate orderTime;//дата заказа(предоплата или заполнение мерок?)
+    
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
     private LocalDate competitionTime;//дата соревнований
+    
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
-    private LocalDate neededTime;//дата, когда нужен заказ
+    private LocalDate neededTime;//Клиент: дата когда нужен заказ
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
+    private LocalDate packageTime;//Дата, когда нужно отправить
+    
+    private int deliveryTime; //время доставки
 
     private String comment;//комментарий на чем остановились
-
     private TrainerEntity trainer;//тренер
-
+    
+    @Column(name = "delivery_time", columnDefinition = "INT NOT NULL DEFAULT 0")
+    public int getDeliveryTime() {
+        return deliveryTime;
+    }
+    
+    public void setDeliveryTime(int deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+    
+    @Column(name = "package_time")
+    public LocalDate getPackageTime() {
+        return packageTime;
+    }
+    
+    public void setPackageTime(LocalDate packageTime) {
+        this.packageTime = packageTime;
+    }
+    
     @ManyToOne(targetEntity = TrainerEntity.class)//сущности откуда берем переменную из какой табл
     @JoinColumn(name = "pd_trainer_id")
     public TrainerEntity getTrainer() {

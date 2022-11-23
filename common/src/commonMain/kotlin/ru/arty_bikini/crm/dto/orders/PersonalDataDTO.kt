@@ -8,15 +8,21 @@ import ru.arty_bikini.crm.dto.enums.personalData.ClientLanguage
 @Serializable
 class PersonalDataDTO {
     var name: String? = null //фамилия имя отчество
-    var prepayment: String? = null  //предоплата
-    var payment: Int? = null  //цена
     var telephon: String? = null //телефон
     var city: String? = null  //город
     var language: ClientLanguage? = null
-    var addOrder: String? = null //допольнительно к заказу
+    
+    var prepayment: String? = null  //предоплата
+    var payment: Int = 0  //цена
+    var trainer: TrainerDTO? = null  //тренер
+    
     var orderTime: Long? = null //дата заказа(предоплата или заполнение мерок?)
     var competitionTime: Long? = null  //дата соревнований
     var neededTime: Long? = null  //дата, когда нужен заказ
+    var packageTime : Long? = null //Дата, когда нужно отправить
+    var deliveryTime : Int = 0 //время доставки
+    
+    var addOrder: String? = null //дополнительно к заказу
     var comment: String? = null //комментарий на чем остановились
-    var trainer: TrainerDTO? = null  //тренер
+    
 }

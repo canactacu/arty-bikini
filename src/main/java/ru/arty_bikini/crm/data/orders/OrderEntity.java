@@ -27,7 +27,7 @@ public class OrderEntity {
     private ProductTypeEntity product;//тип заказа
     private String measuresJson;
     
-   
+   //дата отправки, время доставки
     
     @Id
     @GeneratedValue

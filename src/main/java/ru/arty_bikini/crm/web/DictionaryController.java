@@ -26,13 +26,13 @@ import java.util.List;
 //api/dict/add-express  + добавить новую цену срочности
 //api/dict/edit-express  + изменить цену срочности
 
-//api/dict/get-price   получить всех
-//api/dict/add-price  добавить
-//api/dict/edit-price  изменить
+//api/dict/get-price  + получить всех
+//api/dict/add-price + добавить
+//api/dict/edit-price  + изменить
 
-//api/dict/get-straps   получить всех straps
-//api/dict/add-straps  добавить straps
-//api/dict/edit-straps  изменить straps
+//api/dict/get-straps  +  получить всех straps
+//api/dict/add-straps +  добавить straps
+//api/dict/edit-straps +  изменить straps
 
 @RestController
 @RequestMapping("/api/dict")

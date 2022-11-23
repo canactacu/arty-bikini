@@ -81,4 +81,10 @@ public class Utils {
         LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
         return dateTime;
     }
+    
+    public static LocalDate toDate(String str){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        LocalDate dateTime = LocalDate.parse(str, formatter);
+        return dateTime;
+    }
 }

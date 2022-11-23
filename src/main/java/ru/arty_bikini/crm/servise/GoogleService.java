@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
 
+import static ru.arty_bikini.crm.Utils.toDate;
 import static ru.arty_bikini.crm.Utils.toTime;
 
 @Service
@@ -96,7 +97,7 @@ public class GoogleService {
             //проверка заполняли ли эту строку(ищем в бд по времени заполнения)
             String time = line.get(0);//значение времени заполнения из гугл
 
-            //если не заполняли , то заполняем
+            //если не заполняли, то заполняем
             DataGoogleEntity dataGoogle = new DataGoogleEntity();//создаем новый
 
             dataGoogle.setId(0);
@@ -120,6 +121,14 @@ public class GoogleService {
 
                 if (column.getTarget() == ColumnImportTarget.TELEPHONE) {
                     dataGoogle.setTelephon(loc);
+                }
+                
+                if (column.getTarget() == ColumnImportTarget.NEEDED_DATE) {
+                    dataGoogle.setNeededDate(Utils.toDate(loc));
+                }
+    
+                if (column.getTarget() == ColumnImportTarget.COMPETITION) {
+                    dataGoogle.setCompetition( Utils.toDate(loc));
                 }
 
                 if (!loc.equals("")) {

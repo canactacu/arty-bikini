@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 //описывает данные, получаемые из гугл
@@ -22,7 +23,33 @@ public class DataGoogleEntity {
     private String name;//имя клиента указанного в гугол
     private String telephon;//телефон клиента указанного в гугол
     private String json;//другие данные из гугла
-
+    
+    @JsonSerialize(using = LocalDateTimeToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeToLongDeserializer.class)
+    private LocalDate neededDate;
+    
+    @JsonSerialize(using = LocalDateTimeToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeToLongDeserializer.class)
+    private LocalDate competition;
+    
+    @Column(name = "needed_date")
+    public LocalDate getNeededDate() {
+        return neededDate;
+    }
+    
+    public void setNeededDate(LocalDate neededDate) {
+        this.neededDate = neededDate;
+    }
+    
+    @Column(name = "competition")
+    public LocalDate getCompetition() {
+        return competition;
+    }
+    
+    public void setCompetition(LocalDate competition) {
+        this.competition = competition;
+    }
+    
     @Id
     @GeneratedValue
     public int getId() {
