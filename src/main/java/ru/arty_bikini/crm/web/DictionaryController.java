@@ -159,10 +159,12 @@ public class DictionaryController {
         //проверка на права доступа
         if (session.getUser().getGroup().canViewProductTypes == true){
             body.getProductTypeDTO();
-            ProductTypeEntity productType = productTypeRepository.getById(body.getProductTypeDTO().getId());
-            if(productType == null){//не нашли такого, добавляем нового
+            ProductTypeEntity productType;
+            if(body.getProductTypeDTO().getId() == 0){//не нашли такого, добавляем нового
                 productType = new ProductTypeEntity();
                 productType.setId(0);
+            } else {
+                productType = productTypeRepository.getById(body.getProductTypeDTO().getId());
             }
             productType.setName(body.getProductTypeDTO().getName());
             productType.setPaymentNonStone(body.getProductTypeDTO().getPaymentNonStone());
@@ -208,10 +210,12 @@ public class DictionaryController {
         }
         //проверка на права доступа
         if (session.getUser().getGroup().canViewProductTypes == true){
-            RhinestoneTypeEntity rhinestoneType = rhinestoneTypeRepository.getById(body.getRhinestoneTypeDTO().getId());
-            if(rhinestoneType ==null){
+            RhinestoneTypeEntity rhinestoneType;
+            if(body.getRhinestoneTypeDTO().getId() == 0){
                 rhinestoneType = new RhinestoneTypeEntity();
                 rhinestoneType.setId(0);
+            }else {
+                rhinestoneType =  rhinestoneTypeRepository.getById(body.getRhinestoneTypeDTO().getId());
             }
             rhinestoneType.setPrice(body.getRhinestoneTypeDTO().getPrice());
             rhinestoneType.setManufacturer(body.getRhinestoneTypeDTO().getManufacturer());

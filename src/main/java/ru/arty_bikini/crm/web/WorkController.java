@@ -108,6 +108,63 @@ public class WorkController {
         }
         return new AddWorkResponse("нет сессии", null);
     }
+    
+    @PostMapping("/add-edit")//изменить работу
+    @ResponseBody
+    public EditWorkResponse editWork(@RequestParam String key, @RequestBody EditWorkRequest body) {
+        
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new EditWorkResponse("нет сессии", null);
+        }
+        
+        //проверка на права доступа
+        if (session.getUser().getGroup().canAddWork == true) {
+            if (body.getWorkDTO().getOrder() == null){
+                return new EditWorkResponse("Order == null", null);
+            }
+            OrderEntity order = orderRepository.getById(body.getWorkDTO().getOrder().getId());
+            if (order == null) {
+                return new EditWorkResponse("order == null", null);
+            }
+            
+            WorkEntity work = workRepository.getById(body.getWorkDTO().getId());
+            if (work == null) {
+                return new EditWorkResponse("work == null", null);
+            }
+            
+            if (body.getWorkDTO().getUser() == null){
+                return new EditWorkResponse("user == null", null);
+            }
+            UserEntity userWork = userRepository.getById(body.getWorkDTO().getUser().getId());
+            if (userWork == null) {
+                return new EditWorkResponse("userWork == null", null);
+            }
+    
+            if (body.getWorkDTO().getInterval() == null){
+                return new EditWorkResponse("Interval == null", null);
+            }
+            IntervalEntity interval = intervalRepository.getById(body.getWorkDTO().getInterval().getId());
+            if (interval == null) {
+                return new EditWorkResponse("interval == null", null);
+            }
+            
+            work.setOrder(order);
+            work.setUser(userWork);
+            work.setInterval(interval);
+            work.setWorks(body.getWorkDTO().getWorks());//создали set и скопировали все значения листа
+            
+            //сохранить бд
+            WorkEntity save = workRepository.save(work);
+            
+            //перевести работу в DTO
+            WorkDTO saveDTO = objectMapper.convertValue(save, WorkDTO.class);
+            
+            return new EditWorkResponse("работу изменили", saveDTO);
+        }
+        return new EditWorkResponse("нет сессии", null);
+    }
 
     @PostMapping("/add-interval")//добавить интервал
     @ResponseBody

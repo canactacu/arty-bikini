@@ -13,7 +13,7 @@ import java.util.Set;
 public class WorkEntity {
     private int id;
     private OrderEntity order;//заказ
-    private Set<TypeWork> works;//части чаказа
+    private Set<TypeWork> works;//части от заказа
     private UserEntity user;//работник
     private IntervalEntity interval;//интервал
     private TourEntity tour;//если ли встреча и когда

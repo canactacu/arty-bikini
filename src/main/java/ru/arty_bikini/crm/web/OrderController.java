@@ -162,7 +162,10 @@ public class OrderController {
             order.setId(0);
             order.setName(name);
             order.setType(type);
-
+    
+            PersonalData personalData = new PersonalData();
+            order.setPersonalData(personalData);
+            order.getPersonalData().setDeliveryTime(21);
             //сохранить в бд
            orderRepository.save(order);
 
@@ -255,42 +258,69 @@ public class OrderController {
             order.setLeadInfo(leadInfo);
     
             //ставим дату предоплаты
-            if (order.getPersonalData().getOrderTime() == null) {
-                if (body.getOrder().getPersonalData() != null) {
-                    if (body.getOrder().getPersonalData().getPrepayment() != null) {
-                        if (order.getPersonalData() == null) {
-                            order.setPersonalData(new PersonalData());
+            if (order.getPersonalData()!= null) {
+    
+                if (order.getPersonalData().getOrderTime() == null) {
+    
+                    if (body.getOrder().getPersonalData() != null) {
+    
+                        if (body.getOrder().getPersonalData().getPrepayment() != null) {
+    
+                            if (order.getPersonalData() == null) {
+    
+                                order.setPersonalData(new PersonalData());
+                            }
+    
+                            order.getPersonalData().setOrderTime(LocalDate.now());
                         }
-                        order.getPersonalData().setOrderTime(LocalDate.now());
                     }
                 }
             }
+            System.out.println("/////////////////////////5////////////////////////////////2");
     
             //считаем дату отправки
-            if (order.getPersonalData().getDeliveryTime() != 0) {
-                if (order.getPersonalData().getNeededTime() != null) { //менеджер дата, когда нужен
+            if (personalData != null) {
+                System.out.println("/////////////////////////51//s//////////////////////////////2");
+    
+                if (order.getPersonalData().getDeliveryTime() != 0) {
+                    System.out.println("/////////////////////////////////////////////////////////2");
+                    System.out.println(order.getPersonalData().getNeededTime());
+//                    System.out.println(order.getDataGoogle().getNeededDate());
+//                    System.out.println(order.getDataGoogle().getCompetition());
+                    System.out.println("ok..............");
+        
+                    if (order.getPersonalData().getNeededTime() != null) { //менеджер дата, когда нужен
+                        LocalDate date = order.getPersonalData().getNeededTime().minusDays(order.getPersonalData().getDeliveryTime());
+                        date = date.minusDays(3);
+                        order.getPersonalData().setPackageTime(date);//сохраняем
+                        System.out.println(date);
+                        System.out.println("................");
             
-                    LocalDate date = order.getPersonalData().getNeededTime().minusDays(order.getPersonalData().getDeliveryTime());
-                    date = date.minusDays(3);
-                    order.getPersonalData().setPackageTime(date);//сохраняем
+                    } else if (order.getPersonalData().getCompetitionTime() != null) {//менеджер дата соревнований
             
-                } else if (order.getPersonalData().getCompetitionTime() != null) {//менеджер дата соревнований
+                        LocalDate date = order.getPersonalData().getCompetitionTime().minusDays(order.getPersonalData().getDeliveryTime());
+                        date = date.minusDays(3);
+                        order.getPersonalData().setPackageTime(date);//сохраняем
+                        System.out.println(date);
+                        System.out.println("................");
+                    } else if (order.getDataGoogle() != null && order.getDataGoogle().getNeededDate() != null) {//клиент дата, когда нужен
             
-                    LocalDate date = order.getPersonalData().getCompetitionTime().minusDays(order.getPersonalData().getDeliveryTime());
-                    date = date.minusDays(3);
-                    order.getPersonalData().setPackageTime(date);//сохраняем
-                } else if (order.getDataGoogle().getNeededDate() != null) {//клиент дата, когда нужен
+                        LocalDate date = order.getDataGoogle().getNeededDate().minusDays(order.getPersonalData().getDeliveryTime());
+                        date = date.minusDays(3);
+                        order.getPersonalData().setPackageTime(date);//сохраняем
+                        System.out.println(date);
+                        System.out.println("................");
+                    } else if (order.getDataGoogle() != null && order.getDataGoogle().getCompetition() != null) {//клиент дата соревнований
             
-                    LocalDate date = order.getDataGoogle().getNeededDate().minusDays(order.getPersonalData().getDeliveryTime());
-                    date = date.minusDays(3);
-                    order.getPersonalData().setPackageTime(date);//сохраняем
-                } else if (order.getDataGoogle().getCompetition() != null) {//клиент дата соревнований
-            
-                    LocalDate date = order.getDataGoogle().getNeededDate().minusDays(order.getPersonalData().getDeliveryTime());
-                    date = date.minusDays(3);
-                    order.getPersonalData().setPackageTime(date);//сохраняем
+                        LocalDate date = order.getDataGoogle().getNeededDate().minusDays(order.getPersonalData().getDeliveryTime());
+                        date = date.minusDays(3);
+                        order.getPersonalData().setPackageTime(date);//сохраняем
+                        System.out.println(date);
+                        System.out.println("................");
+                    }
                 }
             }
+           
     
     
             //сохранить в бд

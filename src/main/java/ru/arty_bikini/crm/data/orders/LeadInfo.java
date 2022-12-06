@@ -8,11 +8,21 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-@Embeddable//помечает класс как встраиваемый в др сущность
+@Embeddable
 public class LeadInfo {
-    private ColdHotLeadInfo coldHot;//холодный,теплый горячий
+    private ColdHotLeadInfo coldHot;//холодный, теплый, горячий
     private HasManyLeadInfo hasMany;//А,В,С
-
+    private String commentArchive;//причина попадания в архив
+    
+    @Column(name = "l_comment_archive")
+    public String getCommentArchive() {
+        return commentArchive;
+    }
+    
+    public void setCommentArchive(String commentArchive) {
+        this.commentArchive = commentArchive;
+    }
+    
     @Column(name = "l_cold_hot")
     @Enumerated(EnumType.STRING)
     public ColdHotLeadInfo getColdHot() {
