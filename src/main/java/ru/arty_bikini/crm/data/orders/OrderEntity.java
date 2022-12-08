@@ -20,14 +20,21 @@ public class OrderEntity {
     private LeadInfo leadInfo;
     
     private ExpressEntity express ;//срочность
-    private boolean measureAll;//заполненость мерок
-    private boolean designAll; //заполненость дизайна
-    private boolean tanyaOk; //таня проверила
     
     private ProductTypeEntity product;//тип заказа
     private String measuresJson;
     
+    private StatusInfo statusInfo;
    //дата отправки, время доставки
+    
+    @Embedded
+    public StatusInfo getStatusInfo() {
+        return statusInfo;
+    }
+    
+    public void setStatusInfo(StatusInfo statusInfo) {
+        this.statusInfo = statusInfo;
+    }
     
     @Id
     @GeneratedValue
@@ -112,33 +119,6 @@ public class OrderEntity {
     
     public void setExpress(ExpressEntity express) {
         this.express = express;
-    }
-    
-    @Column(name = "measure_all", columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
-    public boolean isMeasureAll() {
-        return measureAll;
-    }
-    
-    public void setMeasureAll(boolean measureAll) {
-        this.measureAll = measureAll;
-    }
-    
-    @Column(name = "design_all", columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
-    public boolean isDesignAll() {
-        return designAll;
-    }
-    
-    public void setDesignAll(boolean designAll) {
-        this.designAll = designAll;
-    }
-    
-    @Column(name = "tanya_ok", columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
-    public boolean isTanyaOk() {
-        return tanyaOk;
-    }
-    
-    public void setTanyaOk(boolean tanyaOk) {
-        tanyaOk = tanyaOk;
     }
     
     @ManyToOne(targetEntity = ProductTypeEntity.class)//сущности откуда берем переменную из какой табл

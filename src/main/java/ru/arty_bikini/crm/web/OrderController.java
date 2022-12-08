@@ -6,17 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
-import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.dict.ExpressEntity;
 import ru.arty_bikini.crm.data.dict.ProductTypeEntity;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
+import ru.arty_bikini.crm.data.orders.*;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.dto.PageDTO;
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType;
-import ru.arty_bikini.crm.data.orders.Design;
-import ru.arty_bikini.crm.data.orders.LeadInfo;
-import ru.arty_bikini.crm.data.orders.OrderEntity;
-import ru.arty_bikini.crm.data.orders.PersonalData;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
 import ru.arty_bikini.crm.dto.packet.order.*;
 import ru.arty_bikini.crm.jpa.*;
@@ -105,7 +101,7 @@ public class OrderController {
 
             //сходить в бд//получить клиентов
             List<OrderEntity> all = orderRepository.findAllByType(LEAD);
-            List<OrderEntity> orderList = orderRepository.getByMeasureAllOrDesignAll(false, false);
+            List<OrderEntity> orderList = orderRepository.getByStatusInfoMeasureAllOrStatusInfoDesignAll(false, false);
             List<OrderDTO> orderDTOS1 = orderService.toOrderDTOList(orderList);
     
             //сделать DTO
@@ -198,14 +194,13 @@ public class OrderController {
             //примитивы в OrderEntity заполнить в ручную @Embedable
             order.setName(body.getOrder().getName());
             order.setType(body.getOrder().getType());
-            order.setMeasureAll(body.getOrder().getMeasureAll());
-            order.setDesignAll(body.getOrder().getDesignAll());
-            order.setTanyaOk(body.getOrder().getTanyaOk());
+            
     
             //все остальное заполнить через класс маппер
             PersonalData personalData = objectMapper.convertValue(body.getOrder().getPersonalData(), PersonalData.class);
             Design design = objectMapper.convertValue(body.getOrder().getDesign(), Design.class);//->DTO
             LeadInfo leadInfo = objectMapper.convertValue(body.getOrder().getLeadInfo(), LeadInfo.class);
+            StatusInfo statusInfo = objectMapper.convertValue(body.getOrder().getStatusInfo(), StatusInfo.class);
             //проверить все вложенные *Entity (по ID сходить в бд и заменить на то, что вернет гибернайт)
     
             if (body.getOrder().getExpress() != null) {
@@ -241,21 +236,29 @@ public class OrderController {
                     personalData.setTrainer(trainer);
                 }
             }
-    
-            if (design != null) {
-                if (design.getDesigner() != null) {
-                    UserEntity user = userRepository.getById(design.getDesigner().getId());
-                    if (user == null) {
-                        return new EditClientResponse("user == null, не заполнено ", null);
-                    }
-                    design.setDesigner(user);
+            
+            //проставляем, кто заполнил мерки и дизайн
+            if (statusInfo != null){
+                if (statusInfo.isDesignAll() && (order.getStatusInfo() == null || order.getStatusInfo().isDesignAll() == false)) {
+                    statusInfo.setDesignBy(session.getUser());
+                } else if (order.getStatusInfo() != null) {
+                    statusInfo.setDesignBy(order.getStatusInfo().getDesignBy());
+                }
+                
+                if (statusInfo.isMeasureAll() && (order.getStatusInfo() == null || order.getStatusInfo().isMeasureAll() == false)) {
+                    statusInfo.setMeasureBy(session.getUser());
+                } else if (order.getStatusInfo() != null) {
+                    statusInfo.setMeasureBy(order.getStatusInfo().getMeasureBy());
                 }
             }
+    
+            
     
             //заполняем
             order.setPersonalData(personalData);
             order.setDesign(design);
             order.setLeadInfo(leadInfo);
+            order.setStatusInfo(statusInfo);
     
             //ставим дату предоплаты
             if (order.getPersonalData()!= null) {

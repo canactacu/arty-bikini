@@ -13,16 +13,17 @@ class OrderDTO : IEntity {
     override var id = 0
     var name: String? = null
     var type: ClientType? = null
+    
     var personalData: PersonalDataDTO? = null
     var design: DesignDTO? = null
     var leadInfo: LeadInfoDTO? = null
-
     val dataGoogle: DataGoogleDTO? = null
-    var tanyaOk : Boolean = false
-    var designAll : Boolean = false
-    var measureAll : Boolean = false
+    
+    
     var express : ExpressDTO? = null
     
     var product : ProductTypeDTO? = null
     var measures : Map<Int, String>? = null
+    
+    var statusInfo : StatusInfoDTO? = null
 }

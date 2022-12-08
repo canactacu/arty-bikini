@@ -10,7 +10,7 @@ import ru.arty_bikini.crm.dto.enums.design.TextileOrder;
 import javax.persistence.*;
 
 //класс данных о дизайне
-@Embeddable//помечает класс как встраиваемый в др сущность
+@Embeddable
 public class Design {
     private String color;//цвет купальника
     private TextileOrder textile;//ткань купальника
@@ -21,9 +21,7 @@ public class Design {
     private String commentDesignUP;//комментарий по дизайну лифа
     private String commentDesignDoun;//комментарий по дизайну низ
 
-    private UserEntity designer;//кто заполнил дизайн
-    private boolean userTanya;//таня проверила дизайн
-    
+   
 
     @Column(name = "d_color")
     public String getColor() {
@@ -92,23 +90,5 @@ public class Design {
         this.commentDesignDoun = commentDesignDoun;
     }
 
-    @ManyToOne(targetEntity = UserEntity.class)//сущности откуда берем переменную из какой табл
-    @JoinColumn(name = "d_user_id")//даем название колонке
-    public UserEntity getDesigner() {
-        return designer;
     }
-
-    public void setDesigner(UserEntity designer) {
-        this.designer = designer;
-    }
-
-    @Column(name = "d_user_tanya")
-    public boolean isUserTanya() {
-        return userTanya;
-    }
-
-    public void setUserTanya(boolean userTanya) {
-        this.userTanya = userTanya;
-    }
-}
 

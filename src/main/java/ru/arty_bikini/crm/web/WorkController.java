@@ -24,7 +24,7 @@ import java.util.List;
 import static ru.arty_bikini.crm.Utils.toDate;
 
 //api/work/add-work  + //добавить работу
-//api/work/edit-work//изменить работу?
+//api/work/edit-work  + //изменить работу
 //api/work/add-interval + //добавить интервал
 //api/work/edit-interval + ///изменить интервал
 //api/work/del-work  + //удалить работу
@@ -109,7 +109,7 @@ public class WorkController {
         return new AddWorkResponse("нет сессии", null);
     }
     
-    @PostMapping("/add-edit")//изменить работу
+    @PostMapping("/edit-work")//изменить работу
     @ResponseBody
     public EditWorkResponse editWork(@RequestParam String key, @RequestBody EditWorkRequest body) {
         
