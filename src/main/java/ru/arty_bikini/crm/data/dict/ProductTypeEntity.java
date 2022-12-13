@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm.data.dict;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import ru.arty_bikini.crm.dto.enums.measure.CategoryMeasure;
 
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import javax.persistence.*;
 
 //(тип заказа(куп,платье..))
 @Entity(name = "product_types")
+@JsonFilter("entityFilter")
 public class ProductTypeEntity {
     private int id;
     private String name;//не понятно зачем

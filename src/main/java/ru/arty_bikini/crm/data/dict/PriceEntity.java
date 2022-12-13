@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
+//допы(эскиз, дизайн и тд)
 @Entity(name = "price")
 public class PriceEntity {
     private int id;

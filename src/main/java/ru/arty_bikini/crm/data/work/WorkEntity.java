@@ -100,7 +100,7 @@ public class WorkEntity {
     }
 
     @ManyToOne(targetEntity = IntervalEntity.class)//сущности откуда берем переменную из какой табл
-    @JoinColumn(name = "intetval_id")
+    @JoinColumn(name = "interval_id")
     public IntervalEntity getInterval() {
         return interval;
     }

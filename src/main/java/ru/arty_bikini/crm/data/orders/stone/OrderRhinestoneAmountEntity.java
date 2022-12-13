@@ -1,5 +1,6 @@
-package ru.arty_bikini.crm.data.dict;
+package ru.arty_bikini.crm.data.orders.stone;
 
+import ru.arty_bikini.crm.data.dict.RhinestoneTypeEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 
 import javax.persistence.*;
@@ -22,7 +23,7 @@ public class OrderRhinestoneAmountEntity {
         this.id = id;
     }
     
-    @ManyToOne(targetEntity = ExpressEntity.class)//сущности откуда берем переменную из какой табл
+    @ManyToOne(targetEntity = RhinestoneTypeEntity.class)//сущности откуда берем переменную из какой табл
     @JoinColumn(name = "rhinestone_type_id")
     public RhinestoneTypeEntity getRhinestoneType() {
         return rhinestoneType;
@@ -41,7 +42,7 @@ public class OrderRhinestoneAmountEntity {
         this.count = count;
     }
     
-    @ManyToOne(targetEntity = ExpressEntity.class)//сущности откуда берем переменную из какой табл
+    @ManyToOne(targetEntity = OrderEntity.class)//сущности откуда берем переменную из какой табл
     @JoinColumn(name = "order_id")
     public OrderEntity getOrder() {
         return order;

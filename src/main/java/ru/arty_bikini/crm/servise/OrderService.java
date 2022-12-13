@@ -6,9 +6,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.arty_bikini.crm.data.dict.TrainerEntity;
+import ru.arty_bikini.crm.data.orders.stone.OrderRhinestoneAmountEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
+import ru.arty_bikini.crm.data.work.WorkEntity;
+import ru.arty_bikini.crm.dto.orders.stone.OrderRhinestoneAmountDTO;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
+import ru.arty_bikini.crm.dto.work.WorkDTO;
+import ru.arty_bikini.crm.jpa.OrderRhinestoneAmountRepository;
+import ru.arty_bikini.crm.jpa.WorkRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +28,15 @@ public class OrderService {
     @Autowired
     private ColumnService columnService;
     
+    @Autowired
+    private WorkRepository workRepository;
     
-    //orderEntity преобразуем в OrderDTO
+    @Autowired
+    private OrderRhinestoneAmountRepository orderRARepository;
+    
+    
+    
+    //orderEntity преобразуем в OrderDTO OrderRhinestoneAmount
     public OrderDTO toOrderDTO(OrderEntity orderEntity) {
     
         //  System.out.println(objectMapper);
@@ -45,6 +57,16 @@ public class OrderService {
     
         Map<Integer, String> integerStringMap = columnService.measuresToMap(orderEntity.getMeasuresJson());
         orderDTO.setMeasures(integerStringMap);
+       
+        //заполняем работу по заказу
+        List<WorkEntity> workEntityList = workRepository.getByOrder(orderEntity);
+        List<WorkDTO> workDTOList = objectMapper.convertValue(workEntityList, new TypeReference<List<WorkDTO>>() {});
+        orderDTO.setWorks(workDTOList);
+        
+        //добавляем стразы
+        List<OrderRhinestoneAmountEntity> order = orderRARepository.getByOrder(orderEntity);
+        List<OrderRhinestoneAmountDTO> orderRADTOList = objectMapper.convertValue(order, new TypeReference<List<OrderRhinestoneAmountDTO>>() {});
+        orderDTO.setStones(orderRADTOList);
        
         return orderDTO;
     }

@@ -12,6 +12,6 @@ public class LocalDateTimeToLongDeserializer extends JsonDeserializer<LocalDateT
     
     @Override
     public LocalDateTime deserialize(JsonParser parser, DeserializationContext context) throws IOException {
-        return Utils.toTime(parser.getNumberValue().intValue());
+        return Utils.toTime(parser.getNumberValue().longValue());
     }
 }

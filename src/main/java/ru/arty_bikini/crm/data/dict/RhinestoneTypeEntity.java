@@ -8,8 +8,8 @@ import javax.persistence.*;
 @Entity(name = "rhinestone_types")
 public class RhinestoneTypeEntity {
     private int id;
-    private ManufacturerType manufacturer;//1) Производитель
-    private SizeTypeRhinston sizeType;//2) Тип (Пришивная и тд)
+    private String manufacturer;//1) Производитель
+    private String sizeType;//2) Тип (Пришивная и тд)
     private int price;//3) Цена за расклейку 1 шт"
     
     @Id
@@ -22,23 +22,21 @@ public class RhinestoneTypeEntity {
         this.id = id;
     }
     
-    @Column(name = "manufacturer")
-    @Enumerated(EnumType.STRING)
-    public ManufacturerType getManufacturer() {
+    @Column
+    public String getManufacturer() {
         return manufacturer;
     }
     
-    public void setManufacturer(ManufacturerType manufacturer) {
+    public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
     }
     
     @Column(name = "size_type")
-    @Enumerated(EnumType.STRING)
-    public SizeTypeRhinston getSizeType() {
+    public String getSizeType() {
         return sizeType;
     }
     
-    public void setSizeType(SizeTypeRhinston sizeType) {
+    public void setSizeType(String sizeType) {
         this.sizeType = sizeType;
     }
     

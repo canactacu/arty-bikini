@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm.data.orders.google;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ru.arty_bikini.crm.dto.enums.ColumnImportTarget;
 import ru.arty_bikini.crm.dto.enums.measure.DataDisplayCategory;
 

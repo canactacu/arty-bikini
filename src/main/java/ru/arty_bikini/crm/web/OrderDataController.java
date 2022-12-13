@@ -32,6 +32,7 @@ import ru.arty_bikini.crm.servise.DictionaryService;
 import ru.arty_bikini.crm.servise.GoogleService;
 import ru.arty_bikini.crm.servise.OrderService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 ///api/order-data/edit-type +  изменить столбик гугол(имя, таргет в системе)
@@ -96,8 +97,10 @@ public class OrderDataController {
             List<OrderDataTypeEntity> orderAll = orderDataTypeRepository.findAll();
 
             //переделываем в дто
-            List<OrderDataTypeDTO> orderDataTypeDTOS = objectMapper.convertValue(orderAll, new TypeReference<List<OrderDataTypeDTO>>() {});
-
+            List<OrderDataTypeDTO> orderDataTypeDTOS = new ArrayList<>();
+            for (int i = 0; i < orderAll.size(); i++) {
+                orderDataTypeDTOS.add(columnService.toDTO(orderAll.get(i)));
+            }
             //выдаем результат
             return new GetTypesResponse("список колонок гугол отправлен", orderDataTypeDTOS);
 
@@ -117,6 +120,7 @@ public class OrderDataController {
         if(session.getUser().getGroup().canEditColumnForGoogle == true){
             OrderDataTypeDTO orderDataTypeDTO = body.getOrderDataType();//столбик, кот нам передали
             OrderDataTypeEntity orderDataTypeEntity;
+            
             if (body.getOrderDataType().getId() == 0) {
                 orderDataTypeEntity = new OrderDataTypeEntity();
                 orderDataTypeEntity.setId(0);
