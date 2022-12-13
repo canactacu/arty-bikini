@@ -10,22 +10,11 @@ import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.data.orders.google.MeasureVariantsEntity;
 import ru.arty_bikini.crm.dto.orders.google.MeasureVariantsDTO;
-import ru.arty_bikini.crm.dto.packet.ordet_data.EditValueRequest;
-import ru.arty_bikini.crm.dto.packet.ordet_data.EditValueResponse;
-import ru.arty_bikini.crm.dto.packet.ordet_data.EditMeasureVariantsRequest;
-import ru.arty_bikini.crm.dto.packet.ordet_data.EditMeasureVariantsResponse;
-import ru.arty_bikini.crm.dto.packet.ordet_data.GetMeasureVariantsResponse;
-import ru.arty_bikini.crm.dto.packet.ordet_data.LinkOrderToImportRequest;
-import ru.arty_bikini.crm.dto.packet.ordet_data.LinkOrderToImportResponse;
+import ru.arty_bikini.crm.dto.packet.ordet_data.*;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
-import ru.arty_bikini.crm.dto.packet.ordet_data.UnlinkOrderFromImportRequest;
 import ru.arty_bikini.crm.dto.orders.google.DataGoogleDTO;
 import ru.arty_bikini.crm.dto.orders.google.OrderDataTypeDTO;
 import ru.arty_bikini.crm.data.orders.google.OrderDataTypeEntity;
-import ru.arty_bikini.crm.dto.packet.ordet_data.EditTypeRequest;
-import ru.arty_bikini.crm.dto.packet.ordet_data.EditTypeResponse;
-import ru.arty_bikini.crm.dto.packet.ordet_data.GetTypesResponse;
-import ru.arty_bikini.crm.dto.packet.ordet_data.ImportResultResponse;
 import ru.arty_bikini.crm.jpa.*;
 import ru.arty_bikini.crm.servise.ColumnService;
 import ru.arty_bikini.crm.servise.DictionaryService;
@@ -44,6 +33,8 @@ import java.util.List;
 
 ///api/order-data/get-measure-variants  + получить всех measure-variants
 ///api/order-data/edit-measure-variants  +  изменить,добавить measure-variants
+///api/order-data/del-measure-variants  -   удалить,добавить measure-variants
+
 
 //api/order-data/edit-value +
 
@@ -331,6 +322,23 @@ public class OrderDataController {
             
         }
         return new EditMeasureVariantsResponse ("нет сессии", null);
+    }
+    
+    @PostMapping("/del-measure-variants")  //  удалить   measure-variants
+    @ResponseBody
+    public DelMeasureVariantsResponse editMeasureVariants(@RequestParam String key, @RequestBody DelMeasureVariantsRequest body){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null){
+            return new DelMeasureVariantsResponse ("нет сессии");
+        }
+        if(session.getUser().getGroup().canEditColumnForGoogle == true){
+            MeasureVariantsEntity measureVariants = measureVariantsRepository.getById(body.getMeasureVariantsDTO().getId());
+            measureVariantsRepository.delete(measureVariants);
+            return new DelMeasureVariantsResponse ("удален");
+            
+        }
+        return new DelMeasureVariantsResponse ("нет сессии");
     }
     
     @PostMapping("/edit-value")//

@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm.data.orders;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import ru.arty_bikini.crm.data.dict.ExpressEntity;
 import ru.arty_bikini.crm.data.dict.ProductTypeEntity;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 
 //класс описывает клиента-лида и соединение
 @Entity(name = "orders")
+@JsonFilter("entityFilter")
 public class OrderEntity {
     private int id;
     private String name;

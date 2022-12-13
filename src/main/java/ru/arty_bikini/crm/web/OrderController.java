@@ -279,47 +279,32 @@ public class OrderController {
                     }
                 }
             }
-            System.out.println("/////////////////////////5////////////////////////////////2");
     
             //считаем дату отправки
             if (personalData != null) {
-                System.out.println("/////////////////////////51//s//////////////////////////////2");
     
                 if (order.getPersonalData().getDeliveryTime() != 0) {
-                    System.out.println("/////////////////////////////////////////////////////////2");
-                    System.out.println(order.getPersonalData().getNeededTime());
-//                    System.out.println(order.getDataGoogle().getNeededDate());
-//                    System.out.println(order.getDataGoogle().getCompetition());
-                    System.out.println("ok..............");
         
                     if (order.getPersonalData().getNeededTime() != null) { //менеджер дата, когда нужен
                         LocalDate date = order.getPersonalData().getNeededTime().minusDays(order.getPersonalData().getDeliveryTime());
                         date = date.minusDays(3);
                         order.getPersonalData().setPackageTime(date);//сохраняем
-                        System.out.println(date);
-                        System.out.println("................");
             
                     } else if (order.getPersonalData().getCompetitionTime() != null) {//менеджер дата соревнований
             
                         LocalDate date = order.getPersonalData().getCompetitionTime().minusDays(order.getPersonalData().getDeliveryTime());
                         date = date.minusDays(3);
                         order.getPersonalData().setPackageTime(date);//сохраняем
-                        System.out.println(date);
-                        System.out.println("................");
                     } else if (order.getDataGoogle() != null && order.getDataGoogle().getNeededDate() != null) {//клиент дата, когда нужен
             
                         LocalDate date = order.getDataGoogle().getNeededDate().minusDays(order.getPersonalData().getDeliveryTime());
                         date = date.minusDays(3);
                         order.getPersonalData().setPackageTime(date);//сохраняем
-                        System.out.println(date);
-                        System.out.println("................");
                     } else if (order.getDataGoogle() != null && order.getDataGoogle().getCompetition() != null) {//клиент дата соревнований
             
                         LocalDate date = order.getDataGoogle().getNeededDate().minusDays(order.getPersonalData().getDeliveryTime());
                         date = date.minusDays(3);
                         order.getPersonalData().setPackageTime(date);//сохраняем
-                        System.out.println(date);
-                        System.out.println("................");
                     }
                 }
             }
