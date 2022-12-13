@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface OrderRhinestoneAmountRepository extends JpaRepository<OrderRhinestoneAmountEntity, Integer> {
     // DELETE FROM rhinestone_amount WHERE order_id = 9
-    @Modifying
-    @Query(value = "DELETE FROM rhinestone_amount WHERE order_id = ?", nativeQuery = true)
-    public int deleteByOrder(int orderId);
+    //@Modifying
+    // @Query(value = "DELETE FROM rhinestone_amount WHERE order_id = ?", nativeQuery = true)
+    // public int deleteByOrder(int orderId);
   
     public List<OrderRhinestoneAmountEntity> getByOrder(OrderEntity order);
 }

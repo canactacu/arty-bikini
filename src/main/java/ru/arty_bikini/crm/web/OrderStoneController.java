@@ -80,9 +80,12 @@ public class OrderStoneController {
                 }
                 
             }
-            
-            orderRARepository.deleteByOrder(order.getId());//удалили order из бд orderRARepository с нужными id
-            
+    
+            List<OrderRhinestoneAmountEntity> list = orderRARepository.getByOrder(order);//удалили order из бд orderRARepository с нужными id
+            for (int i = 0; i < list.size(); i++) {
+                orderRARepository.delete(list.get(i));
+            }
+    
             for (int i = 0; i < body.getOrderRhinestoneAmountDTOList().size(); i++) {
                 OrderRhinestoneAmountDTO orderRhinestoneAmountDTO = body.getOrderRhinestoneAmountDTOList().get(i);
     

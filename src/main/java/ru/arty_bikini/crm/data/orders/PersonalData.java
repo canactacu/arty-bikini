@@ -32,7 +32,7 @@ public class PersonalData {
     
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
-    private LocalDate neededTime;//Клиент: дата когда нужен заказ
+    private LocalDate neededTime;// дата когда нужен заказ
     
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)

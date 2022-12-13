@@ -1,11 +1,13 @@
 package ru.arty_bikini.crm.data.dict;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import ru.arty_bikini.crm.dto.enums.design.ManufacturerType;
 import ru.arty_bikini.crm.dto.enums.design.SizeTypeRhinston;
 
 import javax.persistence.*;
 
 @Entity(name = "rhinestone_types")
+@JsonFilter("entityFilter")
 public class RhinestoneTypeEntity {
     private int id;
     private String manufacturer;//1) Производитель

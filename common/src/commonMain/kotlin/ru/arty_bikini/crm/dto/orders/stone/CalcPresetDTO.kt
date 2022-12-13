@@ -15,10 +15,10 @@ class CalcPresetDTO : IEntity  {
 }
 
 @Serializable
-data class CalcPresetRuleDTO(
-    var stone: RhinestoneTypeDTO,
-    var auto: Boolean,
-    var type: CalcPresetRuleType,
-    var value: Int
-)
+class CalcPresetRuleDTO() {
+    var stone: RhinestoneTypeDTO? = null
+    var auto: Boolean = false
+    var type: CalcPresetRuleType = CalcPresetRuleType.COST_PERCENT
+    var value: Int = 0
+}
 

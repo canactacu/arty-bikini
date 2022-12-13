@@ -12,6 +12,7 @@ import ru.arty_bikini.crm.data.dict.TrainerEntity;
 import ru.arty_bikini.crm.data.orders.*;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.dto.PageDTO;
+import ru.arty_bikini.crm.dto.enums.UserGroup;
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
 import ru.arty_bikini.crm.dto.packet.order.*;
@@ -200,7 +201,6 @@ public class OrderController {
             PersonalData personalData = objectMapper.convertValue(body.getOrder().getPersonalData(), PersonalData.class);
             Design design = objectMapper.convertValue(body.getOrder().getDesign(), Design.class);//->DTO
             LeadInfo leadInfo = objectMapper.convertValue(body.getOrder().getLeadInfo(), LeadInfo.class);
-            StatusInfo statusInfo = objectMapper.convertValue(body.getOrder().getStatusInfo(), StatusInfo.class);
             //проверить все вложенные *Entity (по ID сходить в бд и заменить на то, что вернет гибернайт)
     
             if (body.getOrder().getExpress() != null) {
@@ -237,18 +237,26 @@ public class OrderController {
                 }
             }
             
-            //проставляем, кто заполнил мерки и дизайн
-            if (statusInfo != null){
+            //проставляем, кто заполнил мерки и дизайн и статусы
+            StatusInfo statusInfo = order.getStatusInfo();
+            if (body.getOrder().getStatusInfo() != null){
+                if (statusInfo == null) {
+                    statusInfo = new StatusInfo();
+                }
+                statusInfo.setMeasureAll(body.getOrder().getStatusInfo().isMeasureAll());
+                statusInfo.setDesignAll(body.getOrder().getStatusInfo().isDesignAll());
+                
+                if (session.getUser().getGroup() == UserGroup.TANYA) {
+                    statusInfo.setMeasureAllTanya(body.getOrder().getStatusInfo().isMeasureAllTanya());
+                    statusInfo.setDesignAllTanya(body.getOrder().getStatusInfo().isDesignAllTanya());
+                }
+                
                 if (statusInfo.isDesignAll() && (order.getStatusInfo() == null || order.getStatusInfo().isDesignAll() == false)) {
                     statusInfo.setDesignBy(session.getUser());
-                } else if (order.getStatusInfo() != null) {
-                    statusInfo.setDesignBy(order.getStatusInfo().getDesignBy());
                 }
                 
                 if (statusInfo.isMeasureAll() && (order.getStatusInfo() == null || order.getStatusInfo().isMeasureAll() == false)) {
                     statusInfo.setMeasureBy(session.getUser());
-                } else if (order.getStatusInfo() != null) {
-                    statusInfo.setMeasureBy(order.getStatusInfo().getMeasureBy());
                 }
             }
     
@@ -281,34 +289,7 @@ public class OrderController {
             }
     
             //считаем дату отправки
-            if (personalData != null) {
-    
-                if (order.getPersonalData().getDeliveryTime() != 0) {
-        
-                    if (order.getPersonalData().getNeededTime() != null) { //менеджер дата, когда нужен
-                        LocalDate date = order.getPersonalData().getNeededTime().minusDays(order.getPersonalData().getDeliveryTime());
-                        date = date.minusDays(3);
-                        order.getPersonalData().setPackageTime(date);//сохраняем
-            
-                    } else if (order.getPersonalData().getCompetitionTime() != null) {//менеджер дата соревнований
-            
-                        LocalDate date = order.getPersonalData().getCompetitionTime().minusDays(order.getPersonalData().getDeliveryTime());
-                        date = date.minusDays(3);
-                        order.getPersonalData().setPackageTime(date);//сохраняем
-                    } else if (order.getDataGoogle() != null && order.getDataGoogle().getNeededDate() != null) {//клиент дата, когда нужен
-            
-                        LocalDate date = order.getDataGoogle().getNeededDate().minusDays(order.getPersonalData().getDeliveryTime());
-                        date = date.minusDays(3);
-                        order.getPersonalData().setPackageTime(date);//сохраняем
-                    } else if (order.getDataGoogle() != null && order.getDataGoogle().getCompetition() != null) {//клиент дата соревнований
-            
-                        LocalDate date = order.getDataGoogle().getNeededDate().minusDays(order.getPersonalData().getDeliveryTime());
-                        date = date.minusDays(3);
-                        order.getPersonalData().setPackageTime(date);//сохраняем
-                    }
-                }
-            }
-           
+            orderService.savePackageTime(order);
     
     
             //сохранить в бд

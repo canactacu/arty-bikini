@@ -112,11 +112,14 @@ public class OrderDataController {
             OrderDataTypeDTO orderDataTypeDTO = body.getOrderDataType();//столбик, кот нам передали
             OrderDataTypeEntity orderDataTypeEntity;
             
+            //добавляем колонку
             if (body.getOrderDataType().getId() == 0) {
                 orderDataTypeEntity = new OrderDataTypeEntity();
                 orderDataTypeEntity.setId(0);
+                orderDataTypeEntity.setGoogleName("*Не импортируется*");
+                orderDataTypeEntity.setGoogleColumn(-1);
             }
-            else {
+            else {//редактируем колонку
                  orderDataTypeEntity = orderDataTypeRepository.getById(orderDataTypeDTO.getId());
                 if(orderDataTypeEntity == null){//колонка и таким ид не найдена
                     return new EditTypeResponse("колонка и таким ид не найдена", null);
@@ -218,6 +221,7 @@ public class OrderDataController {
             order.setDataGoogle(google);
             OrderEntity save = orderRepository.save(order);
             OrderDTO toOrderDTO = orderService.toOrderDTO(save);
+            orderService.savePackageTime(order);//сохранили и посчитали дату отправки
             return new LinkOrderToImportResponse ("соединили обьединили", toOrderDTO);
 
         }
@@ -250,6 +254,11 @@ public class OrderDataController {
             dataGoogleRepository.save(dataGoogle);
 
             order.setDataGoogle(null);
+            if (order.getPersonalData() != null) {
+                order.getPersonalData().setPackageTime(null);
+            }
+            orderService.savePackageTime(order);//сохранили и посчитали дату отправки
+            
             OrderEntity save = orderRepository.save(order);
             OrderDTO toOrderDTO = orderService.toOrderDTO(save);
             return new LinkOrderToImportResponse ("разъединен", toOrderDTO);
