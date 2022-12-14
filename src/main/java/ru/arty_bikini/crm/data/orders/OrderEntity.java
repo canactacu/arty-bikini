@@ -21,7 +21,7 @@ public class OrderEntity {
     private Design design;
     private LeadInfo leadInfo;
     
-    private ExpressEntity express ;//срочность
+    private ExpressEntity express;//срочность
     
     private ProductTypeEntity product;//тип заказа
     private String measuresJson;

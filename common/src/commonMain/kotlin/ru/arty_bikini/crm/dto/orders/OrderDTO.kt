@@ -14,13 +14,13 @@ import ru.arty_bikini.crm.dto.work.WorkDTO
 class OrderDTO : IEntity {
     override var id = 0
     var name: String? = null
-    var type: ClientType? = null
+    var type: ClientType = ClientType.LEAD
     
+    val dataGoogle: DataGoogleDTO? = null
     var personalData: PersonalDataDTO? = null
     var design: DesignDTO? = null
     var leadInfo: LeadInfoDTO? = null
-    val dataGoogle: DataGoogleDTO? = null
-    
+   
     
     var express : ExpressDTO? = null
     
@@ -30,6 +30,5 @@ class OrderDTO : IEntity {
     var statusInfo : StatusInfoDTO? = null
     
     var works : List<WorkDTO>? = null
-    
     var stones : List<OrderRhinestoneAmountDTO>? = null
 }

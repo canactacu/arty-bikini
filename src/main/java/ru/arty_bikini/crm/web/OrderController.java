@@ -20,9 +20,8 @@ import ru.arty_bikini.crm.jpa.*;
 import ru.arty_bikini.crm.servise.OrderService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-
-import static ru.arty_bikini.crm.dto.enums.personalData.ClientType.*;
 
 ///api/order/get-clients + //получить список клиентов
 ///api/order/get-leads  + - //получить список лидов и клиентов с предоплатой и без мерок или без дизайна
@@ -76,7 +75,7 @@ public class OrderController {
         if(session.getUser().getGroup().canViewClients == true){
 
             //сходить в бд//получить клиентов
-            List<OrderEntity> all = orderRepository.findAllByType(CLIENT);//получила все клиентов
+            List<OrderEntity> all = orderRepository.findAllByType(ClientType.CLIENT);//получила все клиентов
 
             //получить клиентов из всех
 
@@ -100,14 +99,19 @@ public class OrderController {
         //проверка на права доступа
         if(session.getUser().getGroup().canViewLeads == true){
 
-            //сходить в бд//получить клиентов
-            List<OrderEntity> all = orderRepository.findAllByType(LEAD);
-            List<OrderEntity> orderList = orderRepository.getByStatusInfoMeasureAllOrStatusInfoDesignAll(false, false);
-            List<OrderDTO> orderDTOS1 = orderService.toOrderDTOList(orderList);
+            List<OrderEntity> all = orderRepository.findAllByType(ClientType.LEAD);//список всех лидов
+            List<OrderDTO> orderLeadDTOS = orderService.toOrderDTOList(all);
+            
+            //список только клиентов,  у кого нет мерок и дизайна
+            List<OrderEntity> orderClientList =
+                    orderRepository.findByTypeAndStatusInfoMeasureAllOrTypeAndStatusInfoDesignAll
+                            (ClientType.CLIENT, false, ClientType.CLIENT,false);
+            
+            List<OrderDTO> orderClientDTOS = orderService.toOrderDTOList(orderClientList);
     
             //сделать DTO
-            List<OrderDTO> orderDTOS = orderService.toOrderDTOList(all);
-            return new GetClientsResponse("переданы лиды", orderDTOS, orderDTOS1);
+            // List<OrderDTO> orderDTOS = orderService.toOrderDTOList(all);
+            return new GetClientsResponse("переданы лиды", orderLeadDTOS, orderClientDTOS);
         }
         return new GetClientsResponse("нет сессии", null, null);
     }
@@ -124,7 +128,7 @@ public class OrderController {
         if(session.getUser().getGroup().canViewArchive == true){
 
             //сходить в бд//получить клиентов
-            Page<OrderEntity> all = orderRepository.findAllByType(ARCHIVE, Pageable.ofSize(25).withPage(page));
+            Page<OrderEntity> all = orderRepository.findAllByType(ClientType.ARCHIVE, Pageable.ofSize(25).withPage(page));
 
             //сделать DTO
 
@@ -144,8 +148,7 @@ public class OrderController {
     @PostMapping("/add-client")//добавить лида-клиента
     @ResponseBody
     public AddClientResponse addClient(@RequestParam String key, @RequestParam String name, @RequestParam ClientType type){
-        //проверка на key
-        SessionEntity session = sessionRepository.getByKey(key);//выташили нужный кеу,если такого нет, вернули null
+        SessionEntity session = sessionRepository.getByKey(key);
         if (session == null){
             return new AddClientResponse("нет сессии", null);
         }
@@ -163,6 +166,16 @@ public class OrderController {
             PersonalData personalData = new PersonalData();
             order.setPersonalData(personalData);
             order.getPersonalData().setDeliveryTime(21);
+            order.getPersonalData().setCreatedTime(LocalDate.now());
+    
+            Design design = new Design();
+            LeadInfo leadInfo = new LeadInfo();
+            StatusInfo statusInfo = new StatusInfo();
+            
+            order.setDesign(design);
+            order.setLeadInfo(leadInfo);
+            order.setStatusInfo(statusInfo);
+            
             //сохранить в бд
            orderRepository.save(order);
 
@@ -290,7 +303,43 @@ public class OrderController {
     
             //считаем дату отправки
             orderService.savePackageTime(order);
-    
+            
+            
+            //ставим дату попадания в архив
+            if (order.getType() == null){
+                return new EditClientResponse("нет статуса у клиента", null);
+            }
+            else {
+                if((order.getType().equals(ClientType.ARCHIVE))){
+                    if (order.getPersonalData()== null){
+                        PersonalData personalData1 = new PersonalData();
+                        order.setPersonalData(personalData1);
+                        order.getPersonalData().setArchiveTime(LocalDate.now());
+                        
+                        if (body.getOrder().getLeadInfo()!= null){
+                            order.getLeadInfo().setCommentArchive(body.getOrder().getLeadInfo().getCommentArchive());
+                        }
+                        else {
+                            return new EditClientResponse("нет комментария архива", null);
+                        }
+                    }
+                    else {
+                        if (order.getPersonalData().getArchiveTime() == null){
+                            order.getPersonalData().setArchiveTime(LocalDate.now());
+                            
+                            if (body.getOrder().getLeadInfo()!= null){
+                                order.getLeadInfo().setCommentArchive(body.getOrder().getLeadInfo().getCommentArchive());
+                            }
+                            else {
+                                return new EditClientResponse("нет комментария архива", null);
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            
+           
     
             //сохранить в бд
             OrderEntity save = orderRepository.save(order);

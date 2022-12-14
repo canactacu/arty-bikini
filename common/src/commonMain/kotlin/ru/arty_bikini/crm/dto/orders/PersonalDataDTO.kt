@@ -24,5 +24,6 @@ class PersonalDataDTO {
     
     var addOrder: String? = null //дополнительно к заказу
     var comment: String? = null //комментарий на чем остановились
-    
+    var createdTime : Long? = null //дата появления лида
+    var archiveTime : Long? = null //дата попадания в архив
 }

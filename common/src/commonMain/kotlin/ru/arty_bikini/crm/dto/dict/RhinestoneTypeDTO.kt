@@ -9,6 +9,6 @@ import ru.arty_bikini.crm.dto.enums.design.SizeTypeRhinston
 class RhinestoneTypeDTO : IEntity {
     override var id = 0
     var manufacturer: String? = null // Производитель
-    var sizeTypeRhinston: String? = null  // Тип (Пришивная и тд)
+    var sizeType: String? = null  // Тип (Пришивная и тд)
     var price = 0 // Цена за расклейку 1 шт"
 }

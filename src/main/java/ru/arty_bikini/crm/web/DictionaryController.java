@@ -219,7 +219,7 @@ public class DictionaryController {
             }
             rhinestoneType.setPrice(body.getRhinestoneTypeDTO().getPrice());
             rhinestoneType.setManufacturer(body.getRhinestoneTypeDTO().getManufacturer());
-            rhinestoneType.setSizeType(body.getRhinestoneTypeDTO().getSizeTypeRhinston());
+            rhinestoneType.setSizeType(body.getRhinestoneTypeDTO().getSizeType());
     
             RhinestoneTypeEntity save = rhinestoneTypeRepository.save(rhinestoneType);
             RhinestoneTypeDTO rhinestoneTypeDTO = objectMapper.convertValue(save, RhinestoneTypeDTO.class);

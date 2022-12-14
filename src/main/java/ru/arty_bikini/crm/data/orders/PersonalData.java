@@ -24,6 +24,14 @@ public class PersonalData {
     
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
+    private LocalDate createdTime;//дата появления лида
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
+    private LocalDate archiveTime;//дата попадания в архив
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
     private LocalDate orderTime;//дата заказа(предоплата или заполнение мерок?)
     
     @JsonSerialize(using = LocalDateToLongSerializer.class)
@@ -123,7 +131,25 @@ public class PersonalData {
     public String getComment() {
         return comment;
     }
-
+    
+    @Column(name = "pd_created_time")
+    public LocalDate getCreatedTime() {
+        return createdTime;
+    }
+    
+    @Column(name = "pd_archive_time")
+    public LocalDate getArchiveTime() {
+        return archiveTime;
+    }
+    
+    public void setArchiveTime(LocalDate archiveTime) {
+        this.archiveTime = archiveTime;
+    }
+    
+    public void setCreatedTime(LocalDate createdTime) {
+        this.createdTime = createdTime;
+    }
+    
     public void setName(String name) {
         this.name = name;
     }

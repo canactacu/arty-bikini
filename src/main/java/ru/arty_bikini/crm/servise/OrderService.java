@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.data.orders.stone.OrderRhinestoneAmountEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.work.WorkEntity;
@@ -80,7 +81,8 @@ public class OrderService {
             try {
                 Map<Integer, String> integerStringMap = objectMapper.readValue(orderEntity.getDataGoogle().getJson(), new TypeReference<Map<Integer, String>>() {
                 });
-                orderDTO.getDataGoogle().setData(integerStringMap);
+                    orderDTO.getDataGoogle().setData(integerStringMap);
+    
             } catch (JsonMappingException e) {
                 throw new RuntimeException(e);
             } catch (JsonProcessingException e) {

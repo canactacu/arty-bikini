@@ -29,8 +29,8 @@ public class OrderStoneService {
     //преобразуем в Entity
     public void toEntity(CalcPresetDTO calcPresetDTO, CalcPresetEntity calcPresetEntity){
         calcPresetEntity.setId(calcPresetDTO.getId());
-        calcPresetEntity.setName(calcPresetEntity.getName());
-        calcPresetEntity.setPriority(calcPresetEntity.getPriority());
+        calcPresetEntity.setName(calcPresetDTO.getName());
+        calcPresetEntity.setPriority(calcPresetDTO.getPriority());
     
         List<CalcPresetRuleDTO> calcPresetRuleDTOList = calcPresetDTO.getRules();
         List<CalcPresetRuleJson> calcPresetRuleJsonList = new ArrayList<>();
@@ -53,8 +53,11 @@ public class OrderStoneService {
     
     // 1 преобразуем в DTO
     public CalcPresetDTO toDTO(CalcPresetEntity calcPresetEntity){
-        CalcPresetDTO calcPresetDTO = objectMapper.convertValue(calcPresetEntity, CalcPresetDTO.class);
-    
+        CalcPresetDTO calcPresetDTO = new CalcPresetDTO();
+        calcPresetDTO.setId(calcPresetEntity.getId());
+        calcPresetDTO.setName(calcPresetEntity.getName());
+        calcPresetDTO.setPriority(calcPresetEntity.getPriority());
+        
         List<CalcPresetRuleJson> data = null;
         try {
             data = objectMapper.readValue(calcPresetEntity.getRulesJson(), new TypeReference<List<CalcPresetRuleJson>>() {});
