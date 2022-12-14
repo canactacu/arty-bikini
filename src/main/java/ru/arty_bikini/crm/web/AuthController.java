@@ -49,7 +49,7 @@ public class AuthController {
         UserEntity user = userRepository.getByLogin(login);
         if (user == null){
 
-            return new LoginResponse("invalidPassword", null);
+            return new LoginResponse("invalidPassword", false, null, null, null);
         }
         String pass1 = user.getPassword();//пароль от бд
         String pass2 = Utils.SHA256(password);//пароль от клиента
@@ -69,12 +69,13 @@ public class AuthController {
 
             // если (ПК) id != 0
             // UPDATE session SET (user_id = ?, key = ?, start = ?) WHERE id = ?;
-
-
-            return new LoginResponse("ok", session.getKey());
+    
+    
+            UserDTO userDTO = objectMapper.convertValue(user, UserDTO.class);
+            return new LoginResponse("ok", true, null, userDTO, session.getKey());
         }
-
-        return new LoginResponse("invalidPassword", null);//создаем обьект для ответа клиенту
+    
+        return new LoginResponse("invalidPassword", false, null, null, null);
     }
 
     @PostMapping("/reconnect")//вход в систему без пороля, по сохраненному в браузере коду
@@ -83,13 +84,15 @@ public class AuthController {
 
         SessionEntity session = sessionRepository.getByKey(key);
         if (session == null){
-            return new ReconnectResponse(false);
+            return new ReconnectResponse("invalidPassword",false, null, null);
         }
         //сравнить ключ из бд и ключ из клиента
         if (session.getKey().equals(key)){
-            return new ReconnectResponse(true);
+    
+            UserDTO userDTO = objectMapper.convertValue(session.getUser(), UserDTO.class);
+            return new ReconnectResponse("ok", true, null, userDTO);
         }
-        return new ReconnectResponse(false);//ключи не совпали
+        return new ReconnectResponse("invalidPassword",false, null, null);
     }
 
     @PostMapping("/change-password")//смена пароля
