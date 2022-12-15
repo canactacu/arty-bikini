@@ -25,13 +25,16 @@ import static ru.arty_bikini.crm.Utils.toDate;
 
 //api/work/add-work  + //добавить работу
 //api/work/edit-work  + //изменить работу
+//api/work/del-work  + //удалить работу
+
 //api/work/add-interval + //добавить интервал
 //api/work/edit-interval + ///изменить интервал
-//api/work/del-work  + //удалить работу
-//api/work/div-interval  + //разделить интервал(добавить встречу
+
+//api/work/div-interval  + //разделить интервал(добавить встречу)
+//api/work/del-interval + //удалить встречу(только, если нет работ)
 //api/work/assign-work-to-tour + //добавить работу на отдельную встречу
 //api/work/del-work-from-tour   + //удалить работу со встречи
-//api/work/del-interval + //удалить встречу(только, если нет работ)
+
 //api/work/get-interval-work   +  //получить список работ в интервалах, интервалов по дате началу длинна = 35 дней
 
 @RestController
@@ -180,8 +183,7 @@ public class WorkController {
             //проверить поступающий интервал на адекватность(должен быть больше, чем последний),
             // или больше, чем сегодня, если первый
             IntervalEntity last = intervalRepository.getLast();//выяснили последнее
-            if (last == null) {//если там нет интервалов.интервал первый
-                //первый раз добавляем дату
+            if (last == null) {//если там нет интервалов. интервал первый//первый раз добавляем дату
                 IntervalEntity intervalEntity = new IntervalEntity();
 
                 intervalEntity.setId(0);
@@ -228,7 +230,7 @@ public class WorkController {
         //проверка на права доступа
         if (session.getUser().getGroup().canAddWork == true) {
 
-            //надо понять,что существующий существует, идем проверять в бд
+            //надо понять, что существующий существует, идем проверять в бд
             IntervalEntity interval = intervalRepository.getById(body.getIdInterval());//изменяемый интервал
             if (interval == null) {
                 return new EditIntervalResponse("interval == null ошибка", null, null);

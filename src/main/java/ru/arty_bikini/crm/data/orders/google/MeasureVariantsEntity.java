@@ -1,15 +1,29 @@
 package ru.arty_bikini.crm.data.orders.google;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
 import javax.persistence.*;
 
 @Entity(name = "measure_variants")
+@JsonFilter("entityFilter")
 public class MeasureVariantsEntity {
     private int id;
     private String name;
+    private int priority;
+    
     private OrderDataTypeEntity orderDataType;
     private String description;
     private String googleName;
     private String productsJson;
+    
+    @Column(columnDefinition = "INT NOT NULL DEFAULT 0")
+    public int getPriority() {
+        return priority;
+    }
+    
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
     
     @Id
     @GeneratedValue

@@ -30,7 +30,7 @@ public class ColumnService {
     
     public MeasureVariantsDTO toDTO(MeasureVariantsEntity entity) {
         MeasureVariantsDTO dto = objectMapper.convertValue(entity, MeasureVariantsDTO.class);
-    
+        
         Set<ProductTypeDTO> set = dictionaryService.productToSet(entity.getProductsJson());
         dto.setProducts(set);
         

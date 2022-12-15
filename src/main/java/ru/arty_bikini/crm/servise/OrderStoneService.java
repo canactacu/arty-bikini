@@ -32,19 +32,28 @@ public class OrderStoneService {
         calcPresetEntity.setName(calcPresetDTO.getName());
         calcPresetEntity.setPriority(calcPresetDTO.getPriority());
     
-        List<CalcPresetRuleDTO> calcPresetRuleDTOList = calcPresetDTO.getRules();
-        List<CalcPresetRuleJson> calcPresetRuleJsonList = new ArrayList<>();
-    
-        for (int i = 0; i < calcPresetRuleDTOList.size(); i++) {
-            calcPresetRuleJsonList.add(objectMapper.convertValue(calcPresetRuleDTOList.get(i),  CalcPresetRuleJson.class));
-            calcPresetRuleJsonList.get(i).setStoneId(calcPresetRuleDTOList.get(i).getStone().getId());
-        }
-    
         String rulesJson = null;
-        try {
-            rulesJson = objectMapper.writeValueAsString(calcPresetRuleJsonList);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        List<CalcPresetRuleDTO> calcPresetRuleDTOList = calcPresetDTO.getRules();
+        if (calcPresetRuleDTOList!= null){
+            if (calcPresetRuleDTOList.size()!=0){
+                List<CalcPresetRuleJson> calcPresetRuleJsonList = new ArrayList<>();
+    
+                for (int i = 0; i < calcPresetRuleDTOList.size(); i++) {
+                    calcPresetRuleJsonList.add(objectMapper.convertValue(calcPresetRuleDTOList.get(i),  CalcPresetRuleJson.class));
+                   if (calcPresetRuleDTOList.get(i).getStone()!= null){
+                       calcPresetRuleJsonList.get(i).setStoneId(calcPresetRuleDTOList.get(i).getStone().getId());
+                   }
+                   else {
+                       //ошибка
+                   }
+                }
+                
+                try {
+                    rulesJson = objectMapper.writeValueAsString(calcPresetRuleJsonList);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
         calcPresetEntity.setRulesJson(rulesJson);
     }

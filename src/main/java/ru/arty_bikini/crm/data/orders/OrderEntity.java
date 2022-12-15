@@ -27,7 +27,18 @@ public class OrderEntity {
     private String measuresJson;
     
     private StatusInfo statusInfo;
+    
+    private String presetRulesJson;
    //дата отправки, время доставки
+    
+    @Column(name = "preset_rules_json")
+    public String getPresetRulesJson() {
+        return presetRulesJson;
+    }
+    
+    public void setPresetRulesJson(String presetRulesJson) {
+        this.presetRulesJson = presetRulesJson;
+    }
     
     @Embedded
     public StatusInfo getStatusInfo() {

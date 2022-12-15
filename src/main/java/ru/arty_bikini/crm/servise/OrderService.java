@@ -6,18 +6,24 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.arty_bikini.crm.data.dict.RhinestoneTypeEntity;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
+import ru.arty_bikini.crm.data.orders.stone.CalcPresetRuleJson;
 import ru.arty_bikini.crm.data.orders.stone.OrderRhinestoneAmountEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.work.WorkEntity;
+import ru.arty_bikini.crm.dto.dict.RhinestoneTypeDTO;
+import ru.arty_bikini.crm.dto.orders.stone.CalcPresetRuleDTO;
 import ru.arty_bikini.crm.dto.orders.stone.OrderRhinestoneAmountDTO;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
 import ru.arty_bikini.crm.dto.work.WorkDTO;
 import ru.arty_bikini.crm.jpa.OrderRhinestoneAmountRepository;
+import ru.arty_bikini.crm.jpa.RhinestoneTypeRepository;
 import ru.arty_bikini.crm.jpa.WorkRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +41,9 @@ public class OrderService {
     
     @Autowired
     private OrderRhinestoneAmountRepository orderRARepository;
+    
+    @Autowired
+    private RhinestoneTypeRepository rhinestoneTypeRepository;
     
     //считаем и сохраняем дату отправки
     public void savePackageTime(OrderEntity order){
@@ -103,6 +112,35 @@ public class OrderService {
         List<OrderRhinestoneAmountDTO> orderRADTOList = objectMapper.convertValue(order, new TypeReference<List<OrderRhinestoneAmountDTO>>() {});
         orderDTO.setStones(orderRADTOList);
        
+        //заполняем поля presetRules и presetRulesJson
+        if (orderEntity.getPresetRulesJson() == null || orderEntity.getPresetRulesJson().length() == 0){
+            orderDTO.setPresetRules(null);
+        }
+        else {
+            List<CalcPresetRuleJson> data = null;
+            try {
+                data = objectMapper.readValue(orderEntity.getPresetRulesJson(), new TypeReference<List<CalcPresetRuleJson>>() {});
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+    
+            List<CalcPresetRuleDTO> calcPresetRuleDTOList = new ArrayList<>(data.size());
+            
+            for (CalcPresetRuleJson datum : data) {
+        
+                CalcPresetRuleDTO calcPresetRuleDTO = objectMapper.convertValue(datum, CalcPresetRuleDTO.class);
+        
+                RhinestoneTypeEntity rhinestoneType = rhinestoneTypeRepository.getById(datum.getStoneId());
+                
+                if (rhinestoneType != null) {
+                    RhinestoneTypeDTO rhinestoneTypeDTO = objectMapper.convertValue(rhinestoneType, RhinestoneTypeDTO.class);
+                    calcPresetRuleDTO.setStone(rhinestoneTypeDTO);
+                }
+                calcPresetRuleDTOList.add(calcPresetRuleDTO);
+                orderDTO.setPresetRules(calcPresetRuleDTOList);
+            }
+        }
+        
         return orderDTO;
     }
     

@@ -1,14 +1,14 @@
 package ru.arty_bikini.crm.dto.orders.google
 
 import kotlinx.serialization.Serializable
-import ru.arty_bikini.crm.dto.IEntity
+import ru.arty_bikini.crm.dto.EntityDTO
 import ru.arty_bikini.crm.dto.dict.ProductTypeDTO
 import ru.arty_bikini.crm.dto.enums.ColumnImportTarget
 import ru.arty_bikini.crm.dto.enums.measure.DataDisplayCategory
 
 //описывает типы данных получаемых от клиента
 @Serializable
-class OrderDataTypeDTO : IEntity {
+class OrderDataTypeDTO : EntityDTO() {
     override var id = 0
 
     var name : String? = null //имя в системе

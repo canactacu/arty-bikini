@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm.data.orders.google;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ru.arty_bikini.crm.dto.enums.ColumnImportTarget;
 import ru.arty_bikini.crm.dto.enums.measure.DataDisplayCategory;
@@ -8,6 +9,7 @@ import javax.persistence.*;
 
 //описывает типы данных получаемых от клиента   (столбики)
 @Entity(name = "orders_data_type")
+@JsonFilter("entityFilter")
 public class OrderDataTypeEntity {
     private int id;
     private String name;//имя в системе

@@ -310,6 +310,7 @@ public class OrderDataController {
             measureVariants.setName(body.getMeasureVariantsDTO().getName());
             measureVariants.setDescription(body.getMeasureVariantsDTO().getDescription());
             measureVariants.setGoogleName(body.getMeasureVariantsDTO().getGoogleName());
+            measureVariants.setPriority(body.getMeasureVariantsDTO().getPriority());
     
             String json = dictionaryService.productToJson(body.getMeasureVariantsDTO().getProducts());
             if (json == null) {
@@ -323,6 +324,7 @@ public class OrderDataController {
             }
             measureVariants.setOrderDataType(orderDataTypeEntity);
     
+            
             MeasureVariantsEntity save = measureVariantsRepository.save(measureVariants);
     
             MeasureVariantsDTO measureVariantsDTO = columnService.toDTO(save);

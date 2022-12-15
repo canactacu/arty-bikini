@@ -1,10 +1,10 @@
 package ru.arty_bikini.crm.dto.orders.google
 
 import kotlinx.serialization.Serializable
-import ru.arty_bikini.crm.dto.IEntity
+import ru.arty_bikini.crm.dto.EntityDTO
 
 @Serializable
-class DataGoogleDTO  : IEntity {
+class DataGoogleDTO  : EntityDTO() {
     override var id = 0
     
     var connected: Boolean = false

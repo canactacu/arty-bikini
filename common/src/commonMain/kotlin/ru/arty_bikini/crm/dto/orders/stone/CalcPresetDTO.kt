@@ -1,13 +1,13 @@
 package ru.arty_bikini.crm.dto.orders.stone
 
 import kotlinx.serialization.Serializable
-import ru.arty_bikini.crm.dto.IEntity
+import ru.arty_bikini.crm.dto.EntityDTO
 import ru.arty_bikini.crm.dto.dict.RhinestoneTypeDTO
 import ru.arty_bikini.crm.dto.enums.CalcPresetRuleType
 
 //пресеты для калькулятора
 @Serializable
-class CalcPresetDTO : IEntity  {
+class CalcPresetDTO : EntityDTO()  {
     override var id = 0
     var name: String? = null
     var priority = 0

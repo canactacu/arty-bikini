@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,10 +12,12 @@ import ru.arty_bikini.crm.data.dict.ProductTypeEntity;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
 import ru.arty_bikini.crm.data.orders.*;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
+import ru.arty_bikini.crm.data.orders.stone.CalcPresetRuleJson;
 import ru.arty_bikini.crm.dto.PageDTO;
 import ru.arty_bikini.crm.dto.enums.UserGroup;
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
+import ru.arty_bikini.crm.dto.orders.stone.CalcPresetRuleDTO;
 import ru.arty_bikini.crm.dto.packet.order.*;
 import ru.arty_bikini.crm.jpa.*;
 import ru.arty_bikini.crm.servise.OrderService;
@@ -24,10 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 ///api/order/get-clients + //получить список клиентов
-///api/order/get-leads  + - //получить список лидов и клиентов с предоплатой и без мерок или без дизайна
+///api/order/get-leads  +  //получить список лидов и клиентов с предоплатой и без мерок или без дизайна
 ///api/order/add-client + //добавить лида-клиента
 ///api/order/edit-client + //изменить клиента
-///api/order/get-client //получить 1 клиента?
+//Добавить точку + /api/order/get-order
 ///api/order/get-archive + //архив по страницам
 ///api/order/get-order-by-trainer +  //получить список заказов по тренеру
 
@@ -339,7 +342,31 @@ public class OrderController {
                 }
             }
             
-           
+           //сохраняем поле presetRulesJson и presetRules
+            if (body.getOrder().getPresetRules()!= null) {
+                if (body.getOrder().getPresetRules().size() != 0) {
+                   
+                    String presetRulesJson = null;
+                    List<CalcPresetRuleDTO> calcPresetRuleDTOList = body.getOrder().getPresetRules();
+                    List<CalcPresetRuleJson> calcPresetRuleJsonList = new ArrayList<>();
+                    
+                    for (int i = 0; i < calcPresetRuleDTOList.size(); i++) {
+                        
+                        calcPresetRuleJsonList.add(objectMapper.convertValue(calcPresetRuleDTOList.get(i), CalcPresetRuleJson.class));
+                        
+                        if (calcPresetRuleDTOList.get(i).getStone() != null) {
+                            calcPresetRuleJsonList.get(i).setStoneId(calcPresetRuleDTOList.get(i).getStone().getId());
+                        }
+                    }
+                    try {
+                        presetRulesJson = objectMapper.writeValueAsString(calcPresetRuleJsonList);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    order.setPresetRulesJson(presetRulesJson);
+        
+                }
+            }
     
             //сохранить в бд
             OrderEntity save = orderRepository.save(order);
@@ -350,6 +377,26 @@ public class OrderController {
             return new EditClientResponse("данные исправлены", orderDTO);
         }
         return new EditClientResponse("нет сессии", null);
+    }
+    
+    @PostMapping("/get-order")//получить 1
+    @ResponseBody
+    public GetOrderResponse getOrder(@RequestParam String key, @RequestBody GetOrderRequest body){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null){
+            return new GetOrderResponse("нет сессии", false,null, null);
+        }
+        //проверка на права доступа
+        if(session.getUser().getGroup().canViewClients == true){
+    
+            OrderEntity order = orderRepository.getById(body.getIdOrder());
+    
+            OrderDTO orderDTO = orderService.toOrderDTO(order);
+    
+            return new GetOrderResponse("переданы клиенты", true, null, orderDTO);
+        }
+        return new GetOrderResponse("нет сессии", false,null, null);
     }
 
     @PostMapping("/get-order-by-trainer")//получить список заказов по тренеру

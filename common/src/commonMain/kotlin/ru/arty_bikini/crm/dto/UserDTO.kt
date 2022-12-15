@@ -6,7 +6,7 @@ import ru.arty_bikini.crm.dto.enums.UserGroup
 
 //для передали данных в интернете
 @Serializable
-class UserDTO : IEntity {
+class UserDTO : EntityDTO() {
     override var id = 0
     var login: String? = null
     var group: UserGroup? = null
