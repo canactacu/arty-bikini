@@ -429,6 +429,8 @@ public class DictionaryController {
             price.setId(0);
             price.setName(body.getPriceDTO().getName());
             price.setCount(body.getPriceDTO().getCount());
+            price.setHide(body.getPriceDTO().getHide());
+            price.setGroup(body.getPriceDTO().getGroup());
     
             PriceEntity save = priceRepository.save(price);
     
@@ -462,6 +464,8 @@ public class DictionaryController {
     
             price.setName(body.getPriceDTO().getName());
             price.setCount(body.getPriceDTO().getCount());
+            price.setGroup(body.getPriceDTO().getGroup());
+            price.setHide(body.getPriceDTO().getHide());
     
             PriceEntity save = priceRepository.save(price);
     

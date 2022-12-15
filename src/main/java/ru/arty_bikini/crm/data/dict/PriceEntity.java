@@ -10,6 +10,26 @@ public class PriceEntity {
     private int id;
     private String name;
     private int count;
+    private boolean hide;
+    private String group;
+    
+    @Column
+    public String getGroup() {
+        return group;
+    }
+    
+    public void setGroup(String group) {
+        this.group = group;
+    }
+    
+    @Column(columnDefinition = "BOOLEAN NOT NULL DEFAULT true")
+    public boolean isHide() {
+        return hide;
+    }
+    
+    public void setHide(boolean hide) {
+        this.hide = hide;
+    }
     
     @Id
     @GeneratedValue
