@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.arty_bikini.crm.data.dict.RhinestoneTypeEntity;
+import ru.arty_bikini.crm.data.file.OrderFileEntity;
 import ru.arty_bikini.crm.data.orders.OrderScriptStageEntity;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.data.orders.stone.CalcPresetRuleJson;
@@ -14,6 +15,7 @@ import ru.arty_bikini.crm.data.orders.stone.OrderRhinestoneAmountEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.work.WorkEntity;
 import ru.arty_bikini.crm.dto.dict.RhinestoneTypeDTO;
+import ru.arty_bikini.crm.dto.file.OrderFileDTO;
 import ru.arty_bikini.crm.dto.orders.OrderScriptStageDTO;
 import ru.arty_bikini.crm.dto.orders.stone.CalcPresetRuleDTO;
 import ru.arty_bikini.crm.dto.orders.stone.OrderRhinestoneAmountDTO;
@@ -51,6 +53,9 @@ public class OrderService {
     @Autowired
     private OrderScriptStageRepository orderSSRepository;
     
+    @Autowired
+    private OrderFileRepository orderFileRepository;
+    
     //считаем и сохраняем дату отправки
     public void savePackageTime(OrderEntity order){
         
@@ -85,11 +90,9 @@ public class OrderService {
         }
     }
     
-    //orderEntity преобразуем в OrderDTO OrderRhinestoneAmount
+    //orderEntity преобразуем в OrderDTO
     public OrderDTO toOrderDTO(OrderEntity orderEntity) {
-    
-        //  System.out.println(objectMapper);
-    
+        
         OrderDTO orderDTO = objectMapper.convertValue(orderEntity, OrderDTO.class);
     
         if (orderEntity.getDataGoogle() != null) {
@@ -151,6 +154,11 @@ public class OrderService {
         List<OrderScriptStageEntity> scriptOrderList = orderSSRepository.getByOrder(orderEntity);
         List<OrderScriptStageDTO> orderScriptStageDTOS = objectMapper.convertValue(scriptOrderList, new TypeReference<List<OrderScriptStageDTO>>() {});
         orderDTO.setScript(orderScriptStageDTOS);
+        
+        //заполняем поле files
+        List<OrderFileEntity> fileOrderList = orderFileRepository.getByOrder(orderEntity);
+        List<OrderFileDTO> orderFileDTOS = objectMapper.convertValue(fileOrderList, new TypeReference<List<OrderFileDTO>>() {});
+        orderDTO.setFiles(orderFileDTOS);
         
         return orderDTO;
     }

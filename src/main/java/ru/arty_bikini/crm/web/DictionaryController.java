@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.dict.*;
+import ru.arty_bikini.crm.data.work.WorkTypeEntity;
 import ru.arty_bikini.crm.dto.dict.*;
 import ru.arty_bikini.crm.dto.packet.dict.*;
+import ru.arty_bikini.crm.dto.work.WorkTypeDTO;
 import ru.arty_bikini.crm.jpa.*;
+import ru.arty_bikini.crm.servise.DictionaryService;
 
 import java.util.List;
 
@@ -38,6 +41,10 @@ import java.util.List;
 //api/dict/add-script-stage +  добавить script_stage
 //api/dict/edit-script-stage +  изменить script_stage
 
+//api/dict/get-work-type +  получить всех work_type
+//api/dict/add-work-type  + добавить work_type
+//api/dict/edit-work-type  +  изменить work_type
+
 @RestController
 @RequestMapping("/api/dict")
 public class DictionaryController {
@@ -65,9 +72,126 @@ public class DictionaryController {
    
    @Autowired
    private PriceRepository priceRepository;
-   
+    
+    
+    @Autowired
+    private WorkTypeRepository workTypeRepository;
+    
+    @Autowired
+    private DictionaryService dictionaryService;
+    
     @Autowired
     private ScriptStageRepository scriptStageRepository;
+    
+    @PostMapping("/get-work-type")//получить всех work-type
+    @ResponseBody
+    public GetWorkTypeResponse getWorkType(@RequestParam String key) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new GetWorkTypeResponse(false, "нет сессии", null, null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canViewDict == true) {
+    
+            List<WorkTypeEntity> list = workTypeRepository.findAll();
+            List<WorkTypeDTO> workTypeDTOS = objectMapper.convertValue(list, new TypeReference<List<WorkTypeDTO>>() {});
+            
+            return new GetWorkTypeResponse(true, "нет сессии", null, workTypeDTOS);
+        }
+        return new GetWorkTypeResponse(false, "нет сессии", null, null);
+    }
+    
+    @PostMapping("/add-work-type")//добавить add-work-type
+    @ResponseBody
+    public AddWorkTypeResponse addWorkType(@RequestParam String key, @RequestBody AddWorkTypeRequest body){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new AddWorkTypeResponse(false, "нет сессии", null, null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditDict == true){
+            
+            WorkTypeEntity workType = new WorkTypeEntity();
+            workType.setId(0);
+            workType.setName(body.getWorkType().getName());
+            
+            workType.setPriority(body.getWorkType().getPriority());
+            workType.setVisible(body.getWorkType().getVisible());
+            
+            workType.setSeamstress(body.getWorkType().getSeamstress());
+            workType.setGluer(body.getWorkType().getGluer());
+            workType.setGluerAndSeamstress(body.getWorkType().getGluerAndSeamstress());
+            
+            workType.setPaySeamstress(body.getWorkType().getPaySeamstress());
+    
+            if (body.getWorkType().getPrice() != null) {
+                PriceEntity price = priceRepository.getById(body.getWorkType().getPrice().getId());
+                if (price == null) {
+                    return new AddWorkTypeResponse(false, "ошибка price==null", null, null);
+                }
+                workType.setPrice(price);
+            }
+            
+            String productJson = dictionaryService.productToJson(body.getWorkType().getProductList());
+            workType.setProductJson(productJson);
+    
+            WorkTypeEntity save = workTypeRepository.save(workType);
+            WorkTypeDTO workTypeDTO = objectMapper.convertValue(save, WorkTypeDTO.class);
+    
+            return new AddWorkTypeResponse(true, "нет сессии", null, workTypeDTO);
+        }
+    
+        return new AddWorkTypeResponse(false, "нет сессии", null, null);
+    }
+    
+    @PostMapping("/edit-work-type")//изменить work-type
+    @ResponseBody
+    public EditWorkTypeResponse editWorkType(@RequestParam String key, @RequestBody EditWorkTypeRequest body){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new EditWorkTypeResponse(false, "нет сессии", null, null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditDict == true){
+    
+            WorkTypeEntity workType = workTypeRepository.getById(body.getWorkType().getId());
+            if (workType == null) {
+                return new EditWorkTypeResponse(false, "не нашли в бд", null, null);
+            }
+            workType.setName(body.getWorkType().getName());
+    
+            workType.setPriority(body.getWorkType().getPriority());
+            workType.setVisible(body.getWorkType().getVisible());
+    
+            workType.setSeamstress(body.getWorkType().getSeamstress());
+            workType.setGluer(body.getWorkType().getGluer());
+            workType.setGluerAndSeamstress(body.getWorkType().getGluerAndSeamstress());
+    
+            workType.setPaySeamstress(body.getWorkType().getPaySeamstress());
+    
+            if (body.getWorkType().getPrice() != null) {
+                PriceEntity price = priceRepository.getById(body.getWorkType().getPrice().getId());
+                if (price == null) {
+                    return new EditWorkTypeResponse(false, "ошибка price==null", null, null);
+                }
+                workType.setPrice(price);
+            }
+    
+            String productJson = dictionaryService.productToJson(body.getWorkType().getProductList());
+            workType.setProductJson(productJson);
+    
+            WorkTypeEntity save = workTypeRepository.save(workType);
+            WorkTypeDTO workTypeDTO = objectMapper.convertValue(save, WorkTypeDTO.class);
+           
+            
+            return new EditWorkTypeResponse(true, "изменили", null, null);
+        }
+        return new EditWorkTypeResponse(false, "нет сессии", null, null);
+    }
+    
     
     @PostMapping("/get-script-stage")//получить всех
     @ResponseBody
@@ -78,7 +202,7 @@ public class DictionaryController {
             return new GetScriptStageResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canViewDict == true) {
+        if (session.getUser().getGroup().canViewOrder == true) {
     
             List<ScriptStageEntity> all = scriptStageRepository.findAll();
             List<ScriptStageDTO> scriptStageDTOS = objectMapper.convertValue(all, new TypeReference<List<ScriptStageDTO>>() {});
@@ -97,7 +221,7 @@ public class DictionaryController {
             return new AddScriptStageResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canEditDict == true){
+        if (session.getUser().getGroup().canEditOrder == true){
             ScriptStageEntity scriptStage = new ScriptStageEntity();
     
             scriptStage.setId(0);
@@ -121,7 +245,7 @@ public class DictionaryController {
             return new EditScriptStageResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canEditDict == true){
+        if (session.getUser().getGroup().canEditOrder == true){
     
             ScriptStageEntity scriptStage = scriptStageRepository.getById(body.getScriptStageDTO().getId());
             if (scriptStage == null) {

@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm;
 
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -25,6 +26,38 @@ public class Utils {
             throw new RuntimeException(e);
         }
 
+    }
+    public static String SHA256(File file){
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            
+            byte[] data = new byte[1024 * 1024];
+    
+            InputStream input = new FileInputStream(file);
+            try (input) {
+                while (true) {
+                    int size = input.read(data);
+                    if (size < 0) {
+                        break;
+                    }
+    
+                    digest.update(data, 0, size);
+                }
+            }
+            
+            byte[] hash = digest.digest();
+
+            String hashString = Base64.getEncoder().encodeToString(hash);
+
+            return hashString;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    
     }
 
     //генерирует пароли

@@ -6,6 +6,7 @@ import ru.arty_bikini.crm.dto.dict.ExpressDTO
 import ru.arty_bikini.crm.dto.orders.stone.OrderRhinestoneAmountDTO
 import ru.arty_bikini.crm.dto.dict.ProductTypeDTO
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType
+import ru.arty_bikini.crm.dto.file.OrderFileDTO
 import ru.arty_bikini.crm.dto.orders.google.DataGoogleDTO
 import ru.arty_bikini.crm.dto.orders.stone.CalcPresetRuleDTO
 import ru.arty_bikini.crm.dto.work.WorkDTO
@@ -36,4 +37,5 @@ class OrderDTO : EntityDTO() {
     
     var stones : List<OrderRhinestoneAmountDTO>? = null
     var script : List<OrderScriptStageDTO>? = null
+    var files : List<OrderFileDTO>? = null
 }
