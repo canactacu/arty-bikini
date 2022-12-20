@@ -7,19 +7,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.arty_bikini.crm.data.dict.RhinestoneTypeEntity;
+import ru.arty_bikini.crm.data.orders.OrderScriptStageEntity;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.data.orders.stone.CalcPresetRuleJson;
 import ru.arty_bikini.crm.data.orders.stone.OrderRhinestoneAmountEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.work.WorkEntity;
 import ru.arty_bikini.crm.dto.dict.RhinestoneTypeDTO;
+import ru.arty_bikini.crm.dto.orders.OrderScriptStageDTO;
 import ru.arty_bikini.crm.dto.orders.stone.CalcPresetRuleDTO;
 import ru.arty_bikini.crm.dto.orders.stone.OrderRhinestoneAmountDTO;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
 import ru.arty_bikini.crm.dto.work.WorkDTO;
-import ru.arty_bikini.crm.jpa.OrderRhinestoneAmountRepository;
-import ru.arty_bikini.crm.jpa.RhinestoneTypeRepository;
-import ru.arty_bikini.crm.jpa.WorkRepository;
+import ru.arty_bikini.crm.jpa.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,6 +44,12 @@ public class OrderService {
     
     @Autowired
     private RhinestoneTypeRepository rhinestoneTypeRepository;
+    
+    @Autowired
+    private ScriptStageRepository scriptStageRepository;
+    
+    @Autowired
+    private OrderScriptStageRepository orderSSRepository;
     
     //считаем и сохраняем дату отправки
     public void savePackageTime(OrderEntity order){
@@ -140,6 +146,11 @@ public class OrderService {
                 orderDTO.setPresetRules(calcPresetRuleDTOList);
             }
         }
+        
+        //заполняем поле OrderScriptStageEntity скрипты у лида (просмотреть это ведь в лидах должно быть)
+        List<OrderScriptStageEntity> scriptOrderList = orderSSRepository.getByOrder(orderEntity);
+        List<OrderScriptStageDTO> orderScriptStageDTOS = objectMapper.convertValue(scriptOrderList, new TypeReference<List<OrderScriptStageDTO>>() {});
+        orderDTO.setScript(orderScriptStageDTOS);
         
         return orderDTO;
     }

@@ -50,6 +50,36 @@ public class PersonalData {
 
     private String comment;//комментарий на чем остановились
     private TrainerEntity trainer;//тренер
+    private boolean payTrainer;
+    private int payMoneyTrainer;//сколько заплатили тренеру
+    private int sale;
+    
+    @Column(name = "pd_sale", columnDefinition = "INT NOT NULL DEFAULT 0")
+    public int getSale() {
+        return sale;
+    }
+    
+    public void setSale(int sale) {
+        this.sale = sale;
+    }
+    
+    @Column(name = "pd_pay_many_trainer", columnDefinition = "INT NOT NULL DEFAULT 0")
+    public int getPayMoneyTrainer() {
+        return payMoneyTrainer;
+    }
+    
+    public void setPayMoneyTrainer(int payMoneyTrainer) {
+        this.payMoneyTrainer = payMoneyTrainer;
+    }
+    
+    @Column(name = "pd_pay_trainer", columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
+    public boolean isPayTrainer() {
+        return payTrainer;
+    }
+    
+    public void setPayTrainer(boolean payTrainer) {
+        this.payTrainer = payTrainer;
+    }
     
     @Column(name = "delivery_time", columnDefinition = "INT NOT NULL DEFAULT 0")
     public int getDeliveryTime() {

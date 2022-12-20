@@ -26,4 +26,7 @@ class PersonalDataDTO {
     var comment: String? = null //комментарий на чем остановились
     var createdTime : Long? = null //дата появления лида
     var archiveTime : Long? = null //дата попадания в архив
+    var payTrainer = false
+    var payMoney =0
+    var sale = 0//скидка
 }

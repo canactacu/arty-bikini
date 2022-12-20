@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm.data.work;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import ru.arty_bikini.crm.utils.LocalDateToLongDeserializer;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import java.time.LocalDate;
 
 @Entity
+@JsonFilter("entityFilter")
 public class TourEntity {
     private int id;
     @JsonSerialize(using = LocalDateToLongSerializer.class)

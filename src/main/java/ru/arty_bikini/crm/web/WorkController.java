@@ -15,6 +15,7 @@ import ru.arty_bikini.crm.dto.work.IntervalDTO;
 import ru.arty_bikini.crm.dto.work.WorkDTO;
 import ru.arty_bikini.crm.jpa.*;
 import ru.arty_bikini.crm.servise.OrderService;
+import ru.arty_bikini.crm.servise.WorkService;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -64,6 +65,9 @@ public class WorkController {
 
     @Autowired
     private TourRepository tourRepository;
+    
+    @Autowired
+    private WorkService workService;
 
     @PostMapping("/add-work")//добавить работу
     @ResponseBody
@@ -76,7 +80,7 @@ public class WorkController {
         }
 
         //проверка на права доступа
-        if (session.getUser().getGroup().canAddWork == true) {
+        if (session.getUser().getGroup().canEditWork == true) {
 
             //найти и проверить все id, что они есть
             OrderEntity order = orderRepository.getById(body.getIdOrder());
@@ -99,14 +103,17 @@ public class WorkController {
             work.setOrder(order);
             work.setUser(userWork);
             work.setInterval(interval);//id
-            work.setWorks(new HashSet<>(body.getTypeWork()));//создали set и скопировали все значения листа
-
+            //из string в список
+            work.setWorksJson(workService.toString(body.getTypeWork()));
+            
             //сохранить бд
             WorkEntity save = workRepository.save(work);
 
             //перевести работу в DTO
             WorkDTO saveDTO = objectMapper.convertValue(save, WorkDTO.class);
-
+            saveDTO.setWorks(workService.toListDto(save.getWorksJson()));
+            
+            
             return new AddWorkResponse("работу заполнили", saveDTO);
         }
         return new AddWorkResponse("нет сессии", null);
@@ -123,7 +130,7 @@ public class WorkController {
         }
         
         //проверка на права доступа
-        if (session.getUser().getGroup().canAddWork == true) {
+        if (session.getUser().getGroup().canEditWork == true) {
             if (body.getWorkDTO().getOrder() == null){
                 return new EditWorkResponse("Order == null", null);
             }
@@ -156,13 +163,13 @@ public class WorkController {
             work.setOrder(order);
             work.setUser(userWork);
             work.setInterval(interval);
-            work.setWorks(body.getWorkDTO().getWorks());//создали set и скопировали все значения листа
-            
+            work.setWorksJson(workService.toString(body.getWorkDTO().getWorks()));
             //сохранить бд
             WorkEntity save = workRepository.save(work);
             
             //перевести работу в DTO
             WorkDTO saveDTO = objectMapper.convertValue(save, WorkDTO.class);
+            saveDTO.setWorks(workService.toListDto(save.getWorksJson()));
             
             return new EditWorkResponse("работу изменили", saveDTO);
         }
@@ -178,7 +185,7 @@ public class WorkController {
             return new AddIntervalResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canAddWork == true) {
+        if (session.getUser().getGroup().canEditWork == true) {
 
             //проверить поступающий интервал на адекватность(должен быть больше, чем последний),
             // или больше, чем сегодня, если первый
@@ -228,7 +235,7 @@ public class WorkController {
             return new EditIntervalResponse("нет сессии", null, null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canAddWork == true) {
+        if (session.getUser().getGroup().canEditWork == true) {
 
             //надо понять, что существующий существует, идем проверять в бд
             IntervalEntity interval = intervalRepository.getById(body.getIdInterval());//изменяемый интервал
@@ -286,7 +293,7 @@ public class WorkController {
             return new DivIntervalResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canAddWork == true) {
+        if (session.getUser().getGroup().canEditWork == true) {
             //проверить интервал на наличие
             IntervalEntity interval = intervalRepository.getById(body.getIdInterval());//текущий интервал, в кот надо добавить встречу
             if (interval == null) {
@@ -325,7 +332,7 @@ public class WorkController {
             return new DelIntervalResponse("нет сессии");
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canAddWork == true){
+        if (session.getUser().getGroup().canEditWork == true){
 
             //если ли такая встреча(возможно, встречи нет)
             IntervalEntity interval = intervalRepository.getById(body.getIdInterval());//текущий интервал
@@ -359,7 +366,7 @@ public class WorkController {
             return new AssignWorkToTourResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canAddWork == true){
+        if (session.getUser().getGroup().canEditWork == true){
             //найти эту работу в бд
             WorkEntity work = workRepository.getById(body.getIdWork());//работа в которую надо назначить на встречу
             if (work == null){
@@ -388,7 +395,7 @@ public class WorkController {
             return new DelWorkFromTourResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canAddWork == true){
+        if (session.getUser().getGroup().canEditWork == true){
             //найти эту работу в бд
             WorkEntity work = workRepository.getById(body.getIdWork());//работа в которую надо назначить на встречу
             if (work == null){
@@ -416,7 +423,7 @@ public class WorkController {
             return new DelWorkResponse("нет сессии");
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canAddWork == true) {
+        if (session.getUser().getGroup().canEditWork == true) {
 
             //проверить, есть ли такая работа
             WorkEntity work = workRepository.getById(body.getIdWorc());
@@ -438,7 +445,7 @@ public class WorkController {
             return new GetIntervalWorkResponse("нет сессии", null, null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canAddWork == true){
+        if (session.getUser().getGroup().canViewWork == true){
             IntervalEntity intervalLast = intervalRepository.getLast();//последний интервал
             IntervalEntity intervalFirst = intervalRepository.getFirst();//первый интервал
 
@@ -450,9 +457,12 @@ public class WorkController {
             List<WorkEntity> workList = workRepository.getByIntervalList(intervalList);//описание в репазитории
 
             List<IntervalDTO> intervalDTOS = objectMapper.convertValue(intervalList, new TypeReference<List<IntervalDTO>>() {});
-            List<WorkDTO> workEntities = objectMapper.convertValue(workList, new TypeReference<List<WorkDTO>>() {});
-
-            return new GetIntervalWorkResponse("нет сессии", workEntities, intervalDTOS);
+            List<WorkDTO> workDTOList = objectMapper.convertValue(workList, new TypeReference<List<WorkDTO>>() {});
+            for (int i = 0; i < workDTOList.size(); i++) {
+                workDTOList.get(i).setWorks(workService.toListDto(workList.get(i).getWorksJson()));
+            }
+    
+            return new GetIntervalWorkResponse("нет сессии", workDTOList, intervalDTOS);
         }
         return new GetIntervalWorkResponse("нет сессии", null, null);
     }

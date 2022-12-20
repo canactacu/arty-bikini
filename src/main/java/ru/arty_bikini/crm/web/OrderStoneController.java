@@ -54,7 +54,7 @@ public class OrderStoneController {
             return new SaveResponse("нет сессии");
         }
         //проверка прав на добавление
-        if(session.getUser().getGroup().canViewClients == true){
+        if(session.getUser().getGroup().canEditOrder == true){
     
             OrderEntity order = orderRepository.getById(body.getIdOrder());
             if (order == null) {
@@ -122,7 +122,7 @@ public class OrderStoneController {
             return new GetPresetsResponse("нет сессии", null);
         }
         //проверка прав на добавление
-        if(session.getUser().getGroup().canViewClients == true){
+        if(session.getUser().getGroup().canViewOrder == true){
             List<CalcPresetEntity> all = calcPresetRepository.findAll();
     
             List<CalcPresetDTO> calcPresetDTOList = orderStoneService.toDTOS(all);
@@ -140,7 +140,7 @@ public class OrderStoneController {
         if (session == null){
             return new AddPresetsResponse("нет сессии", null);
         }
-        if(session.getUser().getGroup().canViewClients == true){
+        if(session.getUser().getGroup().canEditOrder == true){
     
             if (body.getCalcPresetDTO().getId() != 0) {
                 return new AddPresetsResponse("id != 0", null);
@@ -164,7 +164,7 @@ public class OrderStoneController {
         if (session == null){
             return new EditPresetsResponse("нет сессии", null);
         }
-        if(session.getUser().getGroup().canViewClients == true){
+        if(session.getUser().getGroup().canEditOrder == true){
             
             if (body.getCalcPresetDTO().getId() == 0) {
                 return new EditPresetsResponse("id == 0", null);

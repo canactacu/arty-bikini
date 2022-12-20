@@ -11,9 +11,9 @@ import ru.arty_bikini.crm.dto.orders.OrderDTO
 class WorkDTO : EntityDTO() {
     override var id = 0
     var order : OrderDTO? = null //заказ
-    var works : Set<TypeWork>? = null //части чаказа
+    
+    var works : List<WorkTypeDTO>? = null //части чаказа
     var user : UserDTO? = null  //работник
     var interval : IntervalDTO? = null
     var tour: TourDTO? = null  //доп встреча
-
 }

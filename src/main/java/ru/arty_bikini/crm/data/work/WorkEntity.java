@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm.data.work;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.dto.enums.TypeWork;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
@@ -10,10 +11,12 @@ import java.util.Set;
 
 //класс описывает работы над заказами order
 @Entity(name = "works")
+@JsonFilter("entityFilter")
 public class WorkEntity {
     private int id;
     private OrderEntity order;//заказ
-    private Set<TypeWork> works;//части от заказа
+    
+    private String worksJson;//части от заказа
     private UserEntity user;//работник
     private IntervalEntity interval;//интервал
     private TourEntity tour;//если ли встреча и когда
@@ -48,46 +51,15 @@ public class WorkEntity {
         this.order = order;
     }
 
-    @Transient
-    public Set<TypeWork> getWorks() {
-        return works;
+    @Column(name = "works_json")
+    public String getWorksJson() {
+        return worksJson;
     }
 
-    public void setWorks(Set<TypeWork> works) {
-        this.works = works;
+    public void setWorksJson(String worksJson) {
+        this.worksJson = worksJson;
     }
-
-    @Column(name = "works")
-    public String getWorksInternal() {
-        // [STRUPS, CUP] -> "STRUPS,CUP"
-
-        StringBuilder result = new StringBuilder();
-
-        for (TypeWork work : this.works) {
-            if (!result.isEmpty()) {
-                result.append(",");
-            }
-
-            result.append(work.name());
-        }
-
-        return result.toString();
-    }
-
-    public void setWorksInternal(String value) {
-        // "STRUPS,CUP" -> ["STRUPS", "CUP"] -> [STRUPS, CUP]
-
-        Set<TypeWork> all = new HashSet<>();
-
-        String[] parts = value.split(",");
-        for (String part : parts) {
-            TypeWork curr = TypeWork.valueOf(part);
-
-            all.add(curr);
-        }
-
-        this.works = all;
-    }
+    
 
     @ManyToOne(targetEntity = UserEntity.class)//сущности откуда берем переменную из какой табл
     @JoinColumn(name = "user_id")

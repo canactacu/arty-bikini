@@ -1,5 +1,7 @@
 package ru.arty_bikini.crm.data.dict;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import javax.persistence.Id;
 
 //срочность
 @Entity(name = "express")
+@JsonFilter("entityFilter")
 public class ExpressEntity {
     
     private int id;

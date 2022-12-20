@@ -31,6 +31,9 @@ class OrderDTO : EntityDTO() {
     var statusInfo : StatusInfoDTO? = null
     
     var works : List<WorkDTO>? = null
-    var stones : List<OrderRhinestoneAmountDTO>? = null
+    
     var  presetRules : List<CalcPresetRuleDTO>? = null
+    
+    var stones : List<OrderRhinestoneAmountDTO>? = null
+    var script : List<OrderScriptStageDTO>? = null
 }

@@ -12,7 +12,49 @@ public class RhinestoneTypeEntity {
     private int id;
     private String manufacturer;//1) Производитель
     private String sizeType;//2) Тип (Пришивная и тд)
+    
     private int price;//3) Цена за расклейку 1 шт"
+    private int payGluerCount;
+    private int payGluerPercent;
+    
+    private int priority;
+    private boolean visible;
+    
+    @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
+    public int getPriority() {
+        return priority;
+    }
+    
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+    
+    @Column(columnDefinition = "BOOLEAN NOT NULL DEFAULT true")
+    public boolean isVisible() {
+        return visible;
+    }
+    
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+    
+    @Column(name = "pay_gluer_percent", columnDefinition = "INTEGER NOT NULL DEFAULT 0")
+    public int getPayGluerPercent() {
+        return payGluerPercent;
+    }
+    
+    public void setPayGluerPercent(int payGluerPercent) {
+        this.payGluerPercent = payGluerPercent;
+    }
+    
+    @Column(name = "pay_gluer_count", columnDefinition = "INTEGER NOT NULL DEFAULT 0")
+    public int getPayGluerCount() {
+        return payGluerCount;
+    }
+    
+    public void setPayGluerCount(int payGluer) {
+        this.payGluerCount = payGluer;
+    }
     
     @Id
     @GeneratedValue

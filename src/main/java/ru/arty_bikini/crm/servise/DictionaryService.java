@@ -79,4 +79,15 @@ public class DictionaryService {
         return set;
     }
     
+    public String productToJson(List<ProductTypeDTO> productTypeDTOSet) {
+        Set<ProductTypeDTO> productTypeDTOList = new HashSet<>(productTypeDTOSet);
+        return productToJson(productTypeDTOList);
+    }
+    
+    public List<ProductTypeDTO> productTypeDTOList(String productJson){
+        Set<ProductTypeDTO> productTypeDTOS = productToSet(productJson);
+        List<ProductTypeDTO> productTypeDTOList = new ArrayList<>(productTypeDTOS);
+        return productTypeDTOList;
+    }
+    
 }

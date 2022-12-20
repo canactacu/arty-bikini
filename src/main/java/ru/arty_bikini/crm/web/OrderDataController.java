@@ -82,7 +82,7 @@ public class OrderDataController {
             return new GetTypesResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if(session.getUser().getGroup().canViewColumnForGoogle == true){
+        if(session.getUser().getGroup().canViewColumn == true){
 
             //идем в бд колонок
             List<OrderDataTypeEntity> orderAll = orderDataTypeRepository.findAll();
@@ -108,7 +108,7 @@ public class OrderDataController {
             return new EditTypeResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if(session.getUser().getGroup().canEditColumnForGoogle == true){
+        if(session.getUser().getGroup().canEditColumn == true){
             OrderDataTypeDTO orderDataTypeDTO = body.getOrderDataType();//столбик, кот нам передали
             OrderDataTypeEntity orderDataTypeEntity;
             
@@ -160,7 +160,7 @@ public class OrderDataController {
         if (session == null){
             return ("нет сессии");
         }
-        if(session.getUser().getGroup().canEditColumnForGoogle == true){
+        if(session.getUser().getGroup().canEditOrder == true){
 
             googleService.doImport();
 
@@ -178,7 +178,7 @@ public class OrderDataController {
             return new ImportResultResponse ("нет сессии", null);
         }
         //проверка на права доступа
-        if(session.getUser().getGroup().canViewColumnForGoogle == true){
+        if(session.getUser().getGroup().canEditOrder == true){
 
             //достать из бд всех, кроме connected=true
             List<DataGoogleEntity> byConnected = dataGoogleRepository.getByConnected(false);
@@ -201,7 +201,7 @@ public class OrderDataController {
         if (session == null){
             return new LinkOrderToImportResponse ("нет сессии", null);
         }
-        if(session.getUser().getGroup().canViewColumnForGoogle == true){
+        if(session.getUser().getGroup().canEditOrder == true){
 
             //найти в бд такого клиента
             OrderEntity order = orderRepository.getById(body.getIdOrder());
@@ -236,7 +236,7 @@ public class OrderDataController {
         if (session == null){
             return new LinkOrderToImportResponse ("нет сессии", null);
         }
-        if(session.getUser().getGroup().canViewColumnForGoogle == true){
+        if(session.getUser().getGroup().canEditOrder == true){
 
             //найти в бд такого клиента
             OrderEntity order = orderRepository.getById(body.getIdOrder());
@@ -275,7 +275,7 @@ public class OrderDataController {
         if (session == null){
             return new GetMeasureVariantsResponse ("нет сессии", null);
         }
-        if(session.getUser().getGroup().canEditColumnForGoogle == true){
+        if(session.getUser().getGroup().canViewOrder == true){
             List<MeasureVariantsEntity> all = measureVariantsRepository.findAll();
     
             List<MeasureVariantsDTO> measureVariantsDTOS = objectMapper.convertValue(all, new TypeReference<List<MeasureVariantsDTO>>() {});
@@ -293,7 +293,7 @@ public class OrderDataController {
         if (session == null){
             return new EditMeasureVariantsResponse ("нет сессии", null);
         }
-        if(session.getUser().getGroup().canEditColumnForGoogle == true){
+        if(session.getUser().getGroup().canEditColumn == true){
     
             MeasureVariantsEntity measureVariants;
             if(body.getMeasureVariantsDTO().getId() == 0){
@@ -343,7 +343,7 @@ public class OrderDataController {
         if (session == null){
             return new DelMeasureVariantsResponse ("нет сессии");
         }
-        if(session.getUser().getGroup().canEditColumnForGoogle == true){
+        if(session.getUser().getGroup().canEditColumn == true){
             MeasureVariantsEntity measureVariants = measureVariantsRepository.getById(body.getMeasureVariantsDTO().getId());
             measureVariantsRepository.delete(measureVariants);
             return new DelMeasureVariantsResponse ("удален");
@@ -352,7 +352,7 @@ public class OrderDataController {
         return new DelMeasureVariantsResponse ("нет сессии");
     }
     
-    @PostMapping("/edit-value")//
+    @PostMapping("/edit-value")//в форме мерках
     @ResponseBody
     public EditValueResponse editValue(@RequestParam String key, @RequestBody EditValueRequest body){
         //проверка на key
@@ -360,7 +360,7 @@ public class OrderDataController {
         if (session == null){
             return new EditValueResponse ("нет сессии", null);
         }
-        if(session.getUser().getGroup().canEditColumnForGoogle == true){
+        if(session.getUser().getGroup().canEditOrder == true){
     
             OrderEntity order = orderRepository.getById(body.getOrderId());
             if (order == null) {

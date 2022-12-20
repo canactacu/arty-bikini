@@ -134,7 +134,7 @@ public class AuthController {
         }
         //проверяем совпали ли ключи
         if (session.getKey().equals(key)){// ключи совпали
-            if (session.getUser().getGroup().canEditUsers == true){//должны сравнить права user
+            if (session.getUser().getGroup().canViewUsers == true){//должны сравнить права user
 
                 List<UserDTO> result = userService.getUsers();//получить всех пользователей,которых можно через инет кидать
 

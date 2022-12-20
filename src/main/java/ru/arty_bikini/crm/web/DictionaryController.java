@@ -34,6 +34,10 @@ import java.util.List;
 //api/dict/add-straps +  добавить straps
 //api/dict/edit-straps +  изменить straps
 
+//api/dict/get-script-stage  +  получить всех script_stage
+//api/dict/add-script-stage +  добавить script_stage
+//api/dict/edit-script-stage +  изменить script_stage
+
 @RestController
 @RequestMapping("/api/dict")
 public class DictionaryController {
@@ -61,8 +65,85 @@ public class DictionaryController {
    
    @Autowired
    private PriceRepository priceRepository;
-
-
+   
+    @Autowired
+    private ScriptStageRepository scriptStageRepository;
+    
+    @PostMapping("/get-script-stage")//получить всех
+    @ResponseBody
+    public GetScriptStageResponse getScriptStage(@RequestParam String key) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new GetScriptStageResponse("нет сессии", null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canViewDict == true) {
+    
+            List<ScriptStageEntity> all = scriptStageRepository.findAll();
+            List<ScriptStageDTO> scriptStageDTOS = objectMapper.convertValue(all, new TypeReference<List<ScriptStageDTO>>() {});
+    
+            return new GetScriptStageResponse("список передали", scriptStageDTOS);
+        }
+        return new GetScriptStageResponse("нет сессии", null);
+    }
+    
+    @PostMapping("/add-script-stage")//добавить add-script-stage
+    @ResponseBody
+    public AddScriptStageResponse addScriptStage(@RequestParam String key, @RequestBody AddScriptStageRequest body){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new AddScriptStageResponse("нет сессии", null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditDict == true){
+            ScriptStageEntity scriptStage = new ScriptStageEntity();
+    
+            scriptStage.setId(0);
+            scriptStage.setName(body.getScriptStageDTO().getName());
+    
+            ScriptStageEntity save = scriptStageRepository.save(scriptStage);
+            ScriptStageDTO scriptStageDTO = objectMapper.convertValue(save, ScriptStageDTO.class);
+    
+            return new AddScriptStageResponse("добавлен", scriptStageDTO);
+        }
+        
+        return new AddScriptStageResponse("нет сессии", null);
+    }
+    
+    @PostMapping("/edit-script-stage")//изменить
+    @ResponseBody
+    public EditScriptStageResponse editScriptStage(@RequestParam String key, @RequestBody EditScriptStageRequest body){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new EditScriptStageResponse("нет сессии", null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditDict == true){
+    
+            ScriptStageEntity scriptStage = scriptStageRepository.getById(body.getScriptStageDTO().getId());
+            if (scriptStage == null) {
+                return new EditScriptStageResponse("scriptStage == null", null);
+            }
+            scriptStage.setName(body.getScriptStageDTO().getName());
+    
+            scriptStage.setPriority(body.getScriptStageDTO().getPriority());
+            scriptStage.setVisible(body.getScriptStageDTO().getVisible());
+            
+            scriptStage.setNeedDatePostpone(body.getScriptStageDTO().getNeedDatePostpone());
+            scriptStage.setNeedComment(body.getScriptStageDTO().getNeedComment());
+    
+            ScriptStageEntity save = scriptStageRepository.save(scriptStage);
+            ScriptStageDTO scriptStageDTO = objectMapper.convertValue(save, ScriptStageDTO.class);
+            
+            return new EditScriptStageResponse("изменили", scriptStageDTO);
+        }
+        return new EditScriptStageResponse("нет сессии", null);
+    }
+    
+    
     @PostMapping("/get-trainers")//получить всех тренеров
     @ResponseBody
     public GetTrainersResponse getTrainers(@RequestParam String key) {
@@ -72,7 +153,7 @@ public class DictionaryController {
             return new GetTrainersResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canViewLeads == true) {
+        if (session.getUser().getGroup().canViewDict == true) {
 
             List<TrainerEntity> trainer = trainerRepository.findAll();//найти всех
             
@@ -92,7 +173,7 @@ public class DictionaryController {
                 return new AddTrainersResponse("нет сессии", null);
             }
             //проверка на права доступа
-            if (session.getUser().getGroup().canViewLeads == true){
+            if (session.getUser().getGroup().canEditDict == true){
 
                 TrainerEntity trainer = new TrainerEntity();
 
@@ -117,11 +198,20 @@ public class DictionaryController {
             return new EditTrainersResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canViewLeads == true){
+        if (session.getUser().getGroup().canEditDict == true){
 
-            TrainerEntity trainer = trainerRepository.getById(body.getIdTrainers());//наш тренер
-            trainer.setName(body.getName());
-
+            TrainerEntity trainer = trainerRepository.getById(body.getTrainerDTO().getId());//наш тренер
+            trainer.setName(body.getTrainerDTO().getName());
+    
+            trainer.setPayCount(body.getTrainerDTO().getPayCount());
+            trainer.setPayPercent(body.getTrainerDTO().getPayPercent());
+            
+            trainer.setDiscountCount(body.getTrainerDTO().getDiscountCount());
+            trainer.setDiscountPercent(body.getTrainerDTO().getDiscountPercent());
+            
+            trainer.setPriority(body.getTrainerDTO().getPriority());
+            trainer.setVisible(body.getTrainerDTO().getVisible());
+            
             TrainerEntity save = trainerRepository.save(trainer);
             TrainerDTO trainerDTO = objectMapper.convertValue(save, TrainerDTO.class);
 
@@ -139,7 +229,7 @@ public class DictionaryController {
             return new GetProductTypesResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canViewProductTypes == true){
+        if (session.getUser().getGroup().canViewDict == true){
     
             List<ProductTypeEntity> all = productTypeRepository.findAll();
             List<ProductTypeDTO> productTypeDTOS = objectMapper.convertValue(all, new TypeReference<List<ProductTypeDTO>>() {});
@@ -157,7 +247,7 @@ public class DictionaryController {
             return new EditProductTypeResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canViewProductTypes == true){
+        if (session.getUser().getGroup().canEditDict == true){
             body.getProductTypeDTO();
             ProductTypeEntity productType;
             if(body.getProductTypeDTO().getId() == 0){//не нашли такого, добавляем нового
@@ -168,8 +258,10 @@ public class DictionaryController {
             }
             productType.setName(body.getProductTypeDTO().getName());
             productType.setPaymentNonStone(body.getProductTypeDTO().getPaymentNonStone());
-            productType.setCategoryMeasure(body.getProductTypeDTO().getCategoryMeasure());
     
+            productType.setPriority(body.getProductTypeDTO().getPriority());
+            productType.setVisible(body.getProductTypeDTO().getVisible());
+            
             ProductTypeEntity save = productTypeRepository.save(productType);
     
             ProductTypeDTO productTypeDTO = objectMapper.convertValue(save, ProductTypeDTO.class);
@@ -190,7 +282,7 @@ public class DictionaryController {
             return new GetRhinestoneTypeResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canViewProductTypes == true){
+        if (session.getUser().getGroup().canViewDict == true){
             List<RhinestoneTypeEntity> all = rhinestoneTypeRepository.findAll();
             List<RhinestoneTypeDTO> rhinestoneTypeDTOS = objectMapper.convertValue(all, new TypeReference<List<RhinestoneTypeDTO>>() {});
     
@@ -209,7 +301,7 @@ public class DictionaryController {
             return new EditRhinestoneTypeResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canViewProductTypes == true){
+        if (session.getUser().getGroup().canEditDict == true){
             RhinestoneTypeEntity rhinestoneType;
             if(body.getRhinestoneTypeDTO().getId() == 0){
                 rhinestoneType = new RhinestoneTypeEntity();
@@ -217,10 +309,17 @@ public class DictionaryController {
             }else {
                 rhinestoneType =  rhinestoneTypeRepository.getById(body.getRhinestoneTypeDTO().getId());
             }
-            rhinestoneType.setPrice(body.getRhinestoneTypeDTO().getPrice());
+    
             rhinestoneType.setManufacturer(body.getRhinestoneTypeDTO().getManufacturer());
             rhinestoneType.setSizeType(body.getRhinestoneTypeDTO().getSizeType());
     
+            rhinestoneType.setPrice(body.getRhinestoneTypeDTO().getPrice());
+            rhinestoneType.setPayGluerCount(body.getRhinestoneTypeDTO().getPayGluerCount());
+            rhinestoneType.setPayGluerPercent(body.getRhinestoneTypeDTO().getPayGluerPercent());
+    
+            rhinestoneType.setPriority(body.getRhinestoneTypeDTO().getPriority());
+            rhinestoneType.setVisible(body.getRhinestoneTypeDTO().getVisible());
+            
             RhinestoneTypeEntity save = rhinestoneTypeRepository.save(rhinestoneType);
             RhinestoneTypeDTO rhinestoneTypeDTO = objectMapper.convertValue(save, RhinestoneTypeDTO.class);
     
@@ -239,7 +338,7 @@ public class DictionaryController {
             return new GetExpressResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+        if (session.getUser().getGroup().canViewDict == true) {
     
             List<ExpressEntity> all = expressRepository.findAll();
     
@@ -260,7 +359,7 @@ public class DictionaryController {
         if (session == null) {
             return new AddExpressResponse("нет сессии", null);
         }
-        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+        if (session.getUser().getGroup().canEditDict == true) {
             
             if (body.getExpressDTO() == null){
                 return new AddExpressResponse("ExpressDTO() == null", null);
@@ -290,7 +389,7 @@ public class DictionaryController {
             return new EditExpressResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+        if (session.getUser().getGroup().canEditDict == true) {
     
             if (body.getExpressDTO() == null){
                 return new EditExpressResponse("ExpressDTO() == null", null);
@@ -321,7 +420,7 @@ public class DictionaryController {
             return new GetStrapsResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+        if (session.getUser().getGroup().canViewDict == true) {
             List<StrapsEntity> list = strapsRepository.findAll();
     
             List<StrapsDTO> strapsDTOS = objectMapper.convertValue(list, new TypeReference<List<StrapsDTO>>() {});
@@ -339,7 +438,7 @@ public class DictionaryController {
         if (session == null) {
             return new AddStrapsResponse("нет сессии", null);
         }
-        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+        if (session.getUser().getGroup().canEditDict == true) {
             
             if (body.getStrapsDTO() == null){
                 return new AddStrapsResponse("StrapsDTO() == null", null);
@@ -349,6 +448,9 @@ public class DictionaryController {
             straps.setId(0);
             straps.setName(body.getStrapsDTO().getName());
             straps.setCount(body.getStrapsDTO().getCount());
+    
+            straps.setPriority(body.getStrapsDTO().getPriority());
+            straps.setVisible(body.getStrapsDTO().getVisible());
     
             StrapsEntity save = strapsRepository.save(straps);
             StrapsDTO strapsDTO = objectMapper.convertValue(save, StrapsDTO.class);
@@ -368,7 +470,7 @@ public class DictionaryController {
             return new EditStrapsResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+        if (session.getUser().getGroup().canEditDict == true) {
             
             if (body.getStrapsDTO() == null){
                 return new EditStrapsResponse("StrapsDTO() == null", null);
@@ -379,8 +481,11 @@ public class DictionaryController {
                 return new EditStrapsResponse("нет такой Id", null);
             }
             
-            straps.setName(body.getStrapsDTO().getName());;
+            straps.setName(body.getStrapsDTO().getName());
             straps.setCount(body.getStrapsDTO().getCount());
+            
+            straps.setPriority(body.getStrapsDTO().getPriority());
+            straps.setVisible(body.getStrapsDTO().getVisible());
     
             StrapsEntity save = strapsRepository.save(straps);
             StrapsDTO strapsDTO = objectMapper.convertValue(save, StrapsDTO.class);
@@ -400,7 +505,7 @@ public class DictionaryController {
             return new GetPriceResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+        if (session.getUser().getGroup().canViewDict == true) {
     
             List<PriceEntity> all = priceRepository.findAll();
     
@@ -419,7 +524,7 @@ public class DictionaryController {
         if (session == null) {
             return new AddPriceResponse("нет сессии", null);
         }
-        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+        if (session.getUser().getGroup().canEditDict == true) {
             
             if (body.getPriceDTO() == null){
                 return new AddPriceResponse("PriceDTO() == null", null);
@@ -429,8 +534,13 @@ public class DictionaryController {
             price.setId(0);
             price.setName(body.getPriceDTO().getName());
             price.setCount(body.getPriceDTO().getCount());
-            price.setHide(body.getPriceDTO().getHide());
+    
+            price.setVisible(body.getPriceDTO().getVisible());
             price.setGroup(body.getPriceDTO().getGroup());
+            price.setPriority(body.getPriceDTO().getPriority());
+    
+            price.setPayGluerCount(body.getPriceDTO().getPayGluerCount());
+            price.setPayGluerPercent(body.getPriceDTO().getPayGluerPercent());
     
             PriceEntity save = priceRepository.save(price);
     
@@ -451,7 +561,7 @@ public class DictionaryController {
             return new EditPriceResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if (session.getUser().getGroup().canEditColumnForGoogle == true) {
+        if (session.getUser().getGroup().canEditDict == true) {
             
             if (body.getPriceDTO() == null){
                 return new EditPriceResponse("PriceDTO() == null", null);
@@ -464,9 +574,14 @@ public class DictionaryController {
     
             price.setName(body.getPriceDTO().getName());
             price.setCount(body.getPriceDTO().getCount());
+            
+            price.setVisible(body.getPriceDTO().getVisible());
             price.setGroup(body.getPriceDTO().getGroup());
-            price.setHide(body.getPriceDTO().getHide());
-    
+            price.setPriority(body.getPriceDTO().getPriority());
+            
+            price.setPayGluerCount(body.getPriceDTO().getPayGluerCount());
+            price.setPayGluerPercent(body.getPriceDTO().getPayGluerPercent());
+            
             PriceEntity save = priceRepository.save(price);
     
             PriceDTO priceDTO = objectMapper.convertValue(save, PriceDTO.class);

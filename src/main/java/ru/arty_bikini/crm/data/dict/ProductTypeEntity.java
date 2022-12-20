@@ -1,9 +1,11 @@
 package ru.arty_bikini.crm.data.dict;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
-import ru.arty_bikini.crm.dto.enums.measure.CategoryMeasure;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 
 //(тип заказа(куп,платье..))
@@ -12,8 +14,29 @@ import javax.persistence.*;
 public class ProductTypeEntity {
     private int id;
     private String name;//не понятно зачем
+    
     private int paymentNonStone;//цена без расклейки
-    private CategoryMeasure categoryMeasure;
+    
+    private int priority;
+    private boolean visible;
+    
+    @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
+    public int getPriority() {
+        return priority;
+    }
+    
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+    
+    @Column(columnDefinition = "BOOLEAN NOT NULL DEFAULT true")
+    public boolean isVisible() {
+        return visible;
+    }
+    
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
     
     @Id
     @GeneratedValue
@@ -43,13 +66,4 @@ public class ProductTypeEntity {
         this.paymentNonStone = paymentNonStone;
     }
     
-    @Column(name = "category_measure")
-    @Enumerated(EnumType.STRING)
-    public CategoryMeasure getCategoryMeasure() {
-        return categoryMeasure;
-    }
-    
-    public void setCategoryMeasure(CategoryMeasure categoryMeasure) {
-        this.categoryMeasure = categoryMeasure;
-    }
-}
+   }

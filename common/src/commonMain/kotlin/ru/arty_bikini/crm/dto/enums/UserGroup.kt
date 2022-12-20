@@ -4,81 +4,114 @@ import kotlin.jvm.JvmField
 
 //права доступа
 enum class UserGroup
-    (//видит таблицу пользователей
-    @JvmField val canEditUsers: Boolean, //видит таблицу лидов,может получить всех тренеров,изменить тренара, добавить тренера
-    @JvmField val canViewLeads: Boolean, //видит таблицу клиентов
-    @JvmField val canViewClients: Boolean, //видит таблицу архив
-    @JvmField val canViewArchive: Boolean, //может добавлять клиента-лида
-    @JvmField val canAddClientsLeads: Boolean, //может изменять поля у клиента-лида
-    @JvmField val canEditClients: Boolean, //может добавлять работу на производство и интервал,
-    @JvmField val canAddWork: Boolean,
-    @JvmField val canViewColumnForGoogle: Boolean, //
-    @JvmField val canEditColumnForGoogle: Boolean, //изменить столбик гугол(
-    @JvmField val canViewProductTypes: Boolean, //список типов мерок(бодифитнес,фитнес бини...),Добавить, изменить,Список типов страз
+    (
+    @JvmField val canEditUsers: Boolean,//таня и мы
+    @JvmField val canViewUsers: Boolean,//все
+    //тренера, продукты(слитный, фитнес бикини),
+    // тип страз, срочность, лямки, допы
+    @JvmField val canEditDict: Boolean,
+    @JvmField val canViewDict: Boolean,
+    //заказ
+    @JvmField val canEditOrder: Boolean,
+    @JvmField val canViewOrder: Boolean,
+    //получить список заказов по тренеру
+    @JvmField val canViewTrainer: Boolean,
+    //работы и интервалы
+    @JvmField val canEditWork: Boolean,
+    @JvmField val canViewWork: Boolean,
+    //гугол столбики
+    @JvmField val canEditColumn: Boolean,
+    @JvmField val canViewColumn: Boolean,
 
-) {
-    // изменить интервал,удалить работу,разделить интервал(добавить встречу),добавить работы на отдельную встречу,
-// удалить работу со встречи,получить список работ в интервалах, интервалов по дате
+) : HasDisplayValue {
+    
     ADMIN(
         canEditUsers = true,
-        canViewLeads = true,
-        canViewClients = true,
-        canViewArchive = true,
-        canAddClientsLeads = true,
-        canEditClients = true,
-        canAddWork = true,
-        canViewColumnForGoogle = true,
-        canEditColumnForGoogle = true,
-        canViewProductTypes = true
+        canViewUsers = true,
+        canEditDict = true,
+        canViewDict = true,
+        canEditOrder = true,
+        canViewOrder = true,
+        canViewTrainer = true,
+        canEditWork = true,
+        canViewWork = true,
+        canEditColumn = true,
+        canViewColumn = true
     ),
     TANYA(
         canEditUsers = true,
-        canViewLeads = true,
-        canViewClients = true,
-        canViewArchive = true,
-        canAddClientsLeads = true,
-        canEditClients = true,
-        canAddWork = true,
-        canViewColumnForGoogle = true,
-        canEditColumnForGoogle = true,
-        canViewProductTypes = true,
-    
+        canViewUsers = true,
+        
+        canEditDict = true,
+        canViewDict = true,
+        
+        canEditOrder = true,
+        canViewOrder = true,
+        
+        canViewTrainer = true,
+        
+        canEditWork = true,
+        canViewWork = true,
+        
+        canEditColumn = false,
+        canViewColumn = true
         ),
     MANAGER(
         canEditUsers = false,
-        canViewLeads = true,
-        canViewClients = true,
-        canViewArchive = false,
-        canAddClientsLeads = true,
-        canEditClients = true,
-        canAddWork = true,
-        canViewColumnForGoogle = true,
-        canEditColumnForGoogle = false,
-        canViewProductTypes = true,
+        canViewUsers = true,
+    
+        canEditDict = false,
+        canViewDict = true,
+    
+        canEditOrder = true,
+        canViewOrder = true,
+    
+        canViewTrainer = false,
+    
+        canEditWork = false,
+        canViewWork = true,
+    
+        canEditColumn = false,
+        canViewColumn = true
     ),
     SEAMSTRESS(
         canEditUsers = false,
-        canViewLeads = false,
-        canViewClients = true,
-        canViewArchive = false,
-        canAddClientsLeads = false,
-        canEditClients = false,
-        canAddWork = false,
-        canViewColumnForGoogle = true,
-        canEditColumnForGoogle = false,
-        canViewProductTypes = true,
+        canViewUsers = true,
+    
+        canEditDict = false,
+        canViewDict = true,
+    
+        canEditOrder = false,
+        canViewOrder = true,
+    
+        canViewTrainer = false,
+    
+        canEditWork = false,
+        canViewWork = true,
+    
+        canEditColumn = false,
+        canViewColumn = true
     ),
     GLUER(
         canEditUsers = false,
-        canViewLeads = false,
-        canViewClients = true,
-        canViewArchive = false,
-        canAddClientsLeads = false,
-        canEditClients = false,
-        canAddWork = false,
-        canViewColumnForGoogle = true,
-        canEditColumnForGoogle = false,
-        canViewProductTypes = true,
+        canViewUsers = true,
+    
+        canEditDict = false,
+        canViewDict = true,
+    
+        canEditOrder = false,
+        canViewOrder = true,
+    
+        canViewTrainer = false,
+    
+        canEditWork = false,
+        canViewWork = true,
+    
+        canEditColumn = false,
+        canViewColumn = true
     ),
     ;
+    
+    override val displayName: String
+        get() = name
 }

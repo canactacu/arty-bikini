@@ -75,7 +75,7 @@ public class OrderController {
             return new GetClientsResponse("нет сессии", null, null);
         }
         //проверка на права доступа
-        if(session.getUser().getGroup().canViewClients == true){
+        if(session.getUser().getGroup().canViewOrder == true){
 
             //сходить в бд//получить клиентов
             List<OrderEntity> all = orderRepository.findAllByType(ClientType.CLIENT);//получила все клиентов
@@ -100,7 +100,7 @@ public class OrderController {
             return new GetClientsResponse("нет сессии", null, null);
         }
         //проверка на права доступа
-        if(session.getUser().getGroup().canViewLeads == true){
+        if(session.getUser().getGroup().canViewOrder == true){
 
             List<OrderEntity> all = orderRepository.findAllByType(ClientType.LEAD);//список всех лидов
             List<OrderDTO> orderLeadDTOS = orderService.toOrderDTOList(all);
@@ -128,7 +128,7 @@ public class OrderController {
             return new GetArchiveResponse("нет сессии", null);
         }
         //проверка на права доступа
-        if(session.getUser().getGroup().canViewArchive == true){
+        if(session.getUser().getGroup().canViewOrder == true){
 
             //сходить в бд//получить клиентов
             Page<OrderEntity> all = orderRepository.findAllByType(ClientType.ARCHIVE, Pageable.ofSize(25).withPage(page));
@@ -156,7 +156,7 @@ public class OrderController {
             return new AddClientResponse("нет сессии", null);
         }
         //проверка прав на добавление
-        if(session.getUser().getGroup().canAddClientsLeads == true){
+        if(session.getUser().getGroup().canEditOrder == true){
 
             //создать 1 клиента
             OrderEntity order = new OrderEntity();
@@ -189,7 +189,7 @@ public class OrderController {
         return new AddClientResponse("нет сессии", null);
     }
 
-    @PostMapping("/edit-client")//изменить клиента
+    @PostMapping("/edit-client")//изменить лида-клиента
     @ResponseBody
     public EditClientResponse editClient(@RequestParam String key, @RequestBody EditClientRequest body) {
     
@@ -199,7 +199,7 @@ public class OrderController {
             return new EditClientResponse("нет сессии", null);
         }
         //проверка прав на: изменить клиента
-        if (session.getUser().getGroup().canEditClients == true) {
+        if (session.getUser().getGroup().canEditOrder == true) {
     
             //OrderDto->OrderEntity
             //получить из бд Order проверить,что не null
@@ -226,6 +226,7 @@ public class OrderController {
                 }
                 order.setExpress(express);
             }
+            
             if (body.getOrder().getProduct() != null) {
                 ProductTypeEntity productType = productTypeRepository.getById(body.getOrder().getProduct().getId());
                 if (productType == null) {
@@ -264,7 +265,15 @@ public class OrderController {
                 
                 if (session.getUser().getGroup() == UserGroup.TANYA) {
                     statusInfo.setMeasureAllTanya(body.getOrder().getStatusInfo().isMeasureAllTanya());
+                    if (!statusInfo.isMeasureAll()){
+                        statusInfo.setMeasureAll(true);
+                        statusInfo.setMeasureBy(session.getUser());
+                    }
                     statusInfo.setDesignAllTanya(body.getOrder().getStatusInfo().isDesignAllTanya());
+                    if (!statusInfo.isDesignAll()){
+                        statusInfo.setDesignAll(true);
+                        statusInfo.setDesignBy(session.getUser());
+                    }
                 }
                 
                 if (statusInfo.isDesignAll() && (order.getStatusInfo() == null || order.getStatusInfo().isDesignAll() == false)) {
@@ -275,9 +284,7 @@ public class OrderController {
                     statusInfo.setMeasureBy(session.getUser());
                 }
             }
-    
             
-    
             //заполняем
             order.setPersonalData(personalData);
             order.setDesign(design);
@@ -388,7 +395,7 @@ public class OrderController {
             return new GetOrderResponse("нет сессии", false,null, null);
         }
         //проверка на права доступа
-        if(session.getUser().getGroup().canViewClients == true){
+        if(session.getUser().getGroup().canViewOrder == true){
     
             OrderEntity order = orderRepository.getById(body.getIdOrder());
     
@@ -408,7 +415,7 @@ public class OrderController {
             return new GetOrderByTrainerResponse("нет сессии", null);
         }
         //проверка прав на добавление
-        if(session.getUser().getGroup().canAddClientsLeads == true){
+        if(session.getUser().getGroup().canViewTrainer == true){
         //проверка, есть ли такой тренер
             TrainerEntity trainer = trainerRepository.getById(body.getIdTrainer());//наш тренер
             if (trainer == null){

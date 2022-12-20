@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm.data.orders.stone;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import ru.arty_bikini.crm.data.dict.RhinestoneTypeEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 
 //таблица страз в заказе
 @Entity(name = "rhinestone_amount")
+@JsonFilter("entityFilter")
 public class OrderRhinestoneAmountEntity {
     private int id;
     private RhinestoneTypeEntity rhinestoneType;
