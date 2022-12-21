@@ -13,6 +13,7 @@ import ru.arty_bikini.crm.jpa.WorkRepository;
 import ru.arty_bikini.crm.jpa.WorkTypeRepository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -45,12 +46,16 @@ public class WorkService {
         return worksJson;
     }
     
-    public List<WorkTypeDTO> toListDto(String worksJson){
+    public List<WorkTypeDTO> toListDto(String worksJson) {
+        if (worksJson == null) {
+            return Collections.emptyList();
+        }
         List<Integer> ids;
         List<WorkTypeDTO> workTypeDTOList = null;
-        
+    
         try {
-             ids = objectMapper.readValue(worksJson, new TypeReference<List<Integer>>() {});
+            ids = objectMapper.readValue(worksJson, new TypeReference<List<Integer>>() {
+            });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -58,7 +63,7 @@ public class WorkService {
         for (int i = 0; i < ids.size(); i++) {
             workTypeEntityList.add(workTypeRepository.getById(ids.get(i).intValue()));
         }
-        List<WorkTypeDTO> workTypeDTOS = toListTypeDTO(workTypeEntityList);
+        workTypeDTOList = toListTypeDTO(workTypeEntityList);
     
         return workTypeDTOList;
     }

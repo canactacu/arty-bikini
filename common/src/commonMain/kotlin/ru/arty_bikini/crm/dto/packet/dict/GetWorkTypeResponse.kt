@@ -10,6 +10,6 @@ class GetWorkTypeResponse  (
     override val statusCode: String,
     override val displayMessage: String?,
 
-    val WorkTypeList: List<WorkTypeDTO>?= null
+    val workTypeList: List<WorkTypeDTO>?= null
 
 ): BaseResponse()

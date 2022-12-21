@@ -10,6 +10,7 @@ import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.work.IntervalEntity;
 import ru.arty_bikini.crm.data.work.TourEntity;
 import ru.arty_bikini.crm.data.work.WorkEntity;
+import ru.arty_bikini.crm.dto.orders.OrderDTO;
 import ru.arty_bikini.crm.dto.packet.work.*;
 import ru.arty_bikini.crm.dto.work.IntervalDTO;
 import ru.arty_bikini.crm.dto.work.WorkDTO;
@@ -454,12 +455,25 @@ public class WorkController {
             if(intervalList.size() == 0){
                 return new GetIntervalWorkResponse("интервалов нет", Collections.emptyList(), Collections.emptyList());
             }
-            List<WorkEntity> workList = workRepository.getByIntervalList(intervalList);//описание в репазитории
-
             List<IntervalDTO> intervalDTOS = objectMapper.convertValue(intervalList, new TypeReference<List<IntervalDTO>>() {});
+    
+            
+            List<WorkEntity> workList = workRepository.getByIntervalList(intervalList);//описание в репозитории
+
             List<WorkDTO> workDTOList = objectMapper.convertValue(workList, new TypeReference<List<WorkDTO>>() {});
+            
             for (int i = 0; i < workDTOList.size(); i++) {
-                workDTOList.get(i).setWorks(workService.toListDto(workList.get(i).getWorksJson()));
+                WorkEntity workEntity = workList.get(i);
+                WorkDTO workDTO = workDTOList.get(i);
+    
+                OrderDTO order = workDTO.getOrder();
+                
+                List<WorkEntity> orderWorkEntityList = workRepository.getByOrder(workEntity.getOrder());
+                List<WorkDTO> orderWorkDTOList = objectMapper.convertValue(orderWorkEntityList, new TypeReference<List<WorkDTO>>() {});
+    
+                order.setWorks(orderWorkDTOList);
+                
+                workDTO.setWorks(workService.toListDto(workEntity.getWorksJson()));
             }
     
             return new GetIntervalWorkResponse("нет сессии", workDTOList, intervalDTOS);

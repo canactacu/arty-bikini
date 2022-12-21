@@ -96,8 +96,11 @@ public class DictionaryController {
     
             List<WorkTypeEntity> list = workTypeRepository.findAll();
             List<WorkTypeDTO> workTypeDTOS = objectMapper.convertValue(list, new TypeReference<List<WorkTypeDTO>>() {});
-            
-            return new GetWorkTypeResponse(true, "нет сессии", null, workTypeDTOS);
+            //добавляем поле productJson
+            for (int i = 0; i < list.size(); i++) {
+                workTypeDTOS.get(i).setProductList(dictionaryService.productTypeDTOList(list.get(i).getProductJson()));
+            }
+            return new GetWorkTypeResponse(true, "передали", null, workTypeDTOS);
         }
         return new GetWorkTypeResponse(false, "нет сессии", null, null);
     }
@@ -133,14 +136,15 @@ public class DictionaryController {
                 }
                 workType.setPrice(price);
             }
+            if (body.getWorkType().getProductList()!=null) {
+                String productJson = dictionaryService.productToJson(body.getWorkType().getProductList());
+                workType.setProductJson(productJson);
+            }
             
-            String productJson = dictionaryService.productToJson(body.getWorkType().getProductList());
-            workType.setProductJson(productJson);
-    
             WorkTypeEntity save = workTypeRepository.save(workType);
             WorkTypeDTO workTypeDTO = objectMapper.convertValue(save, WorkTypeDTO.class);
     
-            return new AddWorkTypeResponse(true, "нет сессии", null, workTypeDTO);
+            return new AddWorkTypeResponse(true, "добавлен", null, workTypeDTO);
         }
     
         return new AddWorkTypeResponse(false, "нет сессии", null, null);
@@ -178,6 +182,8 @@ public class DictionaryController {
                     return new EditWorkTypeResponse(false, "ошибка price==null", null, null);
                 }
                 workType.setPrice(price);
+            } else {
+                workType.setPrice(null);
             }
     
             String productJson = dictionaryService.productToJson(body.getWorkType().getProductList());

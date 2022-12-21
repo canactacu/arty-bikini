@@ -1,8 +1,11 @@
 package ru.arty_bikini.crm.web;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.arty_bikini.crm.Utils;
@@ -10,6 +13,7 @@ import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.file.FileEntity;
 import ru.arty_bikini.crm.data.file.OrderFileEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
+import ru.arty_bikini.crm.dto.PageDTO;
 import ru.arty_bikini.crm.dto.file.FileDTO;
 import ru.arty_bikini.crm.dto.file.OrderFileDTO;
 import ru.arty_bikini.crm.dto.packet.file.*;
@@ -23,12 +27,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.List;
 
 //Добавить endpoint /api/file/upload-file //загружаем файл на сервер
 //Добавить endpoint /api/file/get-report  Возвращает общее число файлов, занятое ими место
 // Добавить endpoint /api/file/add-order-file
 // Добавить endpoint /api/file/edit-order-file
 ////  Добавить endpoint /api/file/delete-order-file
+// /api/file/get-order-file возвращает список картинок
+
 
 
 @RestController
@@ -49,6 +56,41 @@ public class FileController {
     
     @Autowired
     private OrderRepository orderRepository;
+    
+    @PostMapping("/get-file")//возвращает список картинок
+    @ResponseBody
+    public GetFileResponse getFile(@RequestParam String key, @RequestParam int page) {
+    
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new GetFileResponse(false, "нет сессии", null, null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditOrder == true) {
+            Page<FileEntity> all = fileRepository.findAll(Pageable.ofSize(25).withPage(page));
+            
+            List<FileEntity> fileEntityList = all.getContent();
+            List<FileDTO> fileDTOList = objectMapper.convertValue(fileEntityList, new TypeReference<List<FileDTO>>() {});
+            for (int i = 0; i < fileEntityList.size(); i++) {
+                List<OrderFileEntity> orderFileEntityList = orderFileRepository.getByFile(fileEntityList.get(i));
+                List<OrderFileDTO> orderFileDTOList = objectMapper.convertValue(orderFileEntityList, new TypeReference<List<OrderFileDTO>>() {});
+                fileDTOList.get(i).setOrders(orderFileDTOList);
+            }
+            
+            PageDTO<FileDTO> pageDTO = new PageDTO<FileDTO>(
+                    fileDTOList,
+                    all.getNumber(),
+                    all.getSize(),
+                    all.getTotalElements(),
+                    all.getTotalPages()
+            );
+    
+    
+            return new GetFileResponse(true, "передали", null, pageDTO);
+        }
+        return new GetFileResponse(false, "нет сессии", null, null);
+    
+    }
     
     @PostMapping("/delete-order-file")
     @ResponseBody
@@ -93,7 +135,7 @@ public class FileController {
             String partNameFile = file.getOriginalFilename();
             partNameFile = partNameFile.substring(partNameFile.lastIndexOf("."));//получили расширение без точки
             
-            nameFile = nameFile + "." + partNameFile;// получили: id.расширение
+            nameFile = nameFile+ partNameFile;// получили: id.расширение
             File oneFile;
 
             try {
@@ -186,7 +228,7 @@ public class FileController {
         if (session.getUser().getGroup().canEditOrder == true) {
     
             OrderFileEntity orderFileEntity = orderFileRepository.getById(body.getOrderFile().getId());
-            if (orderFileEntity!=null) {
+            if (body.getOrderFile().getId()!=0) {
                 return new AddOrderFileResponse(false, "orderFileEntity!=null", null, null);
             }
             orderFileEntity = new OrderFileEntity();
@@ -233,7 +275,7 @@ public class FileController {
         if (session.getUser().getGroup().canEditOrder == true) {
             
             OrderFileEntity orderFileEntity = orderFileRepository.getById(body.getOrderFile().getId());
-            if (orderFileEntity==null) {
+            if (body.getOrderFile().getId()==0) {
                 return new EditOrderFileResponse(false, "orderFileEntity==null", null, null);
             }
             orderFileEntity.setPriority(body.getOrderFile().getPriority());
