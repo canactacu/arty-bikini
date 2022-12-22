@@ -96,7 +96,9 @@ public class OrderStoneController {
                 if (rhinestoneType == null) {
                     return new SaveResponse(" RhinestoneType== null в бд");
                 }
-    
+                //добавляем версию
+                order.setVersion(order.getVersion() + 1);
+                orderRepository.save(order);
     
                 OrderRhinestoneAmountEntity orderRhinestoneAmountEntity = new OrderRhinestoneAmountEntity();
     

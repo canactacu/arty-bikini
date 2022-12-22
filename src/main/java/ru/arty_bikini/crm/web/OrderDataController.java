@@ -129,10 +129,13 @@ public class OrderDataController {
 
             //положить в бд новый
             orderDataTypeEntity.setName(body.getOrderDataType().getName());
+            
             orderDataTypeEntity.setTarget(body.getOrderDataType().getTarget());
+            
             orderDataTypeEntity.setDisplayCategory(body.getOrderDataType().getDisplayCategory());
             orderDataTypeEntity.setDisplayPosition(body.getOrderDataType().getDisplayPosition());
-            
+          
+            orderDataTypeEntity.setComment(body.getOrderDataType().getComment());
             String json = dictionaryService.productToJson(body.getOrderDataType().getProducts());
             if (json == null){
                 return new EditTypeResponse("json == null", null);
@@ -219,6 +222,7 @@ public class OrderDataController {
             dataGoogleRepository.save(google);
 
             order.setDataGoogle(google);
+            order.setVersion(order.getVersion()+1);
             OrderEntity save = orderRepository.save(order);
             OrderDTO toOrderDTO = orderService.toOrderDTO(save);
             orderService.savePackageTime(order);//сохранили и посчитали дату отправки
@@ -258,6 +262,8 @@ public class OrderDataController {
                 order.getPersonalData().setPackageTime(null);
             }
             orderService.savePackageTime(order);//сохранили и посчитали дату отправки
+            
+            order.setVersion(order.getVersion() + 1);
             
             OrderEntity save = orderRepository.save(order);
             OrderDTO toOrderDTO = orderService.toOrderDTO(save);
@@ -376,6 +382,7 @@ public class OrderDataController {
             String measuresToJson = columnService.measuresToJson(order.getMeasuresJson(), orderDataType, body.getValue());
             order.setMeasuresJson(measuresToJson);
     
+            order.setVersion(order.getVersion() + 1);
             OrderEntity save = orderRepository.save(order);
     
             OrderDTO orderDTO = orderService.toOrderDTO(save);

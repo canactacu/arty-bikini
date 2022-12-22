@@ -16,7 +16,7 @@ public class MeasureVariantsEntity {
     private String googleName;
     private String productsJson;
     
-    @Column(columnDefinition = "INT NOT NULL DEFAULT 0")
+    @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
     public int getPriority() {
         return priority;
     }

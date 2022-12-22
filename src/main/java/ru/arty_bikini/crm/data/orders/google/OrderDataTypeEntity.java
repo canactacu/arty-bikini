@@ -13,16 +13,27 @@ import javax.persistence.*;
 public class OrderDataTypeEntity {
     private int id;
     private String name;//имя в системе
-    private ColumnImportTarget target;
+    
     private int googleColumn;//какая колонка
     private String googleName;//имя колонки в гугл таблице
-  
+    
+    private ColumnImportTarget target;
+    
     private DataDisplayCategory displayCategory;
     private String displayPosition;
     
     private String productJson;
+    private String comment;
     
-   
+    @Column(columnDefinition = "TEXT")
+    public String getComment() {
+        return comment;
+    }
+    
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+    
     @Id
     @GeneratedValue
     public int getId() {

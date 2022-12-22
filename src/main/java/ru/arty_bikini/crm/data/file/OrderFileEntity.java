@@ -57,7 +57,7 @@ public class OrderFileEntity {
         this.category = category;
     }
     
-    @Column(columnDefinition = "INT NOT NULL DEFAULT 0")
+    @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
     public int getPriority() {
         return priority;
     }

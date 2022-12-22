@@ -8,12 +8,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.dict.ExpressEntity;
+import ru.arty_bikini.crm.data.dict.PriceEntity;
 import ru.arty_bikini.crm.data.dict.ProductTypeEntity;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
 import ru.arty_bikini.crm.data.orders.*;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.data.orders.stone.CalcPresetRuleJson;
 import ru.arty_bikini.crm.dto.PageDTO;
+import ru.arty_bikini.crm.dto.dict.PriceDTO;
 import ru.arty_bikini.crm.dto.enums.UserGroup;
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
@@ -178,6 +180,8 @@ public class OrderController {
             order.setDesign(design);
             order.setLeadInfo(leadInfo);
             order.setStatusInfo(statusInfo);
+            
+            order.setVersion(order.getVersion() + 1);
             
             //сохранить в бд
            orderRepository.save(order);
@@ -375,6 +379,29 @@ public class OrderController {
                 }
             }
             
+            ////сохраняем поле priceJson; и price
+            if (body.getOrder().getPrice()!=null){
+                if (body.getOrder().getPrice().size()!=0){
+                    
+                    String priceJson = null;
+                    
+                    List<PriceDTO> priceDTOList = body.getOrder().getPrice();
+                    List<PriceEntity> priceEntityList = new ArrayList<>();
+    
+                    for (int i = 0; i < priceDTOList.size(); i++) {
+                        priceEntityList.add(objectMapper.convertValue(priceDTOList.get(i), PriceEntity.class));
+                        
+                        //добавить поля
+                    }
+                    try {
+                         priceJson = objectMapper.writeValueAsString(priceEntityList);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    order.setPriceJson(priceJson);
+                }
+            }
+            order.setVersion(order.getVersion() + 1);
             //сохранить в бд
             OrderEntity save = orderRepository.save(order);
     

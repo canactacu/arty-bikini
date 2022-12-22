@@ -77,26 +77,42 @@ public class WorkController {
         //проверка на key
         SessionEntity session = sessionRepository.getByKey(key);
         if (session == null) {
-            return new AddWorkResponse("нет сессии", null);
+            return new AddWorkResponse(false, "нет сессии", null, null);
         }
 
         //проверка на права доступа
         if (session.getUser().getGroup().canEditWork == true) {
-
-            //найти и проверить все id, что они есть
-            OrderEntity order = orderRepository.getById(body.getIdOrder());
-            if (order == null) {
-                return new AddWorkResponse("order == null", null);
+            OrderEntity order;
+            if (body.getWorkDTO().getOrder()!=null) {
+                order = orderRepository.getById(body.getWorkDTO().getOrder().getId());
+                if (order == null) {
+                    return new AddWorkResponse(false, "order нет в бд", null,null);
+                }
             }
-
-            UserEntity userWork = userRepository.getById(body.getIdUserWork());
-            if (userWork == null) {
-                return new AddWorkResponse("userWork == null", null);
+            else {
+                    return new AddWorkResponse(false, "order нет в body", null,null);
             }
-
-            IntervalEntity interval = intervalRepository.getById(body.getIdInterval());
-            if (interval == null) {
-                return new AddWorkResponse("interval == null", null);
+            
+            UserEntity userWork;
+            if (body.getWorkDTO().getUser()!=null) {
+                userWork = userRepository.getById(body.getWorkDTO().getUser().getId());
+                if (userWork == null) {
+                    return new AddWorkResponse(false, "userWork нет в бд", null,null);
+                }
+            }
+            else {
+                return new AddWorkResponse(false, "userWork нет в body", null,null);
+            }
+    
+            IntervalEntity interval;
+            if (body.getWorkDTO().getInterval()!=null) {
+                interval = intervalRepository.getById(body.getWorkDTO().getInterval().getId());
+                if (interval == null) {
+                    return new AddWorkResponse(false, "interval нет в бд", null,null);
+                }
+            }
+            else {
+                return new AddWorkResponse(false, "interval нет в body", null,null);
             }
 
             WorkEntity work = new WorkEntity();//создали новую работу
@@ -105,7 +121,11 @@ public class WorkController {
             work.setUser(userWork);
             work.setInterval(interval);//id
             //из string в список
-            work.setWorksJson(workService.toString(body.getTypeWork()));
+            if (body.getWorkDTO().getWorks()!= null) {
+                work.setWorksJson(workService.toString(body.getWorkDTO().getWorks()));
+            }
+            
+            work.setPriority(body.getWorkDTO().getPriority());
             
             //сохранить бд
             WorkEntity save = workRepository.save(work);
@@ -115,9 +135,53 @@ public class WorkController {
             saveDTO.setWorks(workService.toListDto(save.getWorksJson()));
             
             
-            return new AddWorkResponse("работу заполнили", saveDTO);
+            return new AddWorkResponse(true, "работу заполнили",null, saveDTO);
         }
-        return new AddWorkResponse("нет сессии", null);
+        return new AddWorkResponse(false, "нет сессии", null, null);
+    }
+    
+    @PostMapping("/edit-work-progress")//изменить работу
+    @ResponseBody
+    public EditWorkResponse editWorkProgress(@RequestParam String key, @RequestBody EditWorkRequest body) {
+        
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new EditWorkResponse(false, "нет сессии", null, null);
+        }
+        
+        //проверка на права доступа
+        if (session.getUser().getGroup().canViewWork == true) {
+            
+            WorkEntity work = workRepository.getById(body.getWorkDTO().getId());
+            if (work == null) {
+                return new EditWorkResponse(false,"work нет в бд", null, null);
+            }
+            
+            UserEntity userWork = work.getUser();
+            if (userWork == null) {
+                return new EditWorkResponse(false,"userWork нет в бд", null, null);
+            }
+    
+            if (session.getUser()!=userWork) {
+                return new EditWorkResponse(false,"userWork нет в бд",
+                        "эта работа назначена не вам", null);
+            }
+            else {
+                work.setProgress(body.getWorkDTO().getProgress());
+                work.setUserApproved(userWork);
+            }
+            
+            //сохранить бд
+            WorkEntity save = workRepository.save(work);
+            
+            //перевести работу в DTO
+            WorkDTO saveDTO = objectMapper.convertValue(save, WorkDTO.class);
+            saveDTO.setWorks(workService.toListDto(save.getWorksJson()));
+            
+            return new EditWorkResponse(true,"работу изменили", null, saveDTO);
+        }
+        return new EditWorkResponse(false, "нет сессии", null, null);
     }
     
     @PostMapping("/edit-work")//изменить работу
@@ -127,44 +191,57 @@ public class WorkController {
         //проверка на key
         SessionEntity session = sessionRepository.getByKey(key);
         if (session == null) {
-            return new EditWorkResponse("нет сессии", null);
+            return new EditWorkResponse(false, "нет сессии", null, null);
         }
         
         //проверка на права доступа
         if (session.getUser().getGroup().canEditWork == true) {
             if (body.getWorkDTO().getOrder() == null){
-                return new EditWorkResponse("Order == null", null);
+                return new EditWorkResponse(false,"Order нет в body", null, null);
             }
             OrderEntity order = orderRepository.getById(body.getWorkDTO().getOrder().getId());
             if (order == null) {
-                return new EditWorkResponse("order == null", null);
+                return new EditWorkResponse(false,"order нет в бд", null, null);
             }
             
             WorkEntity work = workRepository.getById(body.getWorkDTO().getId());
             if (work == null) {
-                return new EditWorkResponse("work == null", null);
+                return new EditWorkResponse(false,"work нет в бд", null, null);
             }
             
             if (body.getWorkDTO().getUser() == null){
-                return new EditWorkResponse("user == null", null);
+                return new EditWorkResponse(false,"user нет в body", null, null);
             }
             UserEntity userWork = userRepository.getById(body.getWorkDTO().getUser().getId());
             if (userWork == null) {
-                return new EditWorkResponse("userWork == null", null);
+                return new EditWorkResponse(false,"userWork нет в бд", null, null);
             }
     
             if (body.getWorkDTO().getInterval() == null){
-                return new EditWorkResponse("Interval == null", null);
+                return new EditWorkResponse(false,"Interval нет в body", null, null);
             }
             IntervalEntity interval = intervalRepository.getById(body.getWorkDTO().getInterval().getId());
             if (interval == null) {
-                return new EditWorkResponse("interval == null", null);
+                return new EditWorkResponse(false,"interval нет в бд", null, null);
             }
             
             work.setOrder(order);
             work.setUser(userWork);
             work.setInterval(interval);
-            work.setWorksJson(workService.toString(body.getWorkDTO().getWorks()));
+            if (body.getWorkDTO().getWorks()!=null) {
+                work.setWorksJson(workService.toString(body.getWorkDTO().getWorks()));
+            }
+            else {
+                return new EditWorkResponse(false,"надо заполнить работы в словаре", null, null);
+            }
+            
+            work.setPriority(body.getWorkDTO().getPriority());
+            
+            if (body.getWorkDTO().getApproved()!=work.isApproved()) {
+                work.setApproved(body.getWorkDTO().getApproved());
+                work.setUserApproved(session.getUser());
+            }
+            
             //сохранить бд
             WorkEntity save = workRepository.save(work);
             
@@ -172,9 +249,9 @@ public class WorkController {
             WorkDTO saveDTO = objectMapper.convertValue(save, WorkDTO.class);
             saveDTO.setWorks(workService.toListDto(save.getWorksJson()));
             
-            return new EditWorkResponse("работу изменили", saveDTO);
+            return new EditWorkResponse(true,"работу изменили", null, saveDTO);
         }
-        return new EditWorkResponse("нет сессии", null);
+        return new EditWorkResponse(false, "нет сессии", null, null);
     }
 
     @PostMapping("/add-interval")//добавить интервал
@@ -467,16 +544,20 @@ public class WorkController {
                 WorkDTO workDTO = workDTOList.get(i);
     
                 OrderDTO order = workDTO.getOrder();
-                
+                //где-то стоит null по json надо его найти
                 List<WorkEntity> orderWorkEntityList = workRepository.getByOrder(workEntity.getOrder());
                 List<WorkDTO> orderWorkDTOList = objectMapper.convertValue(orderWorkEntityList, new TypeReference<List<WorkDTO>>() {});
-    
+                for (int j = 0; j < orderWorkDTOList.size(); j++) {
+                    orderWorkDTOList.get(j).setWorks(workService.toListDto(orderWorkEntityList.get(j).getWorksJson()));
+                }
+              
                 order.setWorks(orderWorkDTOList);
                 
+               
                 workDTO.setWorks(workService.toListDto(workEntity.getWorksJson()));
             }
     
-            return new GetIntervalWorkResponse("нет сессии", workDTOList, intervalDTOS);
+            return new GetIntervalWorkResponse("переданы", workDTOList, intervalDTOS);
         }
         return new GetIntervalWorkResponse("нет сессии", null, null);
     }

@@ -54,7 +54,7 @@ public class PersonalData {
     private int payMoneyTrainer;//сколько заплатили тренеру
     private int sale;
     
-    @Column(name = "pd_sale", columnDefinition = "INT NOT NULL DEFAULT 0")
+    @Column(name = "pd_sale", columnDefinition = "INTEGER NOT NULL DEFAULT 0")
     public int getSale() {
         return sale;
     }
@@ -63,7 +63,7 @@ public class PersonalData {
         this.sale = sale;
     }
     
-    @Column(name = "pd_pay_many_trainer", columnDefinition = "INT NOT NULL DEFAULT 0")
+    @Column(name = "pd_pay_many_trainer", columnDefinition = "INTEGER NOT NULL DEFAULT 0")
     public int getPayMoneyTrainer() {
         return payMoneyTrainer;
     }
@@ -81,7 +81,7 @@ public class PersonalData {
         this.payTrainer = payTrainer;
     }
     
-    @Column(name = "delivery_time", columnDefinition = "INT NOT NULL DEFAULT 0")
+    @Column(name = "delivery_time", columnDefinition = "INTEGER NOT NULL DEFAULT 0")
     public int getDeliveryTime() {
         return deliveryTime;
     }

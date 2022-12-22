@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.arty_bikini.crm.data.dict.PriceEntity;
 import ru.arty_bikini.crm.data.dict.RhinestoneTypeEntity;
 import ru.arty_bikini.crm.data.file.OrderFileEntity;
 import ru.arty_bikini.crm.data.orders.OrderScriptStageEntity;
@@ -14,6 +15,7 @@ import ru.arty_bikini.crm.data.orders.stone.CalcPresetRuleJson;
 import ru.arty_bikini.crm.data.orders.stone.OrderRhinestoneAmountEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.work.WorkEntity;
+import ru.arty_bikini.crm.dto.dict.PriceDTO;
 import ru.arty_bikini.crm.dto.dict.RhinestoneTypeDTO;
 import ru.arty_bikini.crm.dto.file.OrderFileDTO;
 import ru.arty_bikini.crm.dto.orders.OrderScriptStageDTO;
@@ -147,6 +149,25 @@ public class OrderService {
                 }
                 calcPresetRuleDTOList.add(calcPresetRuleDTO);
                 orderDTO.setPresetRules(calcPresetRuleDTOList);
+            }
+        }
+        //заполняем поля price
+        if (orderEntity.getPriceJson()== null || orderEntity.getPriceJson().length() == 0){
+            orderDTO.setPrice(null);
+        }
+        else {
+            List<PriceEntity> data = null;
+            try {
+                data = objectMapper.readValue(orderEntity.getPriceJson(), new TypeReference<List<PriceEntity>>() {});
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            List<PriceDTO> priceDTOList = new ArrayList<>(data.size());
+            
+            for (PriceEntity datum : data){
+                PriceDTO priceDTO = objectMapper.convertValue(datum, PriceDTO.class);
+                priceDTOList.add(priceDTO);
+                orderDTO.setPrice(priceDTOList);
             }
         }
         

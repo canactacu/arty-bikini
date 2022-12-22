@@ -106,7 +106,10 @@ public class FileController {
             if (orderFileEntity==null) {
                 return new DeleteOrderFileResponse(false, "в бд такого нет", null);
             }
-    
+            //сохраняем версию
+            orderFileEntity.getOrder().setVersion(orderFileEntity.getOrder().getVersion() + 1);
+            orderRepository.save(orderFileEntity.getOrder());
+            
             orderFileRepository.delete(orderFileEntity);
             
             return new DeleteOrderFileResponse(true,"удалили", null);
@@ -251,7 +254,9 @@ public class FileController {
                 if (orderEntity==null) {
                     return new AddOrderFileResponse(false, "orderEntity == null", null, null);
                 }
+                orderEntity.setVersion(orderEntity.getVersion() + 1);
                 orderFileEntity.setOrder(orderEntity);
+                orderRepository.save(orderFileEntity.getOrder());
             }
     
             OrderFileEntity save = orderFileRepository.save(orderFileEntity);
@@ -296,7 +301,9 @@ public class FileController {
                 if (orderEntity==null) {
                     return new EditOrderFileResponse(false, "orderEntity == null", null, null);
                 }
+                orderEntity.setVersion(orderEntity.getVersion() + 1);
                 orderFileEntity.setOrder(orderEntity);
+                orderRepository.save(orderFileEntity.getOrder());
             }
             
             OrderFileEntity save = orderFileRepository.save(orderFileEntity);

@@ -12,6 +12,7 @@ import javax.persistence.*;
 @Entity(name = "orders")
 @JsonFilter("entityFilter")
 public class OrderEntity {
+    
     private int id;
     private String name;
     private ClientType type;//статус клиента
@@ -29,7 +30,26 @@ public class OrderEntity {
     private StatusInfo statusInfo;
     
     private String presetRulesJson;
-   //дата отправки, время доставки
+    private String priceJson;
+    private int version;
+    
+    @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
+    public int getVersion() {
+        return version;
+    }
+    
+    public void setVersion(int version) {
+        this.version = version;
+    }
+    
+    @Column(name = "price_json")
+    public String getPriceJson() {
+        return priceJson;
+    }
+    
+    public void setPriceJson(String priceJson) {
+        this.priceJson = priceJson;
+    }
     
     @Column(name = "preset_rules_json")
     public String getPresetRulesJson() {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.dto.enums.TypeWork;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
+import ru.arty_bikini.crm.dto.enums.WorkProgress;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -20,7 +21,50 @@ public class WorkEntity {
     private UserEntity user;//работник
     private IntervalEntity interval;//интервал
     private TourEntity tour;//если ли встреча и когда
-
+    
+    private int priority;
+    private WorkProgress progress;//начал делать, закончил делать,
+    private boolean approved;// менеджер принял
+    private UserEntity userApproved;//какой user принял
+    
+    @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
+    public int getPriority() {
+        return priority;
+    }
+    
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+    
+    @Column(name = "progress")
+    @Enumerated(EnumType.STRING)
+    public WorkProgress getProgress() {
+        return progress;
+    }
+    
+    public void setProgress(WorkProgress progress) {
+        this.progress = progress;
+    }
+    
+    @Column(columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
+    public boolean isApproved() {
+        return approved;
+    }
+    
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+    
+    @ManyToOne(targetEntity = UserEntity.class)
+    @JoinColumn(name = "user_approved_id")
+    public UserEntity getUserApproved() {
+        return userApproved;
+    }
+    
+    public void setUserApproved(UserEntity userApproved) {
+        this.userApproved = userApproved;
+    }
+    
     @ManyToOne(targetEntity = TourEntity.class)//сущности откуда берем переменную из какой табл
     @JoinColumn(name = "tour_id")//даем название колонке
     public TourEntity getTour() {

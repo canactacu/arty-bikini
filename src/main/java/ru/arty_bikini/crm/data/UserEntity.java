@@ -10,10 +10,32 @@ public class UserEntity {
     private String login;
     private String password;
     private UserGroup group;
+    
     private String specialisation;//специализация
     private String productivityComment;//комментарий по продуктивности
     private Integer baseProductivity;//основная продуктивность(для расклейщиц)
     private String productivityJson;
+    
+    private int priority;
+    private boolean visible;
+    
+    @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
+    public int getPriority() {
+        return priority;
+    }
+    
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+    
+    @Column(columnDefinition = "BOOLEAN NOT NULL DEFAULT true")
+    public boolean isVisible() {
+        return visible;
+    }
+    
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
     
     @Id //первичный кюч
     @GeneratedValue//заполнять автоматически   создадут столбцы в табл user

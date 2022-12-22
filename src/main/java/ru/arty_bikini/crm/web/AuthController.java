@@ -187,6 +187,9 @@ public class AuthController {
                     user.setSpecialisation(body.getUser().getSpecialisation());
                     user.setProductivityComment(body.getUser().getProductivityComment());
                     
+                    user.setPriority(body.getUser().getPriority());
+                    user.setVisible(body.getUser().getVisible());
+                    
                     try {
                         String productivityJson = objectMapper.writeValueAsString(body.getUser().getProductivity());
     
@@ -215,6 +218,9 @@ public class AuthController {
                 user.setBaseProductivity(body.getUser().getBaseProductivity());
                 user.setSpecialisation(body.getUser().getSpecialisation());
                 user.setProductivityComment(body.getUser().getProductivityComment());
+    
+                user.setPriority(body.getUser().getPriority());
+                user.setVisible(body.getUser().getVisible());
     
                 try {
                     String productivityJson = objectMapper.writeValueAsString(body.getUser().getProductivity());

@@ -4,7 +4,7 @@ import kotlin.jvm.JvmField
 
 //права доступа
 enum class UserGroup
-    (
+    constructor(
     @JvmField val canEditUsers: Boolean,//таня и мы
     @JvmField val canViewUsers: Boolean,//все
     //тренера, продукты(слитный, фитнес бикини),
@@ -22,7 +22,8 @@ enum class UserGroup
     //гугол столбики
     @JvmField val canEditColumn: Boolean,
     @JvmField val canViewColumn: Boolean,
-
+    
+    override val displayName: String,
 ) : HasDisplayValue {
     
     ADMIN(
@@ -36,7 +37,8 @@ enum class UserGroup
         canEditWork = true,
         canViewWork = true,
         canEditColumn = true,
-        canViewColumn = true
+        canViewColumn = true,
+        displayName = "Админ"
     ),
     TANYA(
         canEditUsers = true,
@@ -54,7 +56,8 @@ enum class UserGroup
         canViewWork = true,
         
         canEditColumn = false,
-        canViewColumn = true
+        canViewColumn = true,
+        displayName = "Татьяна"
         ),
     MANAGER(
         canEditUsers = false,
@@ -72,7 +75,8 @@ enum class UserGroup
         canViewWork = true,
     
         canEditColumn = false,
-        canViewColumn = true
+        canViewColumn = true,
+        displayName = "Менеджер"
     ),
     SEAMSTRESS(
         canEditUsers = false,
@@ -90,7 +94,8 @@ enum class UserGroup
         canViewWork = true,
     
         canEditColumn = false,
-        canViewColumn = true
+        canViewColumn = true,
+        displayName = "Швея"
     ),
     GLUER(
         canEditUsers = false,
@@ -108,10 +113,10 @@ enum class UserGroup
         canViewWork = true,
     
         canEditColumn = false,
-        canViewColumn = true
+        canViewColumn = true,
+        displayName = "Расклейщица"
     ),
     ;
     
-    override val displayName: String
-        get() = name
+    
 }
