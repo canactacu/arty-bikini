@@ -1,10 +1,12 @@
 package ru.arty_bikini.crm.data;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import ru.arty_bikini.crm.dto.enums.UserGroup;
 
 import javax.persistence.*;
 
 @Entity(name = "users")//создаем пустую табл имя user
+@JsonFilter("entityFilter")
 public class UserEntity {
     private int id;
     private String login;

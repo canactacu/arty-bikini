@@ -14,19 +14,28 @@ class PersonalDataDTO {
     
     var prepayment: String? = null  //предоплата
     var payment: Int = 0  //цена
-    var trainer: TrainerDTO? = null  //тренер
-    
-    var orderTime: Long? = null //дата заказа(предоплата или заполнение мерок?)
-    var competitionTime: Long? = null  //дата соревнований
-    var neededTime: Long? = null  //дата, когда нужен заказ
-    var packageTime : Long? = null //Дата, когда нужно отправить
-    var deliveryTime : Int = 0 //время доставки
-    
     var addOrder: String? = null //дополнительно к заказу
     var comment: String? = null //комментарий на чем остановились
+    
+    var packageNow = false
+    
     var createdTime : Long? = null //дата появления лида
     var archiveTime : Long? = null //дата попадания в архив
+    var orderTime: Long? = null //дата заказа(предоплата или заполнение мерок?)
+    var neededTime: Long? = null  //дата, когда нужен заказ
+    var packageTime : Long? = null //Дата, когда нужно отправить
+    
+    var packageManager : Long? = null ///дата, когда нужно отправить, которую указал менеджер(менеджер дата отправки)
+    var packageManufacture : Long? = null //дата, которую посчитала система (4 недели пошив от даты заполнения мерок)
+    var packageClient : Long? = null //дата, которую посчитала система, (клиент указал дату нужности или соревнований + время на пошив)
+    
+    var deliveryTime : Int = 0 //время доставки
+    var userPackage: String? = null
+    
+    var trainer: TrainerDTO? = null  //тренер
     var payTrainer = false
     var payMoney =0
     var sale = 0//скидка
+    
+    
 }

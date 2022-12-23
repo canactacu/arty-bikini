@@ -2,6 +2,7 @@ package ru.arty_bikini.crm.data.orders;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
 import ru.arty_bikini.crm.dto.enums.personalData.ClientLanguage;
 import ru.arty_bikini.crm.utils.LocalDateToLongDeserializer;
@@ -14,14 +15,17 @@ import java.time.LocalDate;
 @Embeddable
 public class PersonalData {
     private String name;//фамилия имя отчество
-
-    private String prepayment;//предоплата
-    private int payment;//цена
     private String telephon;//телефон
     private String city;//город
     private ClientLanguage language;
-    private String addOrder;//дополнительно к заказу
     
+    private String prepayment;//предоплата
+    private int payment;//цена
+    private String addOrder;//дополнительно к заказу
+    private String comment;//комментарий на чем остановились
+    
+    private boolean packageOld;
+   
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
     private LocalDate createdTime;//дата появления лида
@@ -32,11 +36,7 @@ public class PersonalData {
     
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
-    private LocalDate orderTime;//дата заказа(предоплата или заполнение мерок?)
-    
-    @JsonSerialize(using = LocalDateToLongSerializer.class)
-    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
-    private LocalDate competitionTime;//дата соревнований
+    private LocalDate orderTime;//дата заказа(предоплата )
     
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
@@ -44,15 +44,87 @@ public class PersonalData {
     
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
-    private LocalDate packageTime;//Дата, когда нужно отправить
+    private LocalDate packageTime;//Дата, когда нужно отправить, текущая дата отправки
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
+    private LocalDate packageManager;//дата, когда нужно отправить, которую указал менеджер(менеджер дата отправки)
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
+    private LocalDate packageManagerOld;//дата, когда нужно отправить, которую указал менеджер(менеджер дата отправки)
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
+    private LocalDate packageManufacture;//дата, которую посчитала система (4 недели пошив от даты заполнения мерок)
+    
+    @JsonSerialize(using = LocalDateToLongSerializer.class)
+    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
+    private LocalDate packageClient;//дата, которую посчитала система, (клиент указал дату нужности или соревнований + время на пошив)
     
     private int deliveryTime; //время доставки
-
-    private String comment;//комментарий на чем остановились
+    private String userPackage;
+    
     private TrainerEntity trainer;//тренер
     private boolean payTrainer;
     private int payMoneyTrainer;//сколько заплатили тренеру
     private int sale;
+    
+    @Column(name = "pd_package_manager_old")
+    public LocalDate getPackageManagerOld() {
+        return packageManagerOld;
+    }
+    
+    public void setPackageManagerOld(LocalDate packageManagerOld) {
+        this.packageManagerOld = packageManagerOld;
+    }
+    
+    @Column(name = "pd_package_old", columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
+    public boolean isPackageOld() {
+        return packageOld;
+    }
+    
+    public void setPackageOld(boolean packageOld) {
+        this.packageOld = packageOld;
+    }
+    
+    @Column(name = "pd_user_package")
+    public String getUserPackage() {
+        return userPackage;
+    }
+    
+    public void setUserPackage(String userPackage) {
+        this.userPackage = userPackage;
+    }
+    
+    
+    @Column(name = "pd_package_manager")
+    public LocalDate getPackageManager() {
+        return packageManager;
+    }
+    
+    public void setPackageManager(LocalDate packageManager) {
+        this.packageManager = packageManager;
+    }
+    
+    @Column(name = "pd_package_manufacture")
+    public LocalDate getPackageManufacture() {
+        return packageManufacture;
+    }
+    
+    public void setPackageManufacture(LocalDate packageManufacture) {
+        this.packageManufacture = packageManufacture;
+    }
+    
+    @Column(name = "pd_package_client")
+    public LocalDate getPackageClient() {
+        return packageClient;
+    }
+    
+    public void setPackageClient(LocalDate packageClient) {
+        this.packageClient = packageClient;
+    }
+    
     
     @Column(name = "pd_sale", columnDefinition = "INTEGER NOT NULL DEFAULT 0")
     public int getSale() {
@@ -147,11 +219,6 @@ public class PersonalData {
         return orderTime;
     }
 
-    @Column(name = "pd_competition_time")
-    public LocalDate getCompetitionTime() {
-        return competitionTime;
-    }
-
     @Column(name = "pd_needed_time")
     public LocalDate getNeededTime() {
         return neededTime;
@@ -211,11 +278,7 @@ public class PersonalData {
     public void setOrderTime(LocalDate orderTime) {
         this.orderTime = orderTime;
     }
-
-    public void setCompetitionTime(LocalDate competitionTime) {
-        this.competitionTime = competitionTime;
-    }
-
+    
     public void setNeededTime(LocalDate neededTime) {
         this.neededTime = neededTime;
     }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
+import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.orders.OrderEntity;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.data.orders.google.MeasureVariantsEntity;
@@ -222,10 +223,23 @@ public class OrderDataController {
             dataGoogleRepository.save(google);
 
             order.setDataGoogle(google);
+            
             order.setVersion(order.getVersion()+1);
+    
+            //считаем дату отправки OrderEntity order, String user, boolean packageNow, OrderDTO orderDTO, int idDataGoogle
+            orderService.savePackageTime(
+                    order,
+                    session.getUser().getLogin(),
+                    false,
+                    null,
+                    body.getIdDataGoogle()
+            );
+            
             OrderEntity save = orderRepository.save(order);
             OrderDTO toOrderDTO = orderService.toOrderDTO(save);
-            orderService.savePackageTime(order);//сохранили и посчитали дату отправки
+            
+          
+            
             return new LinkOrderToImportResponse ("соединили обьединили", toOrderDTO);
 
         }
@@ -258,10 +272,17 @@ public class OrderDataController {
             dataGoogleRepository.save(dataGoogle);
 
             order.setDataGoogle(null);
-            if (order.getPersonalData() != null) {
-                order.getPersonalData().setPackageTime(null);
-            }
-            orderService.savePackageTime(order);//сохранили и посчитали дату отправки
+    
+            //считаем дату отправки OrderEntity order, String user, boolean packageNow, OrderDTO orderDTO, int idDataGoogle
+            orderService.savePackageTime(
+                    order,
+                    session.getUser().getLogin(),
+                    false,
+                    null,
+                    -1
+            );
+            
+            
             
             order.setVersion(order.getVersion() + 1);
             

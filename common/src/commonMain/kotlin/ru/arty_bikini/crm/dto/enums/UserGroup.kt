@@ -5,6 +5,7 @@ import kotlin.jvm.JvmField
 //права доступа
 enum class UserGroup
     constructor(
+    @JvmField val canViewHistory: Boolean,//таня и мы
     @JvmField val canEditUsers: Boolean,//таня и мы
     @JvmField val canViewUsers: Boolean,//все
     //тренера, продукты(слитный, фитнес бикини),
@@ -27,6 +28,7 @@ enum class UserGroup
 ) : HasDisplayValue {
     
     ADMIN(
+        canViewHistory = true,
         canEditUsers = true,
         canViewUsers = true,
         canEditDict = true,
@@ -41,6 +43,7 @@ enum class UserGroup
         displayName = "Админ"
     ),
     TANYA(
+        canViewHistory = false,
         canEditUsers = true,
         canViewUsers = true,
         
@@ -60,6 +63,7 @@ enum class UserGroup
         displayName = "Татьяна"
         ),
     MANAGER(
+        canViewHistory = false,
         canEditUsers = false,
         canViewUsers = true,
     
@@ -79,6 +83,7 @@ enum class UserGroup
         displayName = "Менеджер"
     ),
     SEAMSTRESS(
+        canViewHistory = false,
         canEditUsers = false,
         canViewUsers = true,
     
@@ -98,6 +103,7 @@ enum class UserGroup
         displayName = "Швея"
     ),
     GLUER(
+        canViewHistory = false,
         canEditUsers = false,
         canViewUsers = true,
     

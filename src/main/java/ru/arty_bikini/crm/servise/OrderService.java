@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.arty_bikini.crm.Utils;
+import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.dict.PriceEntity;
 import ru.arty_bikini.crm.data.dict.RhinestoneTypeEntity;
 import ru.arty_bikini.crm.data.file.OrderFileEntity;
@@ -26,6 +28,7 @@ import ru.arty_bikini.crm.dto.work.WorkDTO;
 import ru.arty_bikini.crm.jpa.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,38 +61,90 @@ public class OrderService {
     @Autowired
     private OrderFileRepository orderFileRepository;
     
+    @Autowired
+    private PriceRepository priceRepository;
+    
+    @Autowired
+    private DataGoogleRepository dataGoogleRepository;
+    
     //считаем и сохраняем дату отправки
-    public void savePackageTime(OrderEntity order){
-        
-        if (order.getPersonalData() != null) {
+    public void savePackageTime(OrderEntity order, String user, boolean packageNow, OrderDTO orderDTO, int idDataGoogle ) {
     
-            int deliveryTime = order.getPersonalData().getDeliveryTime();
-            if (deliveryTime < 0) {
-                deliveryTime = 0;
-            }
+        if (packageNow) {
+            if (orderDTO.getPersonalData()!=null && orderDTO.getPersonalData().getPackageManager()!=null) {
+                order.getPersonalData().setPackageOld(true);
+                order.getPersonalData().setPackageTime(Utils.toDate(orderDTO.getPersonalData().getPackageManager()));
+                order.getPersonalData().setPackageManagerOld(Utils.toDate(orderDTO.getPersonalData().getPackageManager()));
     
-            if (order.getPersonalData().getNeededTime() != null) { //менеджер дата, когда нужен
-                LocalDate date = order.getPersonalData().getNeededTime().minusDays(deliveryTime);
-                date = date.minusDays(3);
-                order.getPersonalData().setPackageTime(date);//сохраняем
-            
-            } else if (order.getPersonalData().getCompetitionTime() != null) {//менеджер дата соревнований
-            
-                LocalDate date = order.getPersonalData().getCompetitionTime().minusDays(deliveryTime);
-                date = date.minusDays(3);
-                order.getPersonalData().setPackageTime(date);//сохраняем
-            } else if (order.getDataGoogle() != null && order.getDataGoogle().getNeededDate() != null) {//клиент дата, когда нужен
-            
-                LocalDate date = order.getDataGoogle().getNeededDate().minusDays(deliveryTime);
-                date = date.minusDays(3);
-                order.getPersonalData().setPackageTime(date);//сохраняем
-            } else if (order.getDataGoogle() != null && order.getDataGoogle().getCompetition() != null) {//клиент дата соревнований
-            
-                LocalDate date = order.getDataGoogle().getCompetition().minusDays(deliveryTime);
-                date = date.minusDays(3);
-                order.getPersonalData().setPackageTime(date);//сохраняем
+                //подписали, кто нажал
+                LocalDate date = LocalDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+                String str = date.format(formatter);
+                order.getPersonalData().setUserPackage(order.getPersonalData().getUserPackage() +
+                        "|" + user + "  " + str);
             }
+           
         }
+        else {
+    
+            if (order.getPersonalData().isPackageOld()) {
+                order.getPersonalData().setPackageTime(order.getPersonalData().getPackageManagerOld());
+            }
+            else {
+    
+                if (order.getExpress()!=null) {
+                    order.getPersonalData().setPackageTime(null);
+                }
+                else {
+    
+                    if (order.getDataGoogle()!=null) {
+                        DataGoogleEntity dataGoogle = dataGoogleRepository.getById(idDataGoogle);
+    
+                        if (dataGoogle!=null) {
+                            //считаем пошив от даты производства(зависит от мерок из гугла)
+                            LocalDate manufacture= dataGoogle.getDateGoogle().toLocalDate();
+                            manufacture = manufacture.plusDays(28);
+                            order.getPersonalData().setPackageManufacture(manufacture);
+    
+                            LocalDate client;//считаем дату край от соревнований и нужности клиента
+                            if (dataGoogle.getNeededDate() != null) {
+                                client = dataGoogle.getNeededDate();
+        
+                                if (dataGoogle.getNeededDate().isAfter(dataGoogle.getCompetition())) {
+                                    client = dataGoogle.getCompetition();
+                                }
+        
+                            }
+                            else {
+                                client = dataGoogle.getCompetition();
+                            }
+                            if (order.getPersonalData().getDeliveryTime()==0) {
+                                order.getPersonalData().setDeliveryTime(1);
+                            }
+                            client = client.minusDays(order.getPersonalData().getDeliveryTime());
+                            client = client.minusDays(3);
+                            order.getPersonalData().setPackageClient(client);
+    
+                            if (client.isAfter(manufacture)) {//крайняя дата после пошива(нормальное состояние)
+                                order.getPersonalData().setPackageTime(manufacture);
+                            }
+                            else {//пошив не успевает
+                                order.getPersonalData().setPackageTime(null);
+                            }
+                        }
+                        else {
+                            order.getPersonalData().setPackageTime(null);
+                        }
+                        
+                    }
+                    else {
+                        order.getPersonalData().setPackageTime(null);
+                    }
+                }
+            }
+            
+        }
+        
     }
     
     //orderEntity преобразуем в OrderDTO
@@ -151,21 +206,24 @@ public class OrderService {
                 orderDTO.setPresetRules(calcPresetRuleDTOList);
             }
         }
+        
         //заполняем поля price
-        if (orderEntity.getPriceJson()== null || orderEntity.getPriceJson().length() == 0){
+        if (orderEntity.getPriceJson() == null || orderEntity.getPriceJson().length() == 0){
             orderDTO.setPrice(null);
         }
         else {
-            List<PriceEntity> data = null;
+            List<Integer> data = null;
             try {
-                data = objectMapper.readValue(orderEntity.getPriceJson(), new TypeReference<List<PriceEntity>>() {});
+                data = objectMapper.readValue(orderEntity.getPriceJson(), new TypeReference<List<Integer>>() {});
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
             List<PriceDTO> priceDTOList = new ArrayList<>(data.size());
             
-            for (PriceEntity datum : data){
-                PriceDTO priceDTO = objectMapper.convertValue(datum, PriceDTO.class);
+            for (Integer datum : data){
+                PriceEntity price = priceRepository.getById(datum.intValue());
+    
+                PriceDTO priceDTO = objectMapper.convertValue(price, PriceDTO.class);
                 priceDTOList.add(priceDTO);
                 orderDTO.setPrice(priceDTOList);
             }

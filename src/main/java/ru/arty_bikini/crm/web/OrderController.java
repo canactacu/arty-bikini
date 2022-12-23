@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
+import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.dict.ExpressEntity;
 import ru.arty_bikini.crm.data.dict.PriceEntity;
 import ru.arty_bikini.crm.data.dict.ProductTypeEntity;
@@ -223,12 +224,29 @@ public class OrderController {
             LeadInfo leadInfo = objectMapper.convertValue(body.getOrder().getLeadInfo(), LeadInfo.class);
             //проверить все вложенные *Entity (по ID сходить в бд и заменить на то, что вернет гибернайт)
     
-            if (body.getOrder().getExpress() != null) {
-                ExpressEntity express = expressRepository.getById(body.getOrder().getExpress().getId());
-                if (express == null) {
-                    return new EditClientResponse("express == null, не заполнено ", null);
+            //проставляем срочность
+            if (body.getOrder().getExpress() != null) {//от клиента пришла не 0
+                
+                //срочность поменялась
+                if ((order.getExpress() == null)||(order.getExpress().getId() != body.getOrder().getExpress().getId())) {
+                    ExpressEntity express = expressRepository.getById(body.getOrder().getExpress().getId());
+                    if (express == null) {
+                        return new EditClientResponse("в бд не заполнено ", null);
+                    }
+                    order.setExpress(express);
+    
+                    order.getPersonalData().setPackageOld(false);
+                    order.getPersonalData().setPackageManagerOld(null);
                 }
-                order.setExpress(express);
+                
+            } else {
+                if (order.getExpress() != null) {
+                    order.setExpress(null);
+                    
+                    order.getPersonalData().setPackageOld(false);
+                    order.getPersonalData().setPackageManagerOld(null);
+                    
+                }
             }
             
             if (body.getOrder().getProduct() != null) {
@@ -239,13 +257,7 @@ public class OrderController {
                 order.setProduct(productType);
             }
     
-            if (body.getOrder().getDataGoogle() != null) {
-                DataGoogleEntity dataGoogle = dataGoogleRepository.getById(body.getOrder().getDataGoogle().getId());
-                if (dataGoogle == null) {
-                    return new EditClientResponse("dataGoogle == null, не заполнено ", null);
-                }
-                order.setDataGoogle(dataGoogle);
-            }
+            
     
             if (personalData != null) {
         
@@ -315,8 +327,14 @@ public class OrderController {
                 }
             }
     
-            //считаем дату отправки
-            orderService.savePackageTime(order);
+            //считаем дату отправки OrderEntity order, String user, boolean packageNow, OrderDTO orderDTO, int idDataGoogle
+            orderService.savePackageTime(
+                    order,
+                    session.getUser().getLogin(),
+                    body.getOrder().getPersonalData().getPackageNow(),
+                    body.getOrder(),
+                    order.getDataGoogle().getId()
+            );
             
             
             //ставим дату попадания в архив
@@ -386,10 +404,11 @@ public class OrderController {
                     String priceJson = null;
                     
                     List<PriceDTO> priceDTOList = body.getOrder().getPrice();
-                    List<PriceEntity> priceEntityList = new ArrayList<>();
+                    List<Integer> priceEntityList = new ArrayList<>();
     
                     for (int i = 0; i < priceDTOList.size(); i++) {
-                        priceEntityList.add(objectMapper.convertValue(priceDTOList.get(i), PriceEntity.class));
+                        
+                        priceEntityList.add(priceDTOList.get(i).getId());
                         
                         //добавить поля
                     }
@@ -402,6 +421,7 @@ public class OrderController {
                 }
             }
             order.setVersion(order.getVersion() + 1);
+            
             //сохранить в бд
             OrderEntity save = orderRepository.save(order);
     

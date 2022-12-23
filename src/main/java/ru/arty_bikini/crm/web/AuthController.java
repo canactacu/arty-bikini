@@ -1,14 +1,19 @@
 package ru.arty_bikini.crm.web;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.Utils;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.UserEntity;
+import ru.arty_bikini.crm.data.work.WorkTypeEntity;
 import ru.arty_bikini.crm.dto.UserDTO;
 import ru.arty_bikini.crm.dto.packet.auth.*;
+import ru.arty_bikini.crm.dto.packet.dict.GetWorkTypeResponse;
+import ru.arty_bikini.crm.dto.work.WorkTypeDTO;
+import ru.arty_bikini.crm.jpa.HistoryRepository;
 import ru.arty_bikini.crm.jpa.SessionRepository;
 import ru.arty_bikini.crm.jpa.UserRepository;
 import ru.arty_bikini.crm.servise.UserService;
@@ -41,7 +46,8 @@ public class AuthController {
     
     @Autowired
     private ObjectMapper objectMapper;
-
+    
+    
     @PostMapping("/login")//точка входа по логину и паролю(
     @ResponseBody
     public LoginResponse login(@RequestParam String login, @RequestParam String password){
