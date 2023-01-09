@@ -40,10 +40,6 @@ public class PersonalData {
     
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
-    private LocalDate neededTime;// дата когда нужен заказ
-    
-    @JsonSerialize(using = LocalDateToLongSerializer.class)
-    @JsonDeserialize(using = LocalDateToLongDeserializer.class)
     private LocalDate packageTime;//Дата, когда нужно отправить, текущая дата отправки
     
     @JsonSerialize(using = LocalDateToLongSerializer.class)
@@ -218,11 +214,7 @@ public class PersonalData {
     public LocalDate getOrderTime() {
         return orderTime;
     }
-
-    @Column(name = "pd_needed_time")
-    public LocalDate getNeededTime() {
-        return neededTime;
-    }
+    
 
     @Column(name = "pd_comment")
     public String getComment() {
@@ -279,10 +271,6 @@ public class PersonalData {
         this.orderTime = orderTime;
     }
     
-    public void setNeededTime(LocalDate neededTime) {
-        this.neededTime = neededTime;
-    }
-
     public void setComment(String comment) {
         this.comment = comment;
     }

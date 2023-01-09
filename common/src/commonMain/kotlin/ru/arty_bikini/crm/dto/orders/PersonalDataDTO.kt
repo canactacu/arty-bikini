@@ -22,7 +22,6 @@ class PersonalDataDTO {
     var createdTime : Long? = null //дата появления лида
     var archiveTime : Long? = null //дата попадания в архив
     var orderTime: Long? = null //дата заказа(предоплата или заполнение мерок?)
-    var neededTime: Long? = null  //дата, когда нужен заказ
     var packageTime : Long? = null //Дата, когда нужно отправить
     
     var packageManager : Long? = null ///дата, когда нужно отправить, которую указал менеджер(менеджер дата отправки)

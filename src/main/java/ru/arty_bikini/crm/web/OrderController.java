@@ -328,12 +328,16 @@ public class OrderController {
             }
     
             //считаем дату отправки OrderEntity order, String user, boolean packageNow, OrderDTO orderDTO, int idDataGoogle
+            int dataGoogleId = -1;
+            if (order.getDataGoogle()!=null) {
+                dataGoogleId = order.getDataGoogle().getId();
+            }
             orderService.savePackageTime(
                     order,
                     session.getUser().getLogin(),
                     body.getOrder().getPersonalData().getPackageNow(),
                     body.getOrder(),
-                    order.getDataGoogle().getId()
+                    dataGoogleId
             );
             
             

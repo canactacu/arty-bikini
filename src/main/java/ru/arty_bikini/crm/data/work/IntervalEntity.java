@@ -1,5 +1,6 @@
 package ru.arty_bikini.crm.data.work;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import ru.arty_bikini.crm.data.UserEntity;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 
 //интервалы
 @Entity(name = "intervals")
+@JsonFilter("entityFilter")
 public class IntervalEntity {
     private int id;
     
