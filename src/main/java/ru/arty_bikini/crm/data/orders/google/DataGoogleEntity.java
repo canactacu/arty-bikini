@@ -8,10 +8,7 @@ import ru.arty_bikini.crm.utils.LocalDateTimeToLongSerializer;
 import ru.arty_bikini.crm.utils.LocalDateToLongDeserializer;
 import ru.arty_bikini.crm.utils.LocalDateToLongSerializer;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -25,6 +22,9 @@ public class DataGoogleEntity {
     @JsonDeserialize(using = LocalDateTimeToLongDeserializer.class)
     private LocalDateTime dateGoogle;//дата заполнения мерок в гугол
     private String name;//имя клиента указанного в гугол
+
+    private boolean exclude;
+
     private String telephon;//телефон клиента указанного в гугол
     private String json;//другие данные из гугла
     
@@ -35,7 +35,16 @@ public class DataGoogleEntity {
     @JsonSerialize(using = LocalDateToLongSerializer.class)
     @JsonDeserialize(using = LocalDateToLongDeserializer.class)
     private LocalDate competition;
-    
+
+    @Column(columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
+    public boolean isExclude() {
+        return exclude;
+    }
+
+    public void setExclude(boolean exclude) {
+        this.exclude = exclude;
+    }
+
     @Column(name = "needed_date")
     public LocalDate getNeededDate() {
         return neededDate;
@@ -55,7 +64,8 @@ public class DataGoogleEntity {
     }
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "data_google_seq_gen")
+    @SequenceGenerator(name = "data_google_seq_gen", sequenceName = "data_google_id_seq")
     public int getId() {
         return id;
     }

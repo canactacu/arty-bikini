@@ -36,3 +36,14 @@ tasks.named('test') {
 tasks.named("bootRun") {
 	workingDir = rootProject.file("test")
 }
+
+tasks.register("copyBootJar", Copy.class) {
+	group = "deploy"
+
+	from(file("build/libs"))
+	into(file("deploy/ab-crm-app/image"))
+
+	exclude("crm-0.0.1-SNAPSHOT-plain.jar")
+
+	dependsOn(tasks.named("bootJar"))
+}

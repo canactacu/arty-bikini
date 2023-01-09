@@ -28,7 +28,8 @@ public class IntervalEntity {
 
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "intervals_seq_gen")
+    @SequenceGenerator(name = "intervals_seq_gen", sequenceName = "intervals_id_seq")
     public int getId() {
         return id;
     }

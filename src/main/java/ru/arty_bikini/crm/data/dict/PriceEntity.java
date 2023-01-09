@@ -2,10 +2,8 @@ package ru.arty_bikini.crm.data.dict;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 //допы (эскиз, дизайн и тд)
 @Entity(name = "price")
 @JsonFilter("entityFilter")
@@ -65,9 +63,10 @@ public class PriceEntity {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
-    
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "price_seq_gen")
+    @SequenceGenerator(name = "price_seq_gen", sequenceName = "price_id_seq")
     public int getId() {
         return id;
     }

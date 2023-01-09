@@ -2,10 +2,7 @@ package ru.arty_bikini.crm.data.dict;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 //срочность
 @Entity(name = "express")
@@ -18,7 +15,8 @@ public class ExpressEntity {
     private int cost;
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "express_seq_gen")
+    @SequenceGenerator(name = "express_seq_gen", sequenceName = "express_id_seq")
     public int getId() {
         return id;
     }

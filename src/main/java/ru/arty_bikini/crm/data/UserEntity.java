@@ -5,10 +5,12 @@ import ru.arty_bikini.crm.dto.enums.UserGroup;
 
 import javax.persistence.*;
 
-@Entity(name = "users")//создаем пустую табл имя user
+@Entity(name = "users")
 @JsonFilter("entityFilter")
 public class UserEntity {
     private int id;
+    private String name;
+
     private String login;
     private String password;
     private UserGroup group;
@@ -20,7 +22,16 @@ public class UserEntity {
     
     private int priority;
     private boolean visible;
-    
+
+    @Column
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
     public int getPriority() {
         return priority;
@@ -39,8 +50,9 @@ public class UserEntity {
         this.visible = visible;
     }
     
-    @Id //первичный кюч
-    @GeneratedValue//заполнять автоматически   создадут столбцы в табл user
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq_gen")
+    @SequenceGenerator(name = "users_seq_gen", sequenceName = "users_id_seq")
     public int getId() {
         return id;
     }

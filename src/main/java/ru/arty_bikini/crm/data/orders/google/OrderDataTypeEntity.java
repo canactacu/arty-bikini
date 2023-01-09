@@ -35,7 +35,8 @@ public class OrderDataTypeEntity {
     }
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_data_type_seq_gen")
+    @SequenceGenerator(name = "orders_data_type_seq_gen", sequenceName = "orders_data_type_id_seq")
     public int getId() {
         return id;
     }

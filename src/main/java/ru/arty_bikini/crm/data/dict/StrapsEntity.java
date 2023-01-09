@@ -2,10 +2,7 @@ package ru.arty_bikini.crm.data.dict;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 //лямки
 @Entity(name = "straps")
@@ -37,7 +34,8 @@ public class StrapsEntity {
     }
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "straps_seq_gen")
+    @SequenceGenerator(name = "straps_seq_gen", sequenceName = "straps_id_seq")
     public int getId() {
         return id;
     }

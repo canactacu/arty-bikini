@@ -57,7 +57,8 @@ public class RhinestoneTypeEntity {
     }
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rhinestone_types_seq_gen")
+    @SequenceGenerator(name = "rhinestone_types_seq_gen", sequenceName = "rhinestone_types_id_seq")
     public int getId() {
         return id;
     }

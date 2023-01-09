@@ -15,6 +15,7 @@ import ru.arty_bikini.crm.dto.packet.work.*;
 import ru.arty_bikini.crm.dto.work.IntervalDTO;
 import ru.arty_bikini.crm.dto.work.WorkDTO;
 import ru.arty_bikini.crm.jpa.*;
+import ru.arty_bikini.crm.servise.DictionaryService;
 import ru.arty_bikini.crm.servise.OrderService;
 import ru.arty_bikini.crm.servise.WorkService;
 
@@ -69,6 +70,9 @@ public class WorkController {
     
     @Autowired
     private WorkService workService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @PostMapping("/add-work")//добавить работу
     @ResponseBody
@@ -542,7 +546,8 @@ public class WorkController {
             for (int i = 0; i < workDTOList.size(); i++) {
                 WorkEntity workEntity = workList.get(i);
                 WorkDTO workDTO = workDTOList.get(i);
-    
+
+                OrderEntity orderEntity = workEntity.getOrder();
                 OrderDTO order = workDTO.getOrder();
                 //где-то стоит null по json надо его найти
                 List<WorkEntity> orderWorkEntityList = workRepository.getByOrder(workEntity.getOrder());
@@ -552,7 +557,7 @@ public class WorkController {
                 }
               
                 order.setWorks(orderWorkDTOList);
-                
+                dictionaryService.fillPrice(orderEntity, order);
                
                 workDTO.setWorks(workService.toListDto(workEntity.getWorksJson()));
             }

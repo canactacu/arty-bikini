@@ -66,6 +66,9 @@ public class OrderService {
     
     @Autowired
     private DataGoogleRepository dataGoogleRepository;
+
+    @Autowired
+    private DictionaryService dictionaryService;
     
     //считаем и сохраняем дату отправки
     public void savePackageTime(OrderEntity order, String user, boolean packageNow, OrderDTO orderDTO, int idDataGoogle ) {
@@ -206,7 +209,11 @@ public class OrderService {
                 orderDTO.setPresetRules(calcPresetRuleDTOList);
             }
         }
-        
+
+        //заполняем поля price
+        dictionaryService.fillPrice(orderEntity, orderDTO);
+
+
         //заполняем поля price
         if (orderEntity.getPriceJson() == null || orderEntity.getPriceJson().length() == 0){
             orderDTO.setPrice(null);

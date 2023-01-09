@@ -18,7 +18,8 @@ public class OrderFileEntity {
     private String comment;
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_file_seq_gen")
+    @SequenceGenerator(name = "order_file_seq_gen", sequenceName = "order_file_id_seq")
     public int getId() {
         return id;
     }

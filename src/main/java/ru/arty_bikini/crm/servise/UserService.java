@@ -49,7 +49,15 @@ public class UserService {
 
             dto.setId(all.get(i).getId());//заполнили
             dto.setLogin(all.get(i).getLogin());
+            dto.setName(all.get(i).getName());
             dto.setGroup(all.get(i).getGroup());
+
+            dto.setSpecialisation(all.get(i).getSpecialisation());
+            dto.setProductivityComment(all.get(i).getProductivityComment());
+            dto.setBaseProductivity(all.get(i).getBaseProductivity());
+
+            dto.setVisible(all.get(i).isVisible());
+            dto.setPriority(all.get(i).getPriority());
 
             result.add(dto);//добавили в конец списка
 

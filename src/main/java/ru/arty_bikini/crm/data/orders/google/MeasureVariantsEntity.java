@@ -26,7 +26,8 @@ public class MeasureVariantsEntity {
     }
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "measure_variants_seq_gen")
+    @SequenceGenerator(name = "measure_variants_seq_gen", sequenceName = "measure_variants_id_seq")
     public int getId() {
         return id;
     }

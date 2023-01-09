@@ -6,13 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import ru.arty_bikini.crm.utils.LocalDateToLongDeserializer;
 import ru.arty_bikini.crm.utils.LocalDateToLongSerializer;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
+@Entity(name = "tour")
 @JsonFilter("entityFilter")
 public class TourEntity {
     private int id;
@@ -21,7 +18,8 @@ public class TourEntity {
     private LocalDate tour;//доп встреча
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tour_seq_gen")
+    @SequenceGenerator(name = "tour_seq_gen", sequenceName = "tour_id_seq")
     public int getId() {
         return id;
     }

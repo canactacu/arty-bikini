@@ -24,7 +24,8 @@ public class FileEntity {
     private long size;
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "file_seq_gen")
+    @SequenceGenerator(name = "file_seq_gen", sequenceName = "file_id_seq")
     public int getId() {
         return id;
     }

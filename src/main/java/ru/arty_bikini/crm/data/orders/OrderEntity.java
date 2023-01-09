@@ -70,7 +70,8 @@ public class OrderEntity {
     }
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_seq_gen")
+    @SequenceGenerator(name = "orders_seq_gen", sequenceName = "orders_id_seq")
     public int getId() {
         return id;
     }

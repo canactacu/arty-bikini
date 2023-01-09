@@ -20,7 +20,8 @@ public class SessionEntity {
     private LocalDate start;
 
     @Id //первичный кюч
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sessions_seq_gen")
+    @SequenceGenerator(name = "sessions_seq_gen", sequenceName = "sessions_id_seq")
     public int getId() {
         return id;
     }

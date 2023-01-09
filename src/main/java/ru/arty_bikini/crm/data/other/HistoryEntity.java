@@ -19,7 +19,8 @@ public class HistoryEntity {
     private String  editType;
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "history_seq_gen")
+    @SequenceGenerator(name = "history_seq_gen", sequenceName = "history_id_seq")
     public int getId() {
         return id;
     }

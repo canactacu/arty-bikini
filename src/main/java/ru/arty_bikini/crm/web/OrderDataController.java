@@ -32,6 +32,8 @@ import java.util.List;
 ///api/order-data/link-order-to-import      +        привязать заказ к результату импорта
 ///api/order-data/unlink-order-from-import      +        отвязать заказ от гугл данных
 
+///api/order-data/hide    -  скрыть 1 импорт
+
 ///api/order-data/get-measure-variants  + получить всех measure-variants
 ///api/order-data/edit-measure-variants  +  изменить,добавить measure-variants
 ///api/order-data/del-measure-variants  -   удалить,добавить measure-variants
@@ -73,11 +75,34 @@ public class OrderDataController {
     @Autowired
     private ColumnService columnService;
 
+    @PostMapping("/hide") //скрыть 1 импорт
+    @ResponseBody
+    public HideResponse hide(@RequestParam String key, @RequestBody HideRequest body ){
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null){
+            return new HideResponse(false, "нет сессии", null);
+        }
+        //проверка на права доступа
+        if(session.getUser().getGroup().canEditOrder == true){
+            DataGoogleEntity dataGoogle = dataGoogleRepository.getById(body.getOrderDataId());
+            if (dataGoogle == null) {
+                return new HideResponse(false, "нет в бд", null);
+            }
+
+            dataGoogle.setExclude(body.getExclude());
+
+            dataGoogleRepository.save(dataGoogle);
+
+            return new HideResponse(true, "скрыт", null);
+
+        }
+        return new HideResponse(false, "нет сессии", null);
+
+    }
 
     @PostMapping("/get-types")//получить список всех столбиков
     @ResponseBody
     public GetTypesResponse getTypes(@RequestParam String key){
-        //проверка на key
         SessionEntity session = sessionRepository.getByKey(key);
         if (session == null){
             return new GetTypesResponse("нет сессии", null);

@@ -2,10 +2,7 @@ package ru.arty_bikini.crm.data.dict;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 
 //(тип заказа(куп,платье..))
@@ -39,7 +36,8 @@ public class ProductTypeEntity {
     }
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_types_seq_gen")
+    @SequenceGenerator(name = "product_types_seq_gen", sequenceName = "product_types_id_seq")
     public int getId() {
         return id;
     }

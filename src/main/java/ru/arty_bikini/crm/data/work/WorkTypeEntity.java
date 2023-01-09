@@ -24,7 +24,8 @@ public class WorkTypeEntity {
     private PriceEntity price;
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "work_type_seq_gen")
+    @SequenceGenerator(name = "work_type_seq_gen", sequenceName = "work_type_id_seq")
     public int getId() {
         return id;
     }

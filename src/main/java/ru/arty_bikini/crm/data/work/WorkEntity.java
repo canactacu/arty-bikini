@@ -76,7 +76,8 @@ public class WorkEntity {
     }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "works_seq_gen")
+    @SequenceGenerator(name = "works_seq_gen", sequenceName = "works_id_seq")
     public int getId() {
         return id;
     }

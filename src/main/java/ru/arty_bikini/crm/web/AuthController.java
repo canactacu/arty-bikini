@@ -188,6 +188,7 @@ public class AuthController {
 
                     user.setId(0);
                     user.setLogin(body.getUser().getLogin());
+                    user.setName(body.getUser().getName());
                     user.setGroup(body.getUser().getGroup());
                     user.setBaseProductivity(body.getUser().getBaseProductivity());
                     user.setSpecialisation(body.getUser().getSpecialisation());
@@ -220,6 +221,7 @@ public class AuthController {
                 }
 
                 user.setLogin(body.getUser().getLogin());
+                user.setName(body.getUser().getName());
                 user.setGroup(body.getUser().getGroup());
                 user.setBaseProductivity(body.getUser().getBaseProductivity());
                 user.setSpecialisation(body.getUser().getSpecialisation());

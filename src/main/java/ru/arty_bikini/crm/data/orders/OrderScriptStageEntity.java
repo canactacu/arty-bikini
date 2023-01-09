@@ -32,7 +32,8 @@ public class OrderScriptStageEntity {
     private String comment;
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_script_stage_seq_gen")
+    @SequenceGenerator(name = "orders_script_stage_seq_gen", sequenceName = "orders_script_stage_id_seq")
     public int getId() {
         return id;
     }

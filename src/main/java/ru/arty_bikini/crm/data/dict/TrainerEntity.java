@@ -3,10 +3,7 @@ package ru.arty_bikini.crm.data.dict;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import org.hibernate.annotations.Generated;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity(name = "trainers")
 @JsonFilter("entityFilter")
@@ -78,7 +75,8 @@ public class TrainerEntity {
     }
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trainers_seq_gen")
+    @SequenceGenerator(name = "trainers_seq_gen", sequenceName = "trainers_id_seq")
     public int getId() {
         return id;
     }

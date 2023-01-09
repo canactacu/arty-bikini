@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import ru.arty_bikini.crm.utils.LocalDateToLongDeserializer;
 import ru.arty_bikini.crm.utils.LocalDateToLongSerializer;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity(name = "script_stage")
@@ -26,7 +23,8 @@ public class ScriptStageEntity {
     
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "script_stage_seq_gen")
+    @SequenceGenerator(name = "script_stage_seq_gen", sequenceName = "script_stage_id_seq")
     public int getId() {
         return id;
     }
