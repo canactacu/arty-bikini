@@ -19,6 +19,7 @@ class OrderDTO : EntityDTO() {
     override var id = 0
     var name: String? = null
     var type: ClientType = ClientType.LEAD
+    var archive : Boolean = false
     
     val dataGoogle: DataGoogleDTO? = null
     var personalData: PersonalDataDTO? = null

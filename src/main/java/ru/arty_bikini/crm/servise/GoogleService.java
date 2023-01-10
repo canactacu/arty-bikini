@@ -6,6 +6,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.arty_bikini.crm.Utils;
 import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
@@ -37,18 +38,20 @@ public class GoogleService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Value("${ab-crm.google.fileId}")
+    private String fileId;
+
     //импорт всего файла
     public String doImport() {
 
         try {
-            String file = importer.importSheet("1gqpkbkeTYIP-ELvaitb_4lIXq39OeTdUy8sxCzkiATA");
+            String file = importer.importSheet(fileId);
 
             CSVParser parser = CSVParser.parse(file, CSVFormat.EXCEL);
 
            // List<String> headers = parser.getHeaderNames();//заголовки из гугла
             List<String> headers = addHeader(parser);
             if (headers.size()==0){
-                System.out.println("//////////////...........mmmmmmmmmmvvvvvvv0000000000000000000");
             }
 
 

@@ -16,6 +16,7 @@ public class OrderEntity {
     private int id;
     private String name;
     private ClientType type;//статус клиента
+    private boolean archive;// в архиве или нет
 
     private DataGoogleEntity dataGoogle;//гугол
     private PersonalData personalData;
@@ -32,7 +33,17 @@ public class OrderEntity {
     private String presetRulesJson;
     private String priceJson;
     private int version;
-    
+
+
+    @Column(columnDefinition = "BOOLEAN NOT NULL DEFAULT false")
+    public boolean isArchive() {
+        return archive;
+    }
+
+    public void setArchive(boolean archive) {
+        this.archive = archive;
+    }
+
     @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
     public int getVersion() {
         return version;

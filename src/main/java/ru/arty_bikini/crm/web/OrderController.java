@@ -106,6 +106,10 @@ public class OrderController {
                             Predicate rule = criteriaBuilder.equal(root.<ClientType>get("type"), body.getFilter().getType());
                             rules.add(rule);
                         }
+                        if (body.getFilter().getArchive() != null) {
+                            Predicate rule = criteriaBuilder.equal(root.get("archive"), body.getFilter().getArchive());
+                            rules.add(rule);
+                        }
                         if (body.getFilter().getTrainer()!=null){
                             Predicate rule = criteriaBuilder.equal(root.get("personalData").get("trainer"), body.getFilter().getTrainer());
                             rules.add(rule);
@@ -153,10 +157,7 @@ public class OrderController {
         if(session.getUser().getGroup().canViewOrder == true){
 
             //сходить в бд//получить клиентов
-            List<OrderEntity> all = orderRepository.findAllByType(ClientType.CLIENT);//получила все клиентов
-
-            //получить клиентов из всех
-
+            List<OrderEntity> all =  orderRepository.findAllByArchiveAndType(false, ClientType.CLIENT);//получила все клиентов
 
             //сделать DTO
             List<OrderDTO> orderDTOS = orderService.toOrderDTOList(all);
@@ -177,13 +178,13 @@ public class OrderController {
         //проверка на права доступа
         if(session.getUser().getGroup().canViewOrder == true){
 
-            List<OrderEntity> all = orderRepository.findAllByType(ClientType.LEAD);//список всех лидов
+            List<OrderEntity> all = orderRepository.findAllByArchiveAndType(false, ClientType.LEAD);//список всех лидов
             List<OrderDTO> orderLeadDTOS = orderService.toOrderDTOList(all);
             
             //список только клиентов,  у кого нет мерок и дизайна
             List<OrderEntity> orderClientList =
-                    orderRepository.findByTypeAndStatusInfoMeasureAllOrTypeAndStatusInfoDesignAll
-                            (ClientType.CLIENT, false, ClientType.CLIENT,false);
+                    orderRepository.findByArchiveAndTypeAndStatusInfoMeasureAllOrArchiveAndTypeAndStatusInfoDesignAll
+                            (false, ClientType.CLIENT, false, false, ClientType.CLIENT,false);
             
             List<OrderDTO> orderClientDTOS = orderService.toOrderDTOList(orderClientList);
     
@@ -192,35 +193,6 @@ public class OrderController {
             return new GetClientsResponse("переданы лиды", orderLeadDTOS, orderClientDTOS);
         }
         return new GetClientsResponse("нет сессии", null, null);
-    }
-
-    @PostMapping("/get-archive")//получить список архив
-    @ResponseBody
-    public GetArchiveResponse getArchive(@RequestParam String key, @RequestParam int page){
-        //проверка на key
-        SessionEntity session = sessionRepository.getByKey(key);
-        if (session == null){
-            return new GetArchiveResponse("нет сессии", null);
-        }
-        //проверка на права доступа
-        if(session.getUser().getGroup().canViewOrder == true){
-
-            //сходить в бд//получить клиентов
-            Page<OrderEntity> all = orderRepository.findAllByType(ClientType.ARCHIVE, Pageable.ofSize(25).withPage(page));
-
-            //сделать DTO
-
-            PageDTO<OrderDTO> pageDTO = new PageDTO<>(
-                    orderService.toOrderDTOList(all.getContent()),
-                    all.getNumber(),
-                    all.getSize(),
-                    all.getTotalElements(),
-                    all.getTotalPages()
-            );
-
-            return new GetArchiveResponse("переданы", pageDTO);
-        }
-        return new GetArchiveResponse("нет сессии", null);
     }
 
     @PostMapping("/add-client")//добавить лида-клиента
@@ -418,7 +390,7 @@ public class OrderController {
                 return new EditClientResponse("нет статуса у клиента", null);
             }
             else {
-                if((order.getType().equals(ClientType.ARCHIVE))){
+                if((order.isArchive())){
                     if (order.getPersonalData()== null){
                         PersonalData personalData1 = new PersonalData();
                         order.setPersonalData(personalData1);
@@ -527,30 +499,6 @@ public class OrderController {
             return new GetOrderResponse("переданы клиенты", true, null, orderDTO);
         }
         return new GetOrderResponse("нет сессии", false,null, null);
-    }
-
-    @PostMapping("/get-order-by-trainer")//получить список заказов по тренеру
-    @ResponseBody
-    public GetOrderByTrainerResponse getOrderByTrainer(@RequestParam String key, @RequestBody GetOrderByTrainerRequest body){
-        //проверка на key
-        SessionEntity session = sessionRepository.getByKey(key);//выташили нужный кеу,если такого нет, вернули null
-        if (session == null){
-            return new GetOrderByTrainerResponse("нет сессии", null);
-        }
-        //проверка прав на добавление
-        if(session.getUser().getGroup().canViewTrainer == true){
-        //проверка, есть ли такой тренер
-            TrainerEntity trainer = trainerRepository.getById(body.getIdTrainer());//наш тренер
-            if (trainer == null){
-                return new GetOrderByTrainerResponse("нет такого тренера", null);
-            }
-            List<OrderEntity> order = orderRepository.getByPersonalDataTrainer(trainer);
-
-            List<OrderDTO> orderDTOS1 = orderService.toOrderDTOList(order);
-
-            return new GetOrderByTrainerResponse("список отправлен", orderDTOS1);
-        }
-        return new GetOrderByTrainerResponse("нет сессии", null);
     }
 }
 
