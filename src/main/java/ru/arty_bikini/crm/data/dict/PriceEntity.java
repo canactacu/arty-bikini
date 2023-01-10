@@ -11,6 +11,7 @@ public class PriceEntity {
     private int id;
     private String name;
     private int count;
+    private int percent;
     
     private boolean visible;//скрыть\показать
     private String group;//группа для отображения
@@ -18,7 +19,16 @@ public class PriceEntity {
     
     private int payGluerCount;
     private int payGluerPercent;
-    
+
+    @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
+    public int getPercent() {
+        return percent;
+    }
+
+    public void setPercent(int percent) {
+        this.percent = percent;
+    }
+
     @Column(columnDefinition = "INTEGER NOT NULL DEFAULT 0")
     public int getPriority() {
         return priority;

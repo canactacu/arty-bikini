@@ -8,6 +8,7 @@ class PriceDTO : EntityDTO() {
     override var id = 0
     var name: String? = null
     var count = 0
+    var percent =0
     
     var visible : Boolean = true
     var group: String? = null

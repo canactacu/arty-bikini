@@ -808,6 +808,7 @@ public class DictionaryController {
     
             price.setName(body.getPriceDTO().getName());
             price.setCount(body.getPriceDTO().getCount());
+            price.setPercent(body.getPriceDTO().getPercent());
             
             price.setVisible(body.getPriceDTO().getVisible());
             price.setGroup(body.getPriceDTO().getGroup());

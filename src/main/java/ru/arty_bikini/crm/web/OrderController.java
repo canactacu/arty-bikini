@@ -94,9 +94,9 @@ public class OrderController {
                 Sort sort = Sort
                         .by(direction, body.getFilter().getOrderColumn())
                         .and(Sort.by(Sort.Direction.ASC, "id"));
-                pageable.withSort(sort);
+                pageable = pageable.withSort(sort);
             } else {
-                pageable.withSort(Sort.Direction.ASC, "id");
+                pageable = pageable.withSort(Sort.Direction.ASC, "id");
             }
 
             Specification<OrderEntity> specification = Specification.where(
