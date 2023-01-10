@@ -4,19 +4,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.*;
+import ru.arty_bikini.crm.Utils;
 import ru.arty_bikini.crm.data.SessionEntity;
-import ru.arty_bikini.crm.data.UserEntity;
 import ru.arty_bikini.crm.data.dict.ExpressEntity;
-import ru.arty_bikini.crm.data.dict.PriceEntity;
 import ru.arty_bikini.crm.data.dict.ProductTypeEntity;
 import ru.arty_bikini.crm.data.dict.TrainerEntity;
 import ru.arty_bikini.crm.data.orders.*;
-import ru.arty_bikini.crm.data.orders.google.DataGoogleEntity;
 import ru.arty_bikini.crm.data.orders.stone.CalcPresetRuleJson;
 import ru.arty_bikini.crm.dto.PageDTO;
 import ru.arty_bikini.crm.dto.dict.PriceDTO;
+import ru.arty_bikini.crm.dto.enums.SortDirection;
 import ru.arty_bikini.crm.dto.enums.UserGroup;
 import ru.arty_bikini.crm.dto.enums.personalData.ClientType;
 import ru.arty_bikini.crm.dto.orders.OrderDTO;
@@ -25,6 +27,7 @@ import ru.arty_bikini.crm.dto.packet.order.*;
 import ru.arty_bikini.crm.jpa.*;
 import ru.arty_bikini.crm.servise.OrderService;
 
+import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,11 +71,80 @@ public class OrderController {
     @Autowired
     public ProductTypeRepository productTypeRepository;
 
+    @PostMapping("/get-orders-page")//Выдает постанично список заказов с фильтрацией
+    @ResponseBody
+    public GetOrdersPageResponse getOrderPage(@RequestParam String key, @RequestBody GetOrdersPageRequest body){
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null){
+            return new GetOrdersPageResponse(false,"нет сессии", null, null);
+        }
+        //проверка на права доступа
+        if(session.getUser().getGroup().canViewOrder == true) {
+            PageRequest pageable = PageRequest.ofSize(25).withPage(body.getFilter().getPage());
+            Sort.Direction direction;
+
+            if (body.getFilter().getOrderColumn() != null) {
+
+                if (body.getFilter().getOrderDirection().equals(SortDirection.ASC)) {
+                    direction = Sort.Direction.ASC;
+                } else {
+                    direction = Sort.Direction.DESC;
+                }
+
+                Sort sort = Sort
+                        .by(direction, body.getFilter().getOrderColumn())
+                        .and(Sort.by(Sort.Direction.ASC, "id"));
+                pageable.withSort(sort);
+            } else {
+                pageable.withSort(Sort.Direction.ASC, "id");
+            }
+
+            Specification<OrderEntity> specification = Specification.where(
+                    (root, query, criteriaBuilder) -> {
+                        List<Predicate> rules = new ArrayList<>();
+                        if (body.getFilter().getType() != null) {
+                            Predicate rule = criteriaBuilder.equal(root.<ClientType>get("type"), body.getFilter().getType());
+                            rules.add(rule);
+                        }
+                        if (body.getFilter().getTrainer()!=null){
+                            Predicate rule = criteriaBuilder.equal(root.get("personalData").get("trainer"), body.getFilter().getTrainer());
+                            rules.add(rule);
+                        }
+                        if (body.getFilter().getCreatedTimeFrom()!=null){
+                            LocalDate localDate = Utils.toDate(body.getFilter().getCreatedTimeFrom());
+                            Predicate rule = criteriaBuilder.greaterThanOrEqualTo(root.get("personalData").get("createdTime"), localDate);
+                            rules.add(rule);
+                        }
+                        if (body.getFilter().getCreatedTimeTo()!=null){
+                            LocalDate localDate = Utils.toDate(body.getFilter().getCreatedTimeTo());
+                            Predicate rule = criteriaBuilder.lessThanOrEqualTo(root.get("personalData").get("createdTime"), localDate);
+                            rules.add(rule);
+                        }
+
+                        return criteriaBuilder.and(rules.toArray(new Predicate[0]));
+
+                    }
+            );
+            Page<OrderEntity> all = orderRepository.findAll(specification, pageable);
+
+            PageDTO<OrderDTO> pageDTO = new PageDTO<>(
+                    orderService.toOrderDTOList(all.getContent()),
+                    all.getNumber(),
+                    all.getSize(),
+                    all.getTotalElements(),
+                    all.getTotalPages()
+            );
+
+            return new GetOrdersPageResponse(true, "переданы страницы", null, pageDTO);
+        }
+        return new GetOrdersPageResponse(false,"нет сессии", null, null);
+
+    }
+
 
     @PostMapping("/get-clients")//получить список клиентов
     @ResponseBody
     public GetClientsResponse getClients(@RequestParam String key){
-        //проверка на key
         SessionEntity session = sessionRepository.getByKey(key);
         if (session == null){
             return new GetClientsResponse("нет сессии", null, null);
