@@ -260,6 +260,7 @@ public class OrderController {
             //примитивы в OrderEntity заполнить в ручную @Embedable
             order.setName(body.getOrder().getName());
             order.setType(body.getOrder().getType());
+            order.setArchive(body.getOrder().getArchive());
             
     
             //все остальное заполнить через класс маппер
