@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.arty_bikini.crm.data.SessionEntity;
 import ru.arty_bikini.crm.data.dict.*;
+import ru.arty_bikini.crm.data.file.FileEntity;
+import ru.arty_bikini.crm.data.other.NoteEntity;
 import ru.arty_bikini.crm.data.work.WorkTypeEntity;
 import ru.arty_bikini.crm.dto.dict.*;
+import ru.arty_bikini.crm.dto.other.NoteDTO;
 import ru.arty_bikini.crm.dto.packet.dict.*;
 import ru.arty_bikini.crm.dto.work.WorkTypeDTO;
 import ru.arty_bikini.crm.jpa.*;
@@ -45,6 +48,10 @@ import java.util.List;
 //api/dict/add-work-type  + добавить work_type
 //api/dict/edit-work-type  +  изменить work_type
 
+//api/dict/get-note +  получить всех note
+//api/dict/add-note  + добавить note
+//api/dict/edit-note  +  изменить note
+
 @RestController
 @RequestMapping("/api/dict")
 public class DictionaryController {
@@ -72,6 +79,9 @@ public class DictionaryController {
    
    @Autowired
    private PriceRepository priceRepository;
+
+    @Autowired
+    private FileRepository fileRepository;
     
     
     @Autowired
@@ -82,7 +92,29 @@ public class DictionaryController {
     
     @Autowired
     private ScriptStageRepository scriptStageRepository;
-    
+
+    @Autowired
+    private NoteRepository noteRepository;
+
+    @PostMapping("/get-note")//получить всех note
+    @ResponseBody
+    public GetNoteResponse getNote(@RequestParam String key) {
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new GetNoteResponse(false, "нет сессии", null, null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canViewDict == true) {
+
+            List<NoteEntity> all = noteRepository.findAll();
+            List<NoteDTO> noteDTOList = objectMapper.convertValue(all, new TypeReference<List<NoteDTO>>() {});
+
+            return new GetNoteResponse(true, "передали", null, noteDTOList);
+        }
+        return new GetNoteResponse(false, "нет сессии", null, null);
+    }
+
     @PostMapping("/get-work-type")//получить всех work-type
     @ResponseBody
     public GetWorkTypeResponse getWorkType(@RequestParam String key) {
@@ -103,6 +135,44 @@ public class DictionaryController {
             return new GetWorkTypeResponse(true, "передали", null, workTypeDTOS);
         }
         return new GetWorkTypeResponse(false, "нет сессии", null, null);
+    }
+
+    @PostMapping("/add-note")//добавить add-note
+    @ResponseBody
+    public AddNoteResponse addNote(@RequestParam String key, @RequestBody AddNoteRequest body){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new AddNoteResponse(false, "нет сессии", null, null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditDict == true){
+;
+            NoteEntity note = noteRepository.getById(body.getNote().getId());
+            if (note != null) {
+                return new AddNoteResponse(false, "есть такой id", null, null);
+            }
+
+            note = new NoteEntity();
+            note.setId(0);
+            note.setPath(body.getNote().getPath());
+            note.setContent(body.getNote().getContent());
+
+             if (body.getNote().getFile()!= null) {
+                 FileEntity file = fileRepository.getById(body.getNote().getFile().getId());
+                 if (file == null) {
+                     return new AddNoteResponse(false, "нет такого файла в бд", null, null);
+                 }
+                 note.setFile(file);
+             }
+
+            NoteEntity save = noteRepository.save(note);
+            NoteDTO noteDTO = objectMapper.convertValue(save, NoteDTO.class);
+
+            return new AddNoteResponse(true, "добавлен", null, noteDTO);
+        }
+
+        return new AddNoteResponse(false, "нет сессии", null, null);
     }
     
     @PostMapping("/add-work-type")//добавить add-work-type
@@ -150,6 +220,40 @@ public class DictionaryController {
         return new AddWorkTypeResponse(false, "нет сессии", null, null);
     }
     
+    @PostMapping("/edit-note")//изменить work-type
+    @ResponseBody
+    public EditNoteResponse editNote(@RequestParam String key, @RequestBody EditNoteRequest body){
+        //проверка на key
+        SessionEntity session = sessionRepository.getByKey(key);
+        if (session == null) {
+            return new EditNoteResponse(false, "нет сессии", null, null);
+        }
+        //проверка на права доступа
+        if (session.getUser().getGroup().canEditDict == true){
+
+            NoteEntity noteEntity = noteRepository.getById(body.getNote().getId());
+            if (noteEntity == null) {
+                return new EditNoteResponse(false, "не нашли в бд", null, null);
+            }
+            noteEntity.setPath(body.getNote().getPath());
+            noteEntity.setContent(body.getNote().getContent());
+
+            FileEntity file = fileRepository.getById(body.getNote().getId());
+            if (file == null) {
+                return new EditNoteResponse(false, "не нашли в бд файл", null, null);
+            }
+            noteEntity.setFile(file);
+
+            NoteEntity save = noteRepository.save(noteEntity);
+
+            NoteDTO noteDTO = objectMapper.convertValue(save, NoteDTO.class);
+
+
+            return new EditNoteResponse(true, "изменили", null, noteDTO);
+        }
+        return new EditNoteResponse(false, "нет сессии", null, null);
+    }
+
     @PostMapping("/edit-work-type")//изменить work-type
     @ResponseBody
     public EditWorkTypeResponse editWorkType(@RequestParam String key, @RequestBody EditWorkTypeRequest body){
@@ -160,22 +264,22 @@ public class DictionaryController {
         }
         //проверка на права доступа
         if (session.getUser().getGroup().canEditDict == true){
-    
+
             WorkTypeEntity workType = workTypeRepository.getById(body.getWorkType().getId());
             if (workType == null) {
                 return new EditWorkTypeResponse(false, "не нашли в бд", null, null);
             }
             workType.setName(body.getWorkType().getName());
-    
+
             workType.setPriority(body.getWorkType().getPriority());
             workType.setVisible(body.getWorkType().getVisible());
-    
+
             workType.setSeamstress(body.getWorkType().getSeamstress());
             workType.setGluer(body.getWorkType().getGluer());
             workType.setGluerAndSeamstress(body.getWorkType().getGluerAndSeamstress());
-    
+
             workType.setPaySeamstress(body.getWorkType().getPaySeamstress());
-    
+
             if (body.getWorkType().getPrice() != null) {
                 PriceEntity price = priceRepository.getById(body.getWorkType().getPrice().getId());
                 if (price == null) {
@@ -185,20 +289,20 @@ public class DictionaryController {
             } else {
                 workType.setPrice(null);
             }
-    
+
             String productJson = dictionaryService.productToJson(body.getWorkType().getProductList());
             workType.setProductJson(productJson);
-    
+
             WorkTypeEntity save = workTypeRepository.save(workType);
             WorkTypeDTO workTypeDTO = objectMapper.convertValue(save, WorkTypeDTO.class);
-           
-            
+
+
             return new EditWorkTypeResponse(true, "изменили", null, null);
         }
         return new EditWorkTypeResponse(false, "нет сессии", null, null);
     }
-    
-    
+
+
     @PostMapping("/get-script-stage")//получить всех
     @ResponseBody
     public GetScriptStageResponse getScriptStage(@RequestParam String key) {
