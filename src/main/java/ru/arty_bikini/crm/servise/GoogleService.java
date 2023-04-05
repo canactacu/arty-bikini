@@ -74,7 +74,7 @@ public class GoogleService {
             throw new RuntimeException(e);
         }
 
-       return "ощибка при чтении файла";
+       return "";
     }
 
     private List<String> addHeader(CSVParser parser){
@@ -100,6 +100,13 @@ public class GoogleService {
             //проверка заполняли ли эту строку(ищем в бд по времени заполнения)
             String time = line.get(0);//значение времени заполнения из гугл
 
+            String[] part = time.split(" ");
+
+            String dot = part[part.length - 1].substring(1, 2);
+
+            if (dot.equals(":")) {
+                time = part[0] + " 0" + part[1];
+            }
             //если не заполняли, то заполняем
             DataGoogleEntity dataGoogle = new DataGoogleEntity();//создаем новый
 
